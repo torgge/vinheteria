@@ -1,0 +1,293 @@
+// Vinheria Digital — PrimeNG Theme Overrides
+
+// Button customizations
+.p-button {
+  border-radius: var(--vinheria-radius-md);
+  font-weight: 600;
+  transition: all var(--vinheria-transition-fast);
+
+  &.p-button-primary {
+    background: var(--p-primary-color);
+    border-color: var(--p-primary-color);
+
+    &:hover {
+      background: var(--p-primary-600);
+      border-color: var(--p-primary-600);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px var(--p-surface-ground), 0 0 0 4px var(--p-primary-200);
+    }
+  }
+
+  &.p-button-outlined {
+    border-color: var(--p-primary-color);
+    color: var(--p-primary-color);
+
+    &:hover {
+      background: var(--p-primary-50);
+    }
+  }
+
+  &.p-button-text {
+    color: var(--p-primary-color);
+
+    &:hover {
+      background: var(--p-primary-50);
+    }
+  }
+}
+
+// Card customizations
+.p-card {
+  border-radius: var(--vinheria-radius-lg);
+  box-shadow: var(--vinheria-shadow-md);
+  border: 1px solid var(--p-surface-border);
+
+  .p-card-header {
+    border-bottom: 1px solid var(--p-surface-border);
+    padding: var(--vinheria-spacing-md);
+  }
+
+  .p-card-body {
+    padding: var(--vinheria-spacing-lg);
+  }
+
+  .p-card-footer {
+    border-top: 1px solid var(--p-surface-border);
+    padding: var(--vinheria-spacing-md);
+  }
+}
+
+// DataTable customizations
+.p-datatable {
+  .p-datatable-header {
+    background: var(--p-surface-ground);
+    border: none;
+    padding: var(--vinheria-spacing-md);
+  }
+
+  .p-datatable-thead > tr > th {
+    background: var(--p-surface-ground);
+    color: var(--p-text-color-secondary);
+    font-weight: 600;
+    font-size: var(--vinheria-font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-color: var(--p-surface-border);
+  }
+
+  .p-datatable-tbody > tr {
+    transition: background var(--vinheria-transition-fast);
+
+    &:hover {
+      background: var(--p-surface-hover);
+    }
+
+    > td {
+      border-color: var(--p-surface-border);
+    }
+  }
+
+  .p-datatable-footer {
+    background: var(--p-surface-ground);
+    border: none;
+  }
+}
+
+// Input customizations
+.p-inputtext,
+.p-dropdown,
+.p-multiselect,
+.p-inputnumber-input {
+  border-radius: var(--vinheria-radius-md);
+  border-color: var(--p-surface-border);
+  transition: all var(--vinheria-transition-fast);
+
+  &:focus,
+  &.p-focus {
+    border-color: var(--p-primary-color);
+    box-shadow: 0 0 0 2px var(--p-primary-50);
+  }
+}
+
+// Dropdown panel
+.p-dropdown-panel,
+.p-multiselect-panel {
+  border-radius: var(--vinheria-radius-md);
+  box-shadow: var(--vinheria-shadow-lg);
+  border: 1px solid var(--p-surface-border);
+}
+
+// Toast customizations
+.p-toast {
+  .p-toast-message {
+    border-radius: var(--vinheria-radius-md);
+    box-shadow: var(--vinheria-shadow-lg);
+
+    &.p-toast-message-success {
+      background: var(--vinheria-success-bg);
+      border-left: 4px solid var(--vinheria-success);
+      color: var(--vinheria-success);
+    }
+
+    &.p-toast-message-warn {
+      background: var(--vinheria-warning-bg);
+      border-left: 4px solid var(--vinheria-warning);
+      color: var(--vinheria-warning);
+    }
+
+    &.p-toast-message-error {
+      background: var(--vinheria-error-bg);
+      border-left: 4px solid var(--vinheria-error);
+      color: var(--vinheria-error);
+    }
+
+    &.p-toast-message-info {
+      background: var(--vinheria-info-bg);
+      border-left: 4px solid var(--vinheria-info);
+      color: var(--vinheria-info);
+    }
+  }
+}
+
+// Dialog customizations
+.p-dialog {
+  border-radius: var(--vinheria-radius-lg);
+  box-shadow: var(--vinheria-shadow-xl);
+
+  .p-dialog-header {
+    border-bottom: 1px solid var(--p-surface-border);
+    padding: var(--vinheria-spacing-lg);
+
+    .p-dialog-title {
+      font-family: var(--vinheria-font-display);
+      font-size: var(--vinheria-font-size-xl);
+      font-weight: 600;
+    }
+  }
+
+  .p-dialog-content {
+    padding: var(--vinheria-spacing-lg);
+  }
+
+  .p-dialog-footer {
+    border-top: 1px solid var(--p-surface-border);
+    padding: var(--vinheria-spacing-md) var(--vinheria-spacing-lg);
+  }
+}
+
+// Badge customizations
+.p-badge {
+  border-radius: var(--vinheria-radius-full);
+  font-weight: 600;
+  font-size: var(--vinheria-font-size-xs);
+}
+
+// Tag customizations (for status badges)
+.p-tag {
+  border-radius: var(--vinheria-radius-full);
+  font-weight: 600;
+  font-size: var(--vinheria-font-size-xs);
+  padding: 0.25rem 0.75rem;
+
+  &.status-draft {
+    background: var(--vinheria-status-draft);
+  }
+
+  &.status-pending {
+    background: var(--vinheria-status-pending);
+    color: #000;
+  }
+
+  &.status-approved {
+    background: var(--vinheria-status-approved);
+  }
+
+  &.status-rejected {
+    background: var(--vinheria-status-rejected);
+  }
+
+  &.status-fulfilled {
+    background: var(--vinheria-status-fulfilled);
+  }
+
+  &.status-delivered {
+    background: var(--vinheria-status-delivered);
+  }
+}
+
+// Menu / Sidebar customizations
+.p-menu,
+.p-tieredmenu {
+  border-radius: var(--vinheria-radius-md);
+  border: 1px solid var(--p-surface-border);
+  box-shadow: var(--vinheria-shadow-md);
+
+  .p-menuitem-link {
+    border-radius: var(--vinheria-radius-sm);
+    transition: all var(--vinheria-transition-fast);
+
+    &:hover {
+      background: var(--p-surface-hover);
+    }
+
+    &.p-menuitem-link-active {
+      background: var(--p-primary-50);
+      color: var(--p-primary-color);
+    }
+  }
+}
+
+// Stepper customizations
+.p-stepper {
+  .p-stepper-header {
+    .p-stepper-number {
+      background: var(--p-primary-color);
+      color: var(--p-primary-color-text);
+    }
+
+    &.p-highlight {
+      .p-stepper-number {
+        background: var(--p-primary-color);
+      }
+    }
+  }
+}
+
+// Chart customizations
+.p-chart {
+  canvas {
+    border-radius: var(--vinheria-radius-md);
+  }
+}
+
+// Slider customizations
+.p-slider {
+  .p-slider-range {
+    background: var(--p-primary-color);
+  }
+
+  .p-slider-handle {
+    border-color: var(--p-primary-color);
+
+    &:focus {
+      box-shadow: 0 0 0 2px var(--p-surface-ground), 0 0 0 4px var(--p-primary-200);
+    }
+  }
+}
+
+// Paginator customizations
+.p-paginator {
+  border-radius: var(--vinheria-radius-md);
+  background: var(--p-surface-ground);
+
+  .p-paginator-page {
+    border-radius: var(--vinheria-radius-sm);
+
+    &.p-highlight {
+      background: var(--p-primary-color);
+      color: var(--p-primary-color-text);
+    }
+  }
+}

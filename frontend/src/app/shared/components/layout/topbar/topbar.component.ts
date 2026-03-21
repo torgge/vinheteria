@@ -1,0 +1,277 @@
+import { Component, inject, input, output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { MenuModule } from 'primeng/menu';
+import { AvatarModule } from 'primeng/avatar';
+import { BadgeModule } from 'primeng/badge';
+import { MenuItem } from 'primeng/api';
+
+import { AuthService } from '../../../../core/auth/auth.service';
+import { CurrencyService } from '../../../../core/currency/currency.service';
+import { ROLE_INFO } from '../../../../core/auth/auth.model';
+import { SupportedCurrency } from '../../../../core/currency/currency.model';
+
+interface LanguageOption {
+  id: string;
+  label: string;
+  flag: string;
+}
+
+interface CurrencyOption {
+  code: SupportedCurrency;
+  label: string;
+  flag: string;
+}
+
+@Component({
+  selector: 'app-topbar',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslocoModule,
+    ButtonModule,
+    DropdownModule,
+    MenuModule,
+    AvatarModule,
+    BadgeModule
+  ],
+  template: `
+    <header class="topbar" *transloco="let t">
+      <div class="topbar-start">
+        <button
+          class="menu-toggle"
+          (click)="toggleSidebar.emit()"
+          pButton
+          icon="pi pi-bars"
+          text
+        ></button>
+      </div>
+
+      <div class="topbar-end">
+        <!-- Currency Switcher -->
+        <p-dropdown
+          [options]="currencies"
+          [(ngModel)]="selectedCurrency"
+          optionLabel="label"
+          optionValue="code"
+          (onChange)="onCurrencyChange($event.value)"
+          styleClass="currency-dropdown"
+        >
+          <ng-template pTemplate="selectedItem" let-selected>
+            <span class="currency-selected">{{ getCurrencyFlag(selected) }} {{ selected }}</span>
+          </ng-template>
+          <ng-template pTemplate="item" let-item>
+            <span>{{ item.flag }} {{ item.label }}</span>
+          </ng-template>
+        </p-dropdown>
+
+        <!-- Language Switcher -->
+        <p-dropdown
+          [options]="languages"
+          [(ngModel)]="selectedLanguage"
+          optionLabel="label"
+          optionValue="id"
+          (onChange)="onLanguageChange($event.value)"
+          styleClass="language-dropdown"
+        >
+          <ng-template pTemplate="selectedItem" let-selected>
+            <span>{{ getLanguageFlag(selected) }}</span>
+          </ng-template>
+          <ng-template pTemplate="item" let-item>
+            <span>{{ item.flag }} {{ item.label }}</span>
+          </ng-template>
+        </p-dropdown>
+
+        <!-- User Menu -->
+        <div class="user-menu" (click)="userMenu.toggle($event)">
+          <p-avatar
+            [image]="authService.userAvatar()"
+            [label]="authService.userAvatar() ? undefined : getInitials()"
+            shape="circle"
+            size="normal"
+            styleClass="user-avatar"
+          />
+          <div class="user-info">
+            <span class="user-name">{{ authService.userName() }}</span>
+            <span class="user-role" [style.color]="getRoleColor()">
+              {{ t('auth.roles.' + authService.userRole()) }}
+            </span>
+          </div>
+          <i class="pi pi-chevron-down"></i>
+        </div>
+
+        <p-menu #userMenu [model]="userMenuItems" [popup]="true" />
+      </div>
+    </header>
+  `,
+  styles: [`
+    .topbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: var(--vinheria-sidebar-width);
+      height: var(--vinheria-topbar-height);
+      background: var(--p-surface-card);
+      border-bottom: 1px solid var(--p-surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--vinheria-spacing-lg);
+      z-index: 999;
+      transition: left var(--vinheria-transition-normal);
+    }
+
+    :host-context(.sidebar-collapsed) .topbar {
+      left: var(--vinheria-sidebar-collapsed-width);
+    }
+
+    .topbar-start {
+      display: flex;
+      align-items: center;
+      gap: var(--vinheria-spacing-md);
+    }
+
+    .menu-toggle {
+      display: none;
+
+      @media (max-width: 768px) {
+        display: block;
+      }
+    }
+
+    .topbar-end {
+      display: flex;
+      align-items: center;
+      gap: var(--vinheria-spacing-md);
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: var(--vinheria-spacing-sm);
+      padding: var(--vinheria-spacing-xs) var(--vinheria-spacing-sm);
+      border-radius: var(--vinheria-radius-md);
+      cursor: pointer;
+      transition: background var(--vinheria-transition-fast);
+
+      &:hover {
+        background: var(--p-surface-hover);
+      }
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: var(--vinheria-font-size-sm);
+      color: var(--p-text-color);
+    }
+
+    .user-role {
+      font-size: var(--vinheria-font-size-xs);
+      font-weight: 500;
+    }
+
+    .currency-selected {
+      font-weight: 600;
+    }
+
+    :host ::ng-deep {
+      .currency-dropdown,
+      .language-dropdown {
+        min-width: auto;
+
+        .p-dropdown-label {
+          padding: 0.5rem 0.75rem;
+        }
+      }
+
+      .user-avatar {
+        background: var(--p-primary-color);
+        color: var(--p-primary-color-text);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        left: 0;
+      }
+    }
+  `]
+})
+export class TopbarComponent {
+  authService = inject(AuthService);
+  currencyService = inject(CurrencyService);
+  translocoService = inject(TranslocoService);
+
+  sidebarCollapsed = input(false);
+  toggleSidebar = output<void>();
+
+  languages: LanguageOption[] = [
+    { id: 'pt-BR', label: 'Português (Brasil)', flag: '🇧🇷' },
+    { id: 'es-PY', label: 'Español (Paraguay)', flag: '🇵🇾' },
+    { id: 'en-US', label: 'English (USA)', flag: '🇺🇸' }
+  ];
+
+  currencies: CurrencyOption[] = [
+    { code: 'BRL', label: 'Real (BRL)', flag: '🇧🇷' },
+    { code: 'PYG', label: 'Guaraní (PYG)', flag: '🇵🇾' },
+    { code: 'USD', label: 'Dollar (USD)', flag: '🇺🇸' }
+  ];
+
+  selectedLanguage = this.translocoService.getActiveLang();
+  selectedCurrency = this.currencyService.selectedCurrency();
+
+  userMenuItems: MenuItem[] = [
+    {
+      label: 'Switch User',
+      icon: 'pi pi-users',
+      command: () => this.authService.logout()
+    },
+    { separator: true },
+    {
+      label: 'Sign Out',
+      icon: 'pi pi-sign-out',
+      command: () => this.authService.logout()
+    }
+  ];
+
+  onLanguageChange(langId: string): void {
+    this.translocoService.setActiveLang(langId);
+  }
+
+  onCurrencyChange(currency: SupportedCurrency): void {
+    this.currencyService.setCurrency(currency);
+  }
+
+  getLanguageFlag(langId: string): string {
+    return this.languages.find(l => l.id === langId)?.flag ?? '';
+  }
+
+  getCurrencyFlag(code: string): string {
+    return this.currencies.find(c => c.code === code)?.flag ?? '';
+  }
+
+  getRoleColor(): string {
+    const role = this.authService.userRole();
+    return role ? ROLE_INFO[role]?.color : '#666';
+  }
+
+  getInitials(): string {
+    const name = this.authService.userName();
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "common": {
+    "appName": "Vinheria Digital",
+    "loading": "Carregando...",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "view": "Visualizar",
+    "create": "Criar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpar",
+    "close": "Fechar",
+    "confirm": "Confirmar",
+    "yes": "Sim",
+    "no": "Não",
+    "all": "Todos",
+    "none": "Nenhum",
+    "actions": "Ações",
+    "status": "Status",
+    "date": "Data",
+    "total": "Total",
+    "quantity": "Quantidade",
+    "price": "Preço",
+    "margin": "Margem",
+    "noResults": "Nenhum resultado encontrado",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "welcome": "Bem-vindo"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "catalog": "Catálogo",
+    "sales": "Vendas",
+    "purchases": "Compras",
+    "approvals": "Aprovações",
+    "fulfillments": "Fulfillments",
+    "customers": "Clientes",
+    "suppliers": "Fornecedores",
+    "warehouses": "Depósitos",
+    "pricing": "Preços",
+    "users": "Usuários",
+    "settings": "Configurações",
+    "admin": "Administração"
+  },
+  "auth": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "selectUser": "Selecione um usuário para entrar",
+    "demoMode": "Modo Demonstração",
+    "switchUser": "Trocar Usuário",
+    "role": "Função",
+    "roles": {
+      "SELLER": "Vendedor",
+      "PURCHASER": "Comprador",
+      "MANAGER": "Gerente",
+      "ADMIN": "Administrador"
+    },
+    "roleDescriptions": {
+      "SELLER": "Cria pedidos de venda, gerencia relacionamento com clientes",
+      "PURCHASER": "Cria pedidos de compra, gerencia fornecedores",
+      "MANAGER": "Aprova pedidos, visualiza relatórios",
+      "ADMIN": "Acesso completo a todas as funcionalidades"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bem-vindo, {{name}}!",
+    "totalSales": "Vendas Totais",
+    "totalOrders": "Total de Pedidos",
+    "totalMargin": "Margem Total",
+    "pendingApprovals": "Aprovações Pendentes",
+    "recentOrders": "Pedidos Recentes",
+    "topWines": "Vinhos Mais Vendidos",
+    "salesChart": "Vendas (últimos 30 dias)"
+  },
+  "catalog": {
+    "title": "Catálogo de Vinhos",
+    "searchPlaceholder": "Buscar por nome, região ou uva...",
+    "filters": {
+      "region": "Região",
+      "grape": "Uva",
+      "vintage": "Safra",
+      "priceRange": "Faixa de Preço",
+      "availability": "Disponibilidade"
+    },
+    "wine": {
+      "vintage": "Safra",
+      "region": "Região",
+      "grapes": "Uvas",
+      "sku": "SKU",
+      "inStock": "Em Estoque",
+      "outOfStock": "Esgotado",
+      "lowStock": "Estoque Baixo",
+      "addToOrder": "Adicionar ao Pedido"
+    },
+    "results": "{{count}} vinhos encontrados"
+  },
+  "sales": {
+    "title": "Pedidos de Venda",
+    "createOrder": "Criar Pedido de Venda",
+    "orderList": "Lista de Pedidos",
+    "orderDetail": "Detalhes do Pedido",
+    "selectCustomer": "Selecionar Cliente",
+    "selectWine": "Selecionar Vinho",
+    "selectWarehouse": "Selecionar Depósito",
+    "addItem": "Adicionar Item",
+    "orderItems": "Itens do Pedido",
+    "orderSummary": "Resumo do Pedido",
+    "subtotal": "Subtotal",
+    "totalMargin": "Margem Total",
+    "marginPercentage": "% de Margem",
+    "submitOrder": "Enviar Pedido",
+    "saveDraft": "Salvar Rascunho",
+    "fulfillments": "Fulfillments",
+    "status": {
+      "DRAFT": "Rascunho",
+      "PENDING_APPROVAL": "Aguardando Aprovação",
+      "APPROVED": "Aprovado",
+      "REJECTED": "Rejeitado",
+      "FULFILLED": "Fulfillment Completo",
+      "PARTIAL_FULFILLED": "Parcialmente Completo",
+      "DELIVERED": "Entregue",
+      "CANCELLED": "Cancelado"
+    }
+  },
+  "purchases": {
+    "title": "Pedidos de Compra",
+    "createOrder": "Criar Pedido de Compra",
+    "selectSupplier": "Selecionar Fornecedor",
+    "receiveStock": "Receber Estoque",
+    "status": {
+      "DRAFT": "Rascunho",
+      "PENDING_APPROVAL": "Aguardando Aprovação",
+      "APPROVED": "Aprovado",
+      "SENT": "Enviado",
+      "PARTIAL_RECEIVED": "Parcialmente Recebido",
+      "RECEIVED": "Recebido",
+      "CANCELLED": "Cancelado"
+    }
+  },
+  "approvals": {
+    "title": "Aprovações",
+    "queue": "Fila de Aprovação",
+    "pending": "Pendentes",
+    "history": "Histórico",
+    "approve": "Aprovar",
+    "reject": "Rejeitar",
+    "reason": "Motivo",
+    "rejectReason": "Motivo da Rejeição",
+    "noApprovals": "Nenhuma aprovação pendente",
+    "orderType": "Tipo de Pedido",
+    "requester": "Solicitante"
+  },
+  "fulfillments": {
+    "title": "Fulfillments",
+    "tracking": "Rastreamento",
+    "warehouse": "Depósito",
+    "items": "Itens",
+    "updateStatus": "Atualizar Status",
+    "trackingCode": "Código de Rastreio",
+    "estimatedDelivery": "Previsão de Entrega",
+    "status": {
+      "PENDING": "Pendente",
+      "PICKING": "Em Separação",
+      "PACKED": "Embalado",
+      "SHIPPED": "Enviado",
+      "DELIVERED": "Entregue"
+    }
+  },
+  "customers": {
+    "title": "Clientes",
+    "addCustomer": "Adicionar Cliente",
+    "companyName": "Razão Social",
+    "taxId": "CNPJ",
+    "creditLimit": "Limite de Crédito",
+    "paymentTerms": "Prazo de Pagamento",
+    "discount": "Desconto",
+    "status": {
+      "ACTIVE": "Ativo",
+      "INACTIVE": "Inativo",
+      "BLOCKED": "Bloqueado"
+    }
+  },
+  "suppliers": {
+    "title": "Fornecedores",
+    "addSupplier": "Adicionar Fornecedor",
+    "minimumOrder": "Pedido Mínimo",
+    "leadTime": "Prazo de Entrega",
+    "paymentTerms": "Condições de Pagamento"
+  },
+  "warehouses": {
+    "title": "Depósitos",
+    "stockOverview": "Visão Geral do Estoque",
+    "available": "Disponível",
+    "reserved": "Reservado",
+    "averageCost": "Custo Médio",
+    "location": "Localização"
+  },
+  "pricing": {
+    "title": "Tabelas de Preço",
+    "priceTable": "Tabela de Preços",
+    "createTable": "Criar Tabela",
+    "unitPrice": "Preço Unitário",
+    "unitCost": "Custo Unitário"
+  },
+  "users": {
+    "title": "Usuários",
+    "addUser": "Adicionar Usuário",
+    "name": "Nome",
+    "email": "E-mail",
+    "role": "Função",
+    "lastLogin": "Último Acesso"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro. Tente novamente.",
+    "notFound": "Recurso não encontrado",
+    "unauthorized": "Você não tem permissão para acessar este recurso",
+    "validation": "Por favor, corrija os erros no formulário"
+  }
+}

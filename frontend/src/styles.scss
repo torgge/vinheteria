@@ -1,0 +1,314 @@
+// Vinheria Digital — Global Styles
+
+// Design tokens and variables
+@import 'styles/variables';
+
+// Typography
+@import 'styles/typography';
+
+// PrimeNG theme customizations
+@import 'styles/primeng-theme';
+
+// PrimeNG core styles
+@import 'primeng/resources/primeng.min.css';
+@import 'primeicons/primeicons.css';
+
+// Reset and base styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--p-surface-ground);
+  min-height: 100vh;
+}
+
+// Links
+a {
+  color: var(--p-primary-color);
+  text-decoration: none;
+  transition: color var(--vinheria-transition-fast);
+
+  &:hover {
+    color: var(--p-primary-600);
+  }
+}
+
+// Images
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// Layout utilities
+.container {
+  max-width: var(--vinheria-content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--vinheria-spacing-md);
+}
+
+.page-content {
+  padding: var(--vinheria-spacing-xl);
+}
+
+// Flex utilities
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.gap-xs { gap: var(--vinheria-spacing-xs); }
+.gap-sm { gap: var(--vinheria-spacing-sm); }
+.gap-md { gap: var(--vinheria-spacing-md); }
+.gap-lg { gap: var(--vinheria-spacing-lg); }
+.gap-xl { gap: var(--vinheria-spacing-xl); }
+
+.flex-1 { flex: 1; }
+.flex-auto { flex: auto; }
+.flex-none { flex: none; }
+
+// Grid utilities
+.grid {
+  display: grid;
+}
+
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+// Spacing utilities
+.m-0 { margin: 0; }
+.m-xs { margin: var(--vinheria-spacing-xs); }
+.m-sm { margin: var(--vinheria-spacing-sm); }
+.m-md { margin: var(--vinheria-spacing-md); }
+.m-lg { margin: var(--vinheria-spacing-lg); }
+.m-xl { margin: var(--vinheria-spacing-xl); }
+
+.mt-0 { margin-top: 0; }
+.mt-xs { margin-top: var(--vinheria-spacing-xs); }
+.mt-sm { margin-top: var(--vinheria-spacing-sm); }
+.mt-md { margin-top: var(--vinheria-spacing-md); }
+.mt-lg { margin-top: var(--vinheria-spacing-lg); }
+.mt-xl { margin-top: var(--vinheria-spacing-xl); }
+
+.mb-0 { margin-bottom: 0; }
+.mb-xs { margin-bottom: var(--vinheria-spacing-xs); }
+.mb-sm { margin-bottom: var(--vinheria-spacing-sm); }
+.mb-md { margin-bottom: var(--vinheria-spacing-md); }
+.mb-lg { margin-bottom: var(--vinheria-spacing-lg); }
+.mb-xl { margin-bottom: var(--vinheria-spacing-xl); }
+
+.p-0 { padding: 0; }
+.p-xs { padding: var(--vinheria-spacing-xs); }
+.p-sm { padding: var(--vinheria-spacing-sm); }
+.p-md { padding: var(--vinheria-spacing-md); }
+.p-lg { padding: var(--vinheria-spacing-lg); }
+.p-xl { padding: var(--vinheria-spacing-xl); }
+
+// Width utilities
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.max-w-sm { max-width: 24rem; }
+.max-w-md { max-width: 28rem; }
+.max-w-lg { max-width: 32rem; }
+.max-w-xl { max-width: 36rem; }
+
+// Visibility
+.hidden { display: none; }
+.invisible { visibility: hidden; }
+
+// Cursor
+.cursor-pointer { cursor: pointer; }
+
+// Selection
+.select-none { user-select: none; }
+
+// Overflow
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+
+// Border radius
+.rounded-sm { border-radius: var(--vinheria-radius-sm); }
+.rounded-md { border-radius: var(--vinheria-radius-md); }
+.rounded-lg { border-radius: var(--vinheria-radius-lg); }
+.rounded-xl { border-radius: var(--vinheria-radius-xl); }
+.rounded-full { border-radius: var(--vinheria-radius-full); }
+
+// Shadows
+.shadow-sm { box-shadow: var(--vinheria-shadow-sm); }
+.shadow-md { box-shadow: var(--vinheria-shadow-md); }
+.shadow-lg { box-shadow: var(--vinheria-shadow-lg); }
+.shadow-xl { box-shadow: var(--vinheria-shadow-xl); }
+
+// Vinheria-specific components
+.vinheria-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--vinheria-spacing-xl);
+
+  h1 {
+    margin-bottom: 0;
+  }
+}
+
+.vinheria-card-grid {
+  display: grid;
+  gap: var(--vinheria-spacing-lg);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.vinheria-kpi-grid {
+  display: grid;
+  gap: var(--vinheria-spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.vinheria-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--vinheria-spacing-2xl);
+  text-align: center;
+  color: var(--p-text-color-muted);
+
+  i {
+    font-size: 3rem;
+    margin-bottom: var(--vinheria-spacing-md);
+  }
+
+  h3 {
+    color: var(--p-text-color-secondary);
+    margin-bottom: var(--vinheria-spacing-sm);
+  }
+}
+
+// Loading state
+.vinheria-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--vinheria-spacing-2xl);
+}
+
+// Margin indicator styles
+.margin-high {
+  color: var(--vinheria-margin-high);
+}
+
+.margin-medium {
+  color: var(--vinheria-margin-medium);
+}
+
+.margin-low {
+  color: var(--vinheria-margin-low);
+}
+
+// Wine-specific styles
+.wine-vintage {
+  font-family: var(--vinheria-font-display);
+  font-weight: 600;
+  color: var(--p-primary-color);
+}
+
+.wine-region {
+  color: var(--p-text-color-secondary);
+  font-size: var(--vinheria-font-size-sm);
+}
+
+// Price display
+.price-display {
+  font-weight: 600;
+  font-size: var(--vinheria-font-size-lg);
+
+  .currency-symbol {
+    font-size: var(--vinheria-font-size-sm);
+    margin-right: 0.25rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--vinheria-transition-normal);
+}
+
+.animate-slide-up {
+  animation: slideInUp var(--vinheria-transition-normal);
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+// Responsive utilities
+@media (max-width: 768px) {
+  .page-content {
+    padding: var(--vinheria-spacing-md);
+  }
+
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .hide-desktop {
+    display: none;
+  }
+}

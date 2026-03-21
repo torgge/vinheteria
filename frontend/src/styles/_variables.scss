@@ -1,0 +1,114 @@
+// Vinheria Digital — Bordeaux Wine Theme
+// Design tokens based on PrimeNG 17
+
+:root {
+  // Core Bordeaux palette
+  --p-primary-color: #722F37;
+  --p-primary-color-text: #FFFFFF;
+  --p-primary-50: #FDF2F3;
+  --p-primary-100: #F9D5D8;
+  --p-primary-200: #F0A8AE;
+  --p-primary-300: #E27A84;
+  --p-primary-400: #C74D5A;
+  --p-primary-500: #722F37;
+  --p-primary-600: #5E2630;
+  --p-primary-700: #4A1D28;
+  --p-primary-800: #361420;
+  --p-primary-900: #220B18;
+
+  // Gold accents (premium feel)
+  --vinheria-accent-gold: #C9A227;
+  --vinheria-accent-gold-light: #E8D48A;
+  --vinheria-accent-gold-dark: #8B6914;
+
+  // Surface colors (parchment-like, elegant)
+  --p-surface-ground: #FAF8F5;
+  --p-surface-section: #FFFFFF;
+  --p-surface-card: #FFFFFF;
+  --p-surface-overlay: #FFFFFF;
+  --p-surface-border: #E5E1DC;
+  --p-surface-hover: #F5F3F0;
+
+  // Text colors
+  --p-text-color: #1A1A2E;
+  --p-text-color-secondary: #5C5C6D;
+  --p-text-color-muted: #9494A5;
+
+  // Semantic colors
+  --vinheria-success: #2E7D32;
+  --vinheria-success-bg: #E8F5E9;
+  --vinheria-warning: #ED6C02;
+  --vinheria-warning-bg: #FFF3E0;
+  --vinheria-error: #D32F2F;
+  --vinheria-error-bg: #FFEBEE;
+  --vinheria-info: #0288D1;
+  --vinheria-info-bg: #E1F5FE;
+
+  // Margin indicators
+  --vinheria-margin-high: #2E7D32;
+  --vinheria-margin-medium: #ED6C02;
+  --vinheria-margin-low: #D32F2F;
+
+  // Status colors
+  --vinheria-status-draft: #9E9E9E;
+  --vinheria-status-pending: #FFC107;
+  --vinheria-status-approved: #4CAF50;
+  --vinheria-status-rejected: #F44336;
+  --vinheria-status-fulfilled: #2196F3;
+  --vinheria-status-delivered: #8BC34A;
+
+  // Typography
+  --p-font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --vinheria-font-display: 'Playfair Display', Georgia, serif;
+
+  // Font sizes
+  --vinheria-font-size-xs: 0.75rem;
+  --vinheria-font-size-sm: 0.875rem;
+  --vinheria-font-size-base: 1rem;
+  --vinheria-font-size-lg: 1.125rem;
+  --vinheria-font-size-xl: 1.25rem;
+  --vinheria-font-size-2xl: 1.5rem;
+  --vinheria-font-size-3xl: 2rem;
+  --vinheria-font-size-4xl: 2.5rem;
+
+  // Spacing
+  --vinheria-spacing-xs: 0.25rem;
+  --vinheria-spacing-sm: 0.5rem;
+  --vinheria-spacing-md: 1rem;
+  --vinheria-spacing-lg: 1.5rem;
+  --vinheria-spacing-xl: 2rem;
+  --vinheria-spacing-2xl: 3rem;
+
+  // Border radius
+  --vinheria-radius-sm: 4px;
+  --vinheria-radius-md: 8px;
+  --vinheria-radius-lg: 12px;
+  --vinheria-radius-xl: 16px;
+  --vinheria-radius-full: 9999px;
+
+  // Shadows
+  --vinheria-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --vinheria-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --vinheria-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --vinheria-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  // Layout
+  --vinheria-sidebar-width: 280px;
+  --vinheria-sidebar-collapsed-width: 80px;
+  --vinheria-topbar-height: 64px;
+  --vinheria-content-max-width: 1400px;
+
+  // Transitions
+  --vinheria-transition-fast: 150ms ease;
+  --vinheria-transition-normal: 250ms ease;
+  --vinheria-transition-slow: 350ms ease;
+}
+
+// Dark mode (future)
+[data-theme="dark"] {
+  --p-surface-ground: #1A1A2E;
+  --p-surface-section: #252538;
+  --p-surface-card: #2D2D42;
+  --p-text-color: #FFFFFF;
+  --p-text-color-secondary: #B8B8C8;
+}

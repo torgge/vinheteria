@@ -1,0 +1,224 @@
+{
+  "common": {
+    "appName": "Vinheria Digital",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "all": "All",
+    "none": "None",
+    "actions": "Actions",
+    "status": "Status",
+    "date": "Date",
+    "total": "Total",
+    "quantity": "Quantity",
+    "price": "Price",
+    "margin": "Margin",
+    "noResults": "No results found",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "welcome": "Welcome"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "catalog": "Catalog",
+    "sales": "Sales",
+    "purchases": "Purchases",
+    "approvals": "Approvals",
+    "fulfillments": "Fulfillments",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "warehouses": "Warehouses",
+    "pricing": "Pricing",
+    "users": "Users",
+    "settings": "Settings",
+    "admin": "Administration"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "selectUser": "Select a user to sign in",
+    "demoMode": "Demo Mode",
+    "switchUser": "Switch User",
+    "role": "Role",
+    "roles": {
+      "SELLER": "Seller",
+      "PURCHASER": "Purchaser",
+      "MANAGER": "Manager",
+      "ADMIN": "Administrator"
+    },
+    "roleDescriptions": {
+      "SELLER": "Creates sales orders, manages customer relationships",
+      "PURCHASER": "Creates purchase orders, manages suppliers",
+      "MANAGER": "Approves orders, views reports",
+      "ADMIN": "Full access to all features"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {{name}}!",
+    "totalSales": "Total Sales",
+    "totalOrders": "Total Orders",
+    "totalMargin": "Total Margin",
+    "pendingApprovals": "Pending Approvals",
+    "recentOrders": "Recent Orders",
+    "topWines": "Top Selling Wines",
+    "salesChart": "Sales (last 30 days)"
+  },
+  "catalog": {
+    "title": "Wine Catalog",
+    "searchPlaceholder": "Search by name, region, or grape...",
+    "filters": {
+      "region": "Region",
+      "grape": "Grape",
+      "vintage": "Vintage",
+      "priceRange": "Price Range",
+      "availability": "Availability"
+    },
+    "wine": {
+      "vintage": "Vintage",
+      "region": "Region",
+      "grapes": "Grapes",
+      "sku": "SKU",
+      "inStock": "In Stock",
+      "outOfStock": "Out of Stock",
+      "lowStock": "Low Stock",
+      "addToOrder": "Add to Order"
+    },
+    "results": "{{count}} wines found"
+  },
+  "sales": {
+    "title": "Sales Orders",
+    "createOrder": "Create Sales Order",
+    "orderList": "Order List",
+    "orderDetail": "Order Details",
+    "selectCustomer": "Select Customer",
+    "selectWine": "Select Wine",
+    "selectWarehouse": "Select Warehouse",
+    "addItem": "Add Item",
+    "orderItems": "Order Items",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "totalMargin": "Total Margin",
+    "marginPercentage": "Margin %",
+    "submitOrder": "Submit Order",
+    "saveDraft": "Save Draft",
+    "fulfillments": "Fulfillments",
+    "status": {
+      "DRAFT": "Draft",
+      "PENDING_APPROVAL": "Pending Approval",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected",
+      "FULFILLED": "Fulfilled",
+      "PARTIAL_FULFILLED": "Partially Fulfilled",
+      "DELIVERED": "Delivered",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "purchases": {
+    "title": "Purchase Orders",
+    "createOrder": "Create Purchase Order",
+    "selectSupplier": "Select Supplier",
+    "receiveStock": "Receive Stock",
+    "status": {
+      "DRAFT": "Draft",
+      "PENDING_APPROVAL": "Pending Approval",
+      "APPROVED": "Approved",
+      "SENT": "Sent",
+      "PARTIAL_RECEIVED": "Partially Received",
+      "RECEIVED": "Received",
+      "CANCELLED": "Cancelled"
+    }
+  },
+  "approvals": {
+    "title": "Approvals",
+    "queue": "Approval Queue",
+    "pending": "Pending",
+    "history": "History",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reason": "Reason",
+    "rejectReason": "Rejection Reason",
+    "noApprovals": "No pending approvals",
+    "orderType": "Order Type",
+    "requester": "Requester"
+  },
+  "fulfillments": {
+    "title": "Fulfillments",
+    "tracking": "Tracking",
+    "warehouse": "Warehouse",
+    "items": "Items",
+    "updateStatus": "Update Status",
+    "trackingCode": "Tracking Code",
+    "estimatedDelivery": "Estimated Delivery",
+    "status": {
+      "PENDING": "Pending",
+      "PICKING": "Picking",
+      "PACKED": "Packed",
+      "SHIPPED": "Shipped",
+      "DELIVERED": "Delivered"
+    }
+  },
+  "customers": {
+    "title": "Customers",
+    "addCustomer": "Add Customer",
+    "companyName": "Company Name",
+    "taxId": "Tax ID",
+    "creditLimit": "Credit Limit",
+    "paymentTerms": "Payment Terms",
+    "discount": "Discount",
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "BLOCKED": "Blocked"
+    }
+  },
+  "suppliers": {
+    "title": "Suppliers",
+    "addSupplier": "Add Supplier",
+    "minimumOrder": "Minimum Order",
+    "leadTime": "Lead Time",
+    "paymentTerms": "Payment Terms"
+  },
+  "warehouses": {
+    "title": "Warehouses",
+    "stockOverview": "Stock Overview",
+    "available": "Available",
+    "reserved": "Reserved",
+    "averageCost": "Average Cost",
+    "location": "Location"
+  },
+  "pricing": {
+    "title": "Price Tables",
+    "priceTable": "Price Table",
+    "createTable": "Create Table",
+    "unitPrice": "Unit Price",
+    "unitCost": "Unit Cost"
+  },
+  "users": {
+    "title": "Users",
+    "addUser": "Add User",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "lastLogin": "Last Login"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "notFound": "Resource not found",
+    "unauthorized": "You do not have permission to access this resource",
+    "validation": "Please fix the errors in the form"
+  }
+}
