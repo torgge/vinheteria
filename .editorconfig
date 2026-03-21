@@ -1,0 +1,29 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+max_line_length = 120
+ktlint_standard_trailing-comma-on-call-site = enabled
+ktlint_standard_trailing-comma-on-declaration-site = enabled
+ktlint_standard_no-wildcard-imports = enabled
+ktlint_standard_enum-entry-name-case = enabled
+
+[*.{ts,js,json,html,scss,css}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.yml]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

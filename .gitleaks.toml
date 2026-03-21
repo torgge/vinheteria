@@ -1,0 +1,23 @@
+title = "Vinheria Digital — Gitleaks Config"
+
+[allowlist]
+description = "Allowlist for known safe patterns"
+paths = [
+  '''\.gitleaks\.toml$''',
+  '''\.github/.*\.yml$''',
+  '''docs/.*\.md$''',
+  '''k6/.*\.js$''',
+]
+
+# Block additional patterns beyond defaults
+[[rules]]
+id = "configcat-sdk-key"
+description = "ConfigCat SDK Key"
+regex = '''configcat-sdk-[0-9]/[A-Za-z0-9_-]+'''
+tags = ["configcat", "feature-flags"]
+
+[[rules]]
+id = "cognito-pool-id"
+description = "AWS Cognito User Pool ID"
+regex = '''us-east-1_[A-Za-z0-9]+'''
+tags = ["aws", "cognito"]

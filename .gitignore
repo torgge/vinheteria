@@ -1,0 +1,55 @@
+# === Gradle ===
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === Kotlin / JVM ===
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# === Quarkus ===
+.quarkus/
+
+# === Node / Angular ===
+node_modules/
+dist/
+.angular/
+.pnpm-store/
+
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Terraform ===
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform.lock.hcl
+
+# === Docker ===
+docker-compose.override.yml
+
+# === Environment ===
+.env
+.env.local
+.env.*.local
+
+# === K6 ===
+k6/results/
+
+# === Coverage ===
+coverage/
+build/reports/

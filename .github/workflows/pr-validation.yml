@@ -1,0 +1,80 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+    branches: [main]
+
+jobs:
+  validate-pr-title:
+    name: "📝 Validate PR Title (Conventional Commits)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          scopes: |
+            catalog
+            order
+            inventory
+            pricing
+            payment
+            shipping
+            identity
+            shared
+            infra
+            k6
+            docker
+            terraform
+            ci
+          requireScope: true
+          subjectPattern: ^[a-z].+$
+          subjectPatternError: |
+            O título do PR "{subject}" não segue Conventional Commits.
+            Formato: <type>(<scope>): <description em lowercase>
+            Exemplo: feat(catalog): add wine search by region
+
+  validate-branch-name:
+    name: "🌿 Validate Branch Name"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch naming convention
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          PATTERN="^(feat|fix|docs|refactor|perf|test|build|ci|chore)/VNH-[0-9]+-[a-z0-9-]+$"
+          if [[ ! "$BRANCH" =~ $PATTERN ]]; then
+            echo "❌ Branch '$BRANCH' não segue o padrão: <type>/VNH-<ticket>-<slug>"
+            echo "   Exemplo: feat/VNH-42-wine-search-by-region"
+            exit 1
+          fi
+          echo "✅ Branch name valid: $BRANCH"
+
+  validate-pr-size:
+    name: "📏 Validate PR Size"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check PR diff size
+        run: |
+          ADDITIONS=$(gh pr view ${{ github.event.pull_request.number }} --json additions -q '.additions')
+          if [ "$ADDITIONS" -gt 400 ]; then
+            echo "⚠️ PR has $ADDITIONS additions. Trunk-Based Development recomenda PRs < 400 linhas."
+            echo "   Considere quebrar em PRs menores com feature flags."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

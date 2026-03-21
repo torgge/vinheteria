@@ -1,0 +1,75 @@
+# .github/workflows/deploy.yml — Deploy Pipeline
+# ─────────────────────────────────────────────────────
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    branches: [main]
+    types: [completed]
+
+env:
+  TF_VAR_image_tag: ${{ github.sha }}
+
+jobs:
+  deploy-staging:
+    name: "🚀 Deploy to Staging"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init (Staging)
+        working-directory: infra/terraform/environments/staging
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: infra/terraform/environments/staging
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: infra/terraform/environments/staging
+        run: terraform apply -auto-approve tfplan
+
+      - name: Update K8s Deployment
+        run: |
+          kubectl set image deployment/${{ github.event.repository.name }} \
+            app=ghcr.io/vinheria/${{ github.event.repository.name }}:${{ github.sha }} \
+            --namespace=staging
+
+      - name: K6 Smoke (Staging)
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: k6/scripts/smoke/catalog-smoke.js
+          flags: --env BASE_URL=${{ vars.STAGING_URL }}
+
+  deploy-production:
+    name: "🚀 Deploy to Production"
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    environment: production      # Requer approval manual no GitHub
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init (Production)
+        working-directory: infra/terraform/environments/production
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: infra/terraform/environments/production
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        working-directory: infra/terraform/environments/production
+        run: terraform apply -auto-approve tfplan
+
+      - name: Rolling Update K8s
+        run: |
+          kubectl set image deployment/${{ github.event.repository.name }} \
+            app=ghcr.io/vinheria/${{ github.event.repository.name }}:${{ github.sha }} \
+            --namespace=production
+          kubectl rollout status deployment/${{ github.event.repository.name }} \
+            --namespace=production --timeout=300s

@@ -1,0 +1,50 @@
+version: 2
+updates:
+  # Gradle (backend — Kotlin/Quarkus)
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "backend"]
+    groups:
+      quarkus:
+        patterns: ["io.quarkus*"]
+      kotlin:
+        patterns: ["org.jetbrains.kotlin*"]
+
+  # npm (frontend — Angular/PrimeNG)
+  - package-ecosystem: "npm"
+    directory: "/vinheria-web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    labels: ["dependencies", "frontend"]
+    groups:
+      angular:
+        patterns: ["@angular*"]
+      primeng:
+        patterns: ["primeng*", "primeicons*"]
+
+  # Docker (base images)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "docker"]
+
+  # Terraform (providers)
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "terraform"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "ci"]
