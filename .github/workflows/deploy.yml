@@ -19,7 +19,7 @@ jobs:
     environment: staging
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
 
       - name: Terraform Init (Staging)
         working-directory: infra/terraform/environments/staging
@@ -52,7 +52,7 @@ jobs:
     environment: production      # Requer approval manual no GitHub
     steps:
       - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
 
       - name: Terraform Init (Production)
         working-directory: infra/terraform/environments/production
