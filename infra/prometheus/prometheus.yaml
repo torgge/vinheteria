@@ -1,0 +1,51 @@
+# Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # OTel Collector metrics
+  - job_name: 'otel-collector'
+    static_configs:
+      - targets: ['otel-collector:8889']
+
+  # Quarkus microservices (when running in Docker)
+  - job_name: 'vinheria-catalog'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8081']
+
+  - job_name: 'vinheria-supplier'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8082']
+
+  - job_name: 'vinheria-customer'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8083']
+
+  - job_name: 'vinheria-warehouse'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8084']
+
+  - job_name: 'vinheria-purchase'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8085']
+
+  - job_name: 'vinheria-sales'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8086']
+
+  - job_name: 'vinheria-pricing'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8087']
+
+  - job_name: 'vinheria-identity'
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ['host.docker.internal:8088']
