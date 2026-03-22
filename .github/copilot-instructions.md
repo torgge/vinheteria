@@ -162,8 +162,8 @@ Conventional Commits are enforced by commitlint. Valid types:
 
 Valid **scopes** (commitlint enforces these exactly):
 
-`catalog` · `order` · `inventory` · `pricing` · `payment` · `shipping` · `identity` · `shared` ·
-`infra` · `k6` · `docker` · `terraform` · `ci`
+`catalog` · `sales` · `purchase` · `warehouse` · `pricing` · `customer` · `supplier` · `identity` ·
+`frontend` · `shared` · `infra` · `docker` · `terraform` · `ci` · `k6`
 
 Subject must be lowercase, max 72 chars; full header max 100 chars.
 

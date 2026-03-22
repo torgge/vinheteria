@@ -25,19 +25,25 @@ module.exports = {
       2,
       'always',
       [
+        // Bounded contexts
         'catalog',
-        'order',
-        'inventory',
+        'sales',
+        'purchase',
+        'warehouse',
         'pricing',
-        'payment',
-        'shipping',
+        'customer',
+        'supplier',
         'identity',
+        // Cross-cutting
+        'frontend',
         'shared',
+        // Infrastructure
         'infra',
-        'k6',
         'docker',
         'terraform',
+        // CI / Testing
         'ci',
+        'k6',
       ],
     ],
     'scope-empty': [1, 'never'],

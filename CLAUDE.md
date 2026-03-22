@@ -232,7 +232,7 @@ APPROVED  REJECTED
 | `chore` | Build, CI, dependencies |
 | `perf` | Performance improvement |
 
-**Scopes:** `catalog`, `sales`, `purchase`, `warehouse`, `pricing`, `customer`, `supplier`, `identity`, `frontend`, `infra`
+**Scopes:** `catalog`, `sales`, `purchase`, `warehouse`, `pricing`, `customer`, `supplier`, `identity`, `frontend`, `shared`, `infra`, `docker`, `terraform`, `ci`, `k6`
 
 **Examples:**
 ```
