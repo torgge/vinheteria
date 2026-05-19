@@ -4,7 +4,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -130,4 +130,4 @@ jobs:
         uses: grafana/k6-action@v0.3.1
         with:
           filename: k6/scripts/smoke/catalog-smoke.js
-          flags: --env BASE_URL=http://localhost:8080
+          flags: --env BASE_URL=http://localhost:8081
