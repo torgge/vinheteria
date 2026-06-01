@@ -1,0 +1,48 @@
+name: "🤖 Auto-Fix Pipeline (Claude)"
+
+on:
+  workflow_run:
+    workflows:
+      - "CI Pipeline"
+      - "PR Validation"
+      - "Security & Quality Gate"
+    types: [completed]
+
+jobs:
+  auto-fix:
+    name: "🔧 Diagnose & Fix with Claude"
+    runs-on: ubuntu-latest
+
+    # Only trigger on genuine failures; skip bot-authored commits to avoid loops
+    if: |
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.head_commit.author.name != 'github-actions[bot]'
+
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r scripts/auto-fix/requirements.txt
+
+      - name: Run Claude auto-fix agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          FAILED_WORKFLOW: ${{ github.event.workflow_run.name }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: python scripts/auto-fix/fix_pipeline.py
