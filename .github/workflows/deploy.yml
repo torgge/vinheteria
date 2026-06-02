@@ -12,10 +12,28 @@ env:
   TF_VAR_image_tag: ${{ github.sha }}
 
 jobs:
+  detect:
+    name: "🔍 Detect Infrastructure"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      has_terraform: ${{ steps.check.outputs.has_terraform }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for Terraform infrastructure
+        id: check
+        run: |
+          if [ -d "infra/terraform" ]; then
+            echo "has_terraform=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_terraform=false" >> "$GITHUB_OUTPUT"
+          fi
+
   deploy-staging:
     name: "🚀 Deploy to Staging"
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: detect
+    if: needs.detect.outputs.has_terraform == 'true'
     environment: staging
     steps:
       - uses: actions/checkout@v4
