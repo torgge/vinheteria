@@ -9,6 +9,11 @@ jobs:
   validate-pr-title:
     name: "📝 Validate PR Title (Conventional Commits)"
     runs-on: ubuntu-latest
+    # Skip automation branches (Claude sessions, Dependabot) whose PR titles
+    # are generated and won't match the human Conventional Commits rules.
+    if: |
+      !startsWith(github.head_ref, 'claude/') &&
+      !startsWith(github.head_ref, 'dependabot/')
     steps:
       - uses: amannn/action-semantic-pull-request@v5
         env:
@@ -52,6 +57,11 @@ jobs:
   validate-branch-name:
     name: "🌿 Validate Branch Name"
     runs-on: ubuntu-latest
+    # Skip automation branches (Claude sessions, Dependabot) which use their
+    # own naming and aren't expected to match <type>/VNH-<ticket>-<slug>.
+    if: |
+      !startsWith(github.head_ref, 'claude/') &&
+      !startsWith(github.head_ref, 'dependabot/')
     steps:
       - name: Check branch naming convention
         run: |

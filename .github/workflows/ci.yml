@@ -13,9 +13,31 @@ env:
   IMAGE_PREFIX: ghcr.io/vinheria
 
 jobs:
+  # Detects which parts of the monorepo are present so backend jobs are
+  # skipped until the Kotlin/Quarkus services land. Auto-enables once a
+  # Gradle wrapper or settings file is committed.
+  detect:
+    name: "🔎 Detect Project Layout"
+    runs-on: ubuntu-latest
+    outputs:
+      has_backend: ${{ steps.check.outputs.has_backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        name: Detect Gradle backend
+        run: |
+          if [ -f gradlew ] || ls settings.gradle* >/dev/null 2>&1; then
+            echo "has_backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_backend=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ No Gradle backend detected — backend jobs will be skipped."
+          fi
+
   lint:
     name: "🔍 Lint (Ktlint + Detekt)"
     runs-on: ubuntu-latest
+    needs: detect
+    if: needs.detect.outputs.has_backend == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -26,7 +48,7 @@ jobs:
       - name: Detekt
         run: ./gradlew detekt
       - name: Upload SARIF
-        if: always()
+        if: always() && hashFiles('build/reports/ktlint/**') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: build/reports/ktlint/
@@ -34,7 +56,8 @@ jobs:
   test:
     name: "🧪 Tests (Unit + Integration + Arch)"
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [detect, lint]
+    if: needs.detect.outputs.has_backend == 'true'
     services:
       postgres:
         image: postgres:16-alpine
@@ -85,8 +108,8 @@ jobs:
   build:
     name: "🏗️ Build & Push Image"
     runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    needs: [detect, test]
+    if: needs.detect.outputs.has_backend == 'true' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
       packages: write
@@ -120,8 +143,8 @@ jobs:
   k6-smoke:
     name: "🚀 K6 Smoke Tests"
     runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
+    needs: [detect, build]
+    if: needs.detect.outputs.has_backend == 'true' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
       - name: Start services
