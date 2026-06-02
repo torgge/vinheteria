@@ -9,28 +9,69 @@ on:
     - cron: '0 6 * * 1'  # Scan semanal (segunda 6h UTC)
 
 jobs:
+  # Detects whether the Kotlin/Quarkus backend and Terraform IaC exist yet so
+  # Gradle/IaC-dependent scans are skipped until they land. Auto-enables once a
+  # Gradle wrapper/settings file or infra/terraform/ directory is committed.
+  detect:
+    name: "🔎 Detect Project Layout"
+    runs-on: ubuntu-latest
+    outputs:
+      has_backend: ${{ steps.check.outputs.has_backend }}
+      has_terraform: ${{ steps.check.outputs.has_terraform }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        name: Detect backend & IaC
+        run: |
+          if [ -f gradlew ] || ls settings.gradle* >/dev/null 2>&1; then
+            echo "has_backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_backend=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ No Gradle backend detected — backend security scans will be skipped."
+          fi
+          if [ -d infra/terraform ]; then
+            echo "has_terraform=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_terraform=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ No infra/terraform directory — IaC scan will be skipped."
+          fi
+
   codeql:
     name: "🛡️ CodeQL (SAST)"
     runs-on: ubuntu-latest
+    needs: detect
     permissions:
       actions: read
       contents: read
       security-events: write
     strategy:
+      fail-fast: false
       matrix:
         language: ['java-kotlin', 'javascript-typescript']
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+      # Skip the java-kotlin analysis until a Gradle backend exists; the
+      # javascript-typescript analysis always runs (frontend + k6).
+      - id: should_run
+        run: |
+          if [ "${{ matrix.language }}" = "java-kotlin" ] && [ "${{ needs.detect.outputs.has_backend }}" != "true" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ Skipping java-kotlin analysis — no Gradle backend yet."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.should_run.outputs.run == 'true'
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
-      - if: matrix.language == 'java-kotlin'
+      - if: steps.should_run.outputs.run == 'true' && matrix.language == 'java-kotlin'
         uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '21' }
-      - if: matrix.language == 'java-kotlin'
+      - if: steps.should_run.outputs.run == 'true' && matrix.language == 'java-kotlin'
         run: ./gradlew build -x test -x detekt -x ktlintCheck
-      - uses: github/codeql-action/analyze@v3
+      - if: steps.should_run.outputs.run == 'true'
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
 
@@ -52,8 +93,8 @@ jobs:
   trivy-image:
     name: "📦 Trivy (Container Image)"
     runs-on: ubuntu-latest
-    needs: [codeql]
-    if: github.ref == 'refs/heads/main'
+    needs: [detect, codeql]
+    if: needs.detect.outputs.has_backend == 'true' && github.ref == 'refs/heads/main'
     permissions:
       security-events: write
     steps:
@@ -76,6 +117,8 @@ jobs:
   trivy-iac:
     name: "🏗️ Trivy (IaC — Terraform)"
     runs-on: ubuntu-latest
+    needs: detect
+    if: needs.detect.outputs.has_terraform == 'true'
     permissions:
       security-events: write
     steps:
@@ -95,7 +138,8 @@ jobs:
   sonarqube:
     name: "📊 SonarQube (Quality Gate)"
     runs-on: ubuntu-latest
-    needs: [codeql, gitleaks]
+    needs: [detect, codeql, gitleaks]
+    if: needs.detect.outputs.has_backend == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
