@@ -3,22 +3,15 @@ name: 📊 Daily Repository Status Report
 description: >
   Generates a daily health report for maintainers covering open issues,
   PR queue, CI/CD status, stale work, and recent activity trends.
+engine: deepseek-v4-pro
 on:
   schedule: daily on weekdays
 permissions:
   contents: read
-  pull-requests: read
-  issues: read
-  actions: read
-  checks: read
-tools:
-  github:
-    mode: remote
-    toolsets: [default]
-  cache-memory: true
-safe-outputs:
-  create-issue:
-    max: 1
+  issues: write
+secrets:
+  - DEEPSEEK_API_KEY
+implementation: scripts/daily-status/generate_report.py
 ---
 
 # Daily Repository Status Report — Vinheria Digital

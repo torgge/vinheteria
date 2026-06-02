@@ -53,3 +53,4 @@ k6/results/
 # === Coverage ===
 coverage/
 build/reports/
+scripts/daily-status/__pycache__/
