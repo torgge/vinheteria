@@ -334,6 +334,11 @@ def call_deepseek(context_prompt: str) -> str:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def main() -> None:
+    if not DEEPSEEK_API_KEY:
+        print("::error::DEEPSEEK_API_KEY secret is empty or not set. "
+              "Go to Settings → Secrets → Actions and add the secret value.")
+        sys.exit(1)
+
     now = datetime.now(timezone.utc)
     today = now.strftime("%Y-%m-%d")
 
