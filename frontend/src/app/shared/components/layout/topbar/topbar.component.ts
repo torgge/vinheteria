@@ -11,20 +11,8 @@ import { MenuItem } from 'primeng/api';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CurrencyService } from '../../../../core/currency/currency.service';
-import { ROLE_INFO } from '../../../../core/auth/auth.model';
-import { SupportedCurrency } from '../../../../core/currency/currency.model';
-
-interface LanguageOption {
-  id: string;
-  label: string;
-  flag: string;
-}
-
-interface CurrencyOption {
-  code: SupportedCurrency;
-  label: string;
-  flag: string;
-}
+import { LanguageOption, ROLE_INFO } from '../../../../core/auth/auth.model';
+import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/currency.model';
 
 @Component({
   selector: 'app-topbar',
@@ -57,12 +45,11 @@ interface CurrencyOption {
           [options]="currencies"
           [(ngModel)]="selectedCurrency"
           optionLabel="label"
-          optionValue="code"
-          (onChange)="onCurrencyChange($event.value)"
+          (onChange)="onCurrencyChange($event.value.code)"
           styleClass="currency-dropdown"
         >
           <ng-template pTemplate="selectedItem" let-selected>
-            <span class="currency-selected">{{ getCurrencyFlag(selected) }} {{ selected }}</span>
+            <span class="currency-selected">{{ selected.flag }} {{ selected.label }}</span>
           </ng-template>
           <ng-template pTemplate="item" let-item>
             <span>{{ item.flag }} {{ item.label }}</span>
@@ -74,12 +61,11 @@ interface CurrencyOption {
           [options]="languages"
           [(ngModel)]="selectedLanguage"
           optionLabel="label"
-          optionValue="id"
-          (onChange)="onLanguageChange($event.value)"
+          (onChange)="onLanguageChange($event.value.id)"
           styleClass="language-dropdown"
         >
           <ng-template pTemplate="selectedItem" let-selected>
-            <span>{{ getLanguageFlag(selected) }}</span>
+            <span>{{ selected.flag }} {{ selected.label }}</span>
           </ng-template>
           <ng-template pTemplate="item" let-item>
             <span>{{ item.flag }} {{ item.label }}</span>
@@ -231,8 +217,17 @@ export class TopbarComponent {
     { code: 'USD', label: 'Dollar (USD)', flag: '🇺🇸' }
   ];
 
-  selectedLanguage = this.translocoService.getActiveLang();
-  selectedCurrency = this.currencyService.selectedCurrency();
+  private getCurrentLanguageOption(): LanguageOption {
+    const activeLang = this.translocoService.getActiveLang();
+    return this.languages.find(l => l.id === activeLang) ?? this.languages[0];
+  }
+  selectedLanguage: LanguageOption = this.getCurrentLanguageOption();
+
+  private getCurrentCurrencyOption(): CurrencyOption {
+    const code = this.currencyService.selectedCurrency();
+    return this.currencies.find(c => c.code === code) ?? this.currencies[0];
+  }
+  selectedCurrency: CurrencyOption = this.getCurrentCurrencyOption();
 
   userMenuItems: MenuItem[] = [
     {
@@ -253,15 +248,16 @@ export class TopbarComponent {
   }
 
   onCurrencyChange(currency: SupportedCurrency): void {
+    this.selectedCurrency = this.currencies.find(c => c.code === currency) ?? this.currencies[0];
     this.currencyService.setCurrency(currency);
   }
 
-  getLanguageFlag(langId: string): string {
-    return this.languages.find(l => l.id === langId)?.flag ?? '';
+  getLanguageFlag(option: LanguageOption): string {
+    return option.flag;
   }
 
-  getCurrencyFlag(code: string): string {
-    return this.currencies.find(c => c.code === code)?.flag ?? '';
+  getLanguageLabel(option: LanguageOption): string {
+    return option.label;
   }
 
   getRoleColor(): string {

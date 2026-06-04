@@ -1,5 +1,11 @@
 // Vinheria Digital — Auth Models
 
+export interface LanguageOption {
+  id: string;
+  label: string;
+  flag: string;
+}
+
 export type UserRole = 'SELLER' | 'PURCHASER' | 'MANAGER' | 'ADMIN';
 
 export interface AuthUser {

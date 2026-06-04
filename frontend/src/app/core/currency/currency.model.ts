@@ -2,6 +2,12 @@
 
 export type SupportedCurrency = 'BRL' | 'PYG' | 'USD';
 
+export interface CurrencyOption {
+  code: SupportedCurrency;
+  label: string;
+  flag: string;
+}
+
 export interface CurrencyConfig {
   code: SupportedCurrency;
   symbol: string;
