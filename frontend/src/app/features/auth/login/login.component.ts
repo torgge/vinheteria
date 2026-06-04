@@ -7,14 +7,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../../../core/auth/auth.service';
-import { DemoUser, ROLE_INFO } from '../../../core/auth/auth.model';
+import { DemoUser, LanguageOption, ROLE_INFO } from '../../../core/auth/auth.model';
 import { CurrencyService } from '../../../core/currency/currency.service';
-
-interface LanguageOption {
-  id: string;
-  label: string;
-  flag: string;
-}
 
 @Component({
   selector: 'app-login',
@@ -42,12 +36,11 @@ interface LanguageOption {
           [options]="languages"
           [(ngModel)]="selectedLanguage"
           optionLabel="label"
-          optionValue="id"
-          (onChange)="onLanguageChange($event.value)"
+          (onChange)="onLanguageChange($event.value.id)"
           styleClass="language-dropdown"
         >
           <ng-template pTemplate="selectedItem" let-selected>
-            <span>{{ getLanguageFlag(selected) }} {{ getLanguageLabel(selected) }}</span>
+            <span>{{ selected.flag }} {{ selected.label }}</span>
           </ng-template>
           <ng-template pTemplate="item" let-item>
             <span>{{ item.flag }} {{ item.label }}</span>
@@ -241,7 +234,11 @@ export class LoginComponent {
     { id: 'en-US', label: 'English (USA)', flag: '🇺🇸' }
   ];
 
-  selectedLanguage = this.translocoService.getActiveLang();
+  private getCurrentLanguageOption(): LanguageOption {
+    const activeLang = this.translocoService.getActiveLang();
+    return this.languages.find(l => l.id === activeLang) ?? this.languages[0];
+  }
+  selectedLanguage: LanguageOption = this.getCurrentLanguageOption();
 
   login(user: DemoUser): void {
     // Set language and currency based on user preferences
@@ -264,11 +261,11 @@ export class LoginComponent {
     return ROLE_INFO[role as keyof typeof ROLE_INFO]?.icon ?? 'pi pi-user';
   }
 
-  getLanguageFlag(langId: string): string {
-    return this.languages.find(l => l.id === langId)?.flag ?? '';
+  getLanguageFlag(option: LanguageOption): string {
+    return option.flag;
   }
 
-  getLanguageLabel(langId: string): string {
-    return this.languages.find(l => l.id === langId)?.label ?? langId;
+  getLanguageLabel(option: LanguageOption): string {
+    return option.label;
   }
 }
