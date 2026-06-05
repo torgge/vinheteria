@@ -24,13 +24,13 @@ import { ButtonModule } from 'primeng/button';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--p-surface-ground);
+      background: var(--m3-surface-container-lowest);
     }
     .unauthorized-content {
       text-align: center;
       i { font-size: 4rem; color: var(--vinheria-error); margin-bottom: 1rem; }
-      h1 { color: var(--p-text-color); margin-bottom: 0.5rem; }
-      p { color: var(--p-text-color-secondary); margin-bottom: 1.5rem; }
+      h1 { color: var(--m3-on-surface); margin-bottom: 0.5rem; }
+      p { color: var(--m3-on-surface-variant); margin-bottom: 1.5rem; }
     }
   `]
 })

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -7,7 +7,6 @@ import { MessageService } from 'primeng/api';
 
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-shell',
@@ -35,7 +34,9 @@ import { AuthService } from '../../../../core/auth/auth.service';
         />
 
         <main class="shell-content">
-          <router-outlet />
+          <div class="content-inner">
+            <router-outlet />
+          </div>
         </main>
       </div>
 
@@ -46,7 +47,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
     .shell-container {
       display: flex;
       min-height: 100vh;
-      background: var(--p-surface-ground);
+      background: var(--m3-surface-container-lowest);
     }
 
     .shell-main {
@@ -68,19 +69,40 @@ import { AuthService } from '../../../../core/auth/auth.service';
       overflow-y: auto;
     }
 
-    @media (max-width: 768px) {
+    /* Compact: full-width */
+    @media (max-width: 599px) {
       .shell-main {
         margin-left: 0;
       }
 
       .shell-content {
-        padding: var(--vinheria-spacing-md);
+        padding: var(--vinheria-spacing-md, 16px);
+      }
+    }
+
+    /* Medium: collapsed sidebar */
+    @media (min-width: 600px) and (max-width: 839px) {
+      .shell-main {
+        margin-left: var(--vinheria-sidebar-collapsed-width, 80px);
+      }
+    }
+
+    /* Expanded+: full sidebar */
+    @media (min-width: 840px) {
+      .shell-main {
+        margin-left: var(--vinheria-sidebar-width, 280px);
+      }
+    }
+
+    /* Large: constrain max-width */
+    @media (min-width: 1200px) {
+      .content-inner {
+        max-width: 1040px;
+        margin: 0 auto;
       }
     }
   `]
 })
 export class ShellComponent {
-  private authService = inject(AuthService);
-
   sidebarCollapsed = signal(false);
 }

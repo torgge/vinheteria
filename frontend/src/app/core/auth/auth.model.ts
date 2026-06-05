@@ -1,10 +1,18 @@
 // Vinheria Digital — Auth Models
 
+import { SupportedCurrency } from '../currency/currency.model';
+
 export interface LanguageOption {
   id: string;
   label: string;
   flag: string;
 }
+
+export const AVAILABLE_LANGUAGES: LanguageOption[] = [
+  { id: 'pt-BR', label: 'Português (Brasil)', flag: '🇧🇷' },
+  { id: 'es-PY', label: 'Español (Paraguay)', flag: '🇵🇾' },
+  { id: 'en-US', label: 'English (USA)', flag: '🇺🇸' }
+];
 
 export type UserRole = 'SELLER' | 'PURCHASER' | 'MANAGER' | 'ADMIN';
 
@@ -15,7 +23,7 @@ export interface AuthUser {
   role: UserRole;
   avatar?: string;
   preferredLanguage: string;
-  preferredCurrency: string;
+  preferredCurrency: SupportedCurrency;
 }
 
 export interface DemoUser extends AuthUser {
@@ -106,21 +114,21 @@ export const ROLE_INFO: Record<UserRole, { label: string; icon: string; color: s
   SELLER: {
     label: 'Seller',
     icon: 'pi pi-shopping-cart',
-    color: '#4CAF50'
+    color: 'var(--vinheria-success)'
   },
   PURCHASER: {
     label: 'Purchaser',
     icon: 'pi pi-truck',
-    color: '#2196F3'
+    color: 'var(--vinheria-info)'
   },
   MANAGER: {
     label: 'Manager',
     icon: 'pi pi-users',
-    color: '#FF9800'
+    color: 'var(--vinheria-warning)'
   },
   ADMIN: {
     label: 'Administrator',
     icon: 'pi pi-shield',
-    color: '#722F37'
+    color: 'var(--m3-primary)'
   }
 };

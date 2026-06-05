@@ -7,7 +7,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../../../core/auth/auth.service';
-import { DemoUser, LanguageOption, ROLE_INFO } from '../../../core/auth/auth.model';
+import { DemoUser, LanguageOption, ROLE_INFO, UserRole, AVAILABLE_LANGUAGES } from '../../../core/auth/auth.model';
 import { CurrencyService } from '../../../core/currency/currency.service';
 
 @Component({
@@ -25,7 +25,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     <div class="login-container" *transloco="let t">
       <div class="login-header">
         <div class="logo">
-          <i class="pi pi-box" style="font-size: 3rem; color: var(--p-primary-color)"></i>
+          <i class="pi pi-box" style="font-size: 3rem; color: var(--m3-primary)"></i>
         </div>
         <h1 class="vinheria-display">{{ t('common.appName') }}</h1>
         <p class="text-secondary">B2B Wine Distribution Platform</p>
@@ -57,7 +57,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 
       <div class="user-cards">
         @for (user of demoUsers; track user.id) {
-          <div class="user-card" (click)="login(user)">
+          <div class="user-card vinheria-card-elevated" (click)="login(user)">
             <div class="user-avatar">
               <img [src]="user.avatar" [alt]="user.name" />
             </div>
@@ -74,7 +74,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
                 [label]="t('auth.login')"
                 icon="pi pi-arrow-right"
                 iconPos="right"
-                styleClass="p-button-outlined"
+                [outlined]="true"
               />
             </div>
           </div>
@@ -93,7 +93,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       flex-direction: column;
       align-items: center;
       padding: var(--vinheria-spacing-xl);
-      background: linear-gradient(135deg, var(--p-surface-ground) 0%, #FDF2F3 100%);
+      background: linear-gradient(135deg, var(--m3-surface-container-lowest) 0%, var(--m3-primary-container) 100%);
     }
 
     .login-header {
@@ -105,7 +105,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       }
 
       h1 {
-        color: var(--p-primary-color);
+        color: var(--m3-primary);
         margin-bottom: var(--vinheria-spacing-xs);
       }
     }
@@ -130,22 +130,35 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     .select-user-title {
       font-family: var(--p-font-family);
       font-size: var(--vinheria-font-size-xl);
-      color: var(--p-text-color-secondary);
+      color: var(--m3-on-surface-variant);
       margin-bottom: var(--vinheria-spacing-lg);
     }
 
     .user-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: var(--vinheria-spacing-lg);
+      gap: var(--vinheria-spacing-lg, 24px);
       max-width: 1400px;
       width: 100%;
+      grid-template-columns: 1fr;
+
+      @media (min-width: 600px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media (min-width: 840px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media (min-width: 1200px) {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
 
     .user-card {
-      background: var(--p-surface-card);
-      border: 2px solid var(--p-surface-border);
-      border-radius: var(--vinheria-radius-lg);
+      background: var(--m3-surface-container-low);
+      border: none;
+      border-radius: var(--m3-radius-md);
+      box-shadow: var(--m3-elevation-1);
       padding: var(--vinheria-spacing-lg);
       display: flex;
       flex-direction: column;
@@ -155,8 +168,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       transition: all var(--vinheria-transition-normal);
 
       &:hover {
-        border-color: var(--p-primary-color);
-        box-shadow: var(--vinheria-shadow-lg);
+        box-shadow: var(--m3-elevation-3);
         transform: translateY(-4px);
       }
 
@@ -165,7 +177,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
         height: 80px;
         border-radius: 50%;
         overflow: hidden;
-        border: 3px solid var(--p-primary-100);
+        border: 3px solid var(--m3-primary-container);
 
         img {
           width: 100%;
@@ -197,7 +209,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
         }
 
         .user-description {
-          color: var(--p-text-color-secondary);
+          color: var(--m3-on-surface-variant);
           font-size: var(--vinheria-font-size-sm);
           line-height: 1.5;
           max-width: 280px;
@@ -212,7 +224,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     .login-footer {
       margin-top: auto;
       padding-top: var(--vinheria-spacing-xl);
-      color: var(--p-text-color-muted);
+      color: var(--m3-outline);
       font-size: var(--vinheria-font-size-sm);
     }
 
@@ -228,11 +240,7 @@ export class LoginComponent {
 
   demoUsers = this.authService.demoUsers;
 
-  languages: LanguageOption[] = [
-    { id: 'pt-BR', label: 'Português (Brasil)', flag: '🇧🇷' },
-    { id: 'es-PY', label: 'Español (Paraguay)', flag: '🇵🇾' },
-    { id: 'en-US', label: 'English (USA)', flag: '🇺🇸' }
-  ];
+  languages = AVAILABLE_LANGUAGES;
 
   private getCurrentLanguageOption(): LanguageOption {
     const activeLang = this.translocoService.getActiveLang();
@@ -243,7 +251,7 @@ export class LoginComponent {
   login(user: DemoUser): void {
     // Set language and currency based on user preferences
     this.translocoService.setActiveLang(user.preferredLanguage);
-    this.currencyService.setCurrency(user.preferredCurrency as any);
+    this.currencyService.setCurrency(user.preferredCurrency);
 
     // Perform login
     this.authService.loginWithDemoUser(user);
@@ -253,19 +261,12 @@ export class LoginComponent {
     this.translocoService.setActiveLang(langId);
   }
 
-  getRoleColor(role: string): string {
-    return ROLE_INFO[role as keyof typeof ROLE_INFO]?.color ?? '#666';
+  getRoleColor(role: UserRole): string {
+    return ROLE_INFO[role]?.color ?? 'var(--m3-on-surface-variant)';
   }
 
-  getRoleIcon(role: string): string {
-    return ROLE_INFO[role as keyof typeof ROLE_INFO]?.icon ?? 'pi pi-user';
+  getRoleIcon(role: UserRole): string {
+    return ROLE_INFO[role]?.icon ?? 'pi pi-user';
   }
 
-  getLanguageFlag(option: LanguageOption): string {
-    return option.flag;
-  }
-
-  getLanguageLabel(option: LanguageOption): string {
-    return option.label;
-  }
 }
