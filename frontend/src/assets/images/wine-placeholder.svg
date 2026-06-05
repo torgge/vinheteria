@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200" fill="none">
+  <defs>
+    <linearGradient id="bottle" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d1f2d"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="wine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#722F37"/>
+      <stop offset="100%" style="stop-color:#4a1f24"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.1)"/>
+      <stop offset="50%" style="stop-color:rgba(255,255,255,0.2)"/>
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0.05)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Bottle body -->
+  <path d="M35 180 L35 100 Q35 90 40 85 L40 45 Q40 40 45 38 L45 20 Q45 15 50 15 Q55 15 55 20 L55 38 Q60 40 60 45 L60 85 Q65 90 65 100 L65 180 Q65 190 50 190 Q35 190 35 180 Z" fill="url(#bottle)"/>
+
+  <!-- Wine level -->
+  <path d="M37 180 L37 110 Q37 105 42 102 L42 102 L58 102 Q63 105 63 110 L63 180 Q63 188 50 188 Q37 188 37 180 Z" fill="url(#wine)"/>
+
+  <!-- Glass reflection -->
+  <path d="M38 180 L38 105 Q38 100 43 97 L43 45 Q43 42 47 40 L47 22 Q47 18 50 18 L50 40 L50 97 Q50 100 50 105 L50 180 Q50 185 44 186 Q38 186 38 180 Z" fill="url(#glass)" opacity="0.5"/>
+
+  <!-- Cork -->
+  <rect x="43" y="12" width="14" height="8" rx="2" fill="#8B7355"/>
+
+  <!-- Label -->
+  <rect x="40" y="120" width="20" height="35" rx="2" fill="#f5f5f5"/>
+  <rect x="42" y="125" width="16" height="3" fill="#722F37"/>
+  <rect x="44" y="132" width="12" height="1" fill="#999"/>
+  <rect x="44" y="136" width="12" height="1" fill="#999"/>
+  <rect x="44" y="140" width="8" height="1" fill="#999"/>
+  <rect x="44" y="147" width="12" height="2" fill="#333"/>
+</svg>

@@ -6,12 +6,12 @@
 // Typography
 @import 'styles/typography';
 
-// PrimeNG theme customizations
-@import 'styles/primeng-theme';
-
-// PrimeNG core styles
+// PrimeNG core styles (must come before overrides)
 @import 'primeng/resources/primeng.min.css';
 @import 'primeicons/primeicons.css';
+
+// PrimeNG theme customizations (overrides core)
+@import 'styles/primeng-theme';
 
 // Reset and base styles
 *,
@@ -197,18 +197,28 @@ img {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--vinheria-spacing-2xl);
+  padding: var(--vinheria-spacing-3xl, 64px) var(--vinheria-spacing-md);
   text-align: center;
-  color: var(--p-text-color-muted);
+  color: var(--m3-on-surface-variant);
 
   i {
-    font-size: 3rem;
+    font-size: var(--vinheria-empty-state-icon-size, 4rem);
+    opacity: 0.4;
     margin-bottom: var(--vinheria-spacing-md);
+    color: var(--m3-outline);
   }
 
   h3 {
-    color: var(--p-text-color-secondary);
+    font-size: var(--m3-typescale-title-large-size);
+    font-weight: var(--m3-typescale-title-large-weight);
     margin-bottom: var(--vinheria-spacing-sm);
+    color: var(--m3-on-surface);
+  }
+
+  p {
+    font-size: var(--m3-typescale-body-medium-size);
+    max-width: 480px;
+    line-height: var(--m3-typescale-body-medium-line-height);
   }
 }
 
@@ -310,5 +320,144 @@ img {
 @media (min-width: 769px) {
   .hide-desktop {
     display: none;
+  }
+}
+
+/* ============================================================
+   M3 — Floating Action Button (FAB)
+   ============================================================ */
+.vinheria-fab {
+  position: fixed;
+  bottom: var(--vinheria-spacing-xl);
+  right: var(--vinheria-spacing-xl);
+  z-index: 900;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--m3-radius-lg);
+  background: var(--m3-primary-container);
+  color: var(--m3-on-primary-container);
+  box-shadow: var(--m3-elevation-3);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow var(--vinheria-transition-fast), 
+              transform var(--vinheria-transition-fast),
+              background var(--vinheria-transition-fast);
+
+  &:hover {
+    box-shadow: var(--m3-elevation-4);
+    background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity))), var(--m3-primary-container);
+  }
+
+  &:active {
+    box-shadow: var(--m3-elevation-3);
+    transform: scale(0.96);
+  }
+
+  .material-symbols-outlined,
+  .pi {
+    font-size: 24px;
+  }
+
+  &.vinheria-fab-small {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--m3-radius-sm);
+
+    .material-symbols-outlined,
+    .pi {
+      font-size: 20px;
+    }
+  }
+
+  &.vinheria-fab-large {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--m3-radius-xl);
+
+    .material-symbols-outlined,
+    .pi {
+      font-size: 36px;
+    }
+  }
+
+  &.vinheria-fab-extended {
+    width: auto;
+    height: 56px;
+    padding: 0 var(--vinheria-spacing-lg);
+    border-radius: var(--m3-radius-lg);
+    gap: var(--vinheria-spacing-sm);
+
+    .vinheria-fab-label {
+      font-family: var(--m3-typescale-label-large-font);
+      font-size: var(--m3-typescale-label-large-size);
+      font-weight: var(--m3-typescale-label-large-weight);
+    }
+  }
+}
+
+/* ============================================================
+   M3 Card Variant Utilities
+   Use with PrimeNG p-card or custom cards
+   ============================================================ */
+.vinheria-card-elevated {
+  box-shadow: var(--m3-elevation-1);
+  background: var(--m3-surface-container-low);
+  border-radius: var(--m3-radius-md);
+  border: none;
+
+  &:hover {
+    box-shadow: var(--m3-elevation-2);
+  }
+}
+
+.vinheria-card-filled {
+  box-shadow: none;
+  background: var(--m3-surface-container-highest);
+  border-radius: var(--m3-radius-md);
+  border: none;
+}
+
+.vinheria-card-outlined {
+  box-shadow: none;
+  background: var(--m3-surface);
+  border-radius: var(--m3-radius-md);
+  border: 1px solid var(--m3-outline-variant);
+
+  &:hover {
+    border-color: var(--m3-outline);
+  }
+}
+
+/* ============================================================
+   M3 Ripple Overrides (enhances PrimeNG ripple)  
+   ============================================================ */
+.p-ripple {
+  .p-ink {
+    background: rgba(var(--m3-primary-rgb), 0.16);
+  }
+}
+
+/* ============================================================
+   M3 Responsive — content max-width, container queries
+   ============================================================ */
+.m3-container {
+  width: 100%;
+  max-width: var(--vinheria-content-max-width, 1400px);
+  margin: 0 auto;
+  padding: var(--vinheria-spacing-xl, 32px);
+
+  @media (max-width: 599px) {
+    padding: var(--vinheria-spacing-md, 16px);
+  }
+}
+
+/* Constrain content on large screens */
+@media (min-width: 1200px) {
+  .m3-content-constrain {
+    max-width: 1040px;
+    margin-inline: auto;
   }
 }

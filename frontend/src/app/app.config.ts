@@ -1,8 +1,9 @@
-import { ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, isDevMode, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideTransloco } from '@jsverse/transloco';
+import { PrimeNGConfig } from 'primeng/api';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
@@ -20,12 +21,20 @@ export const appConfig: ApplicationConfig = {
     ),
 
     // HTTP client
-    provideHttpClient(
-      withInterceptors([])
-    ),
+    provideHttpClient(),
 
     // Animations (required for PrimeNG)
     provideAnimationsAsync(),
+
+    // PrimeNG with M3 ripple enabled
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (config: PrimeNGConfig) => () => {
+        config.ripple = true;
+      },
+      deps: [PrimeNGConfig],
+      multi: true,
+    },
 
     // Transloco i18n
     provideTransloco({

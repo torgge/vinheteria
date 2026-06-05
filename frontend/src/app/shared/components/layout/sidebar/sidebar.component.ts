@@ -5,12 +5,13 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { AuthService } from '../../../../core/auth/auth.service';
+import { UserRole } from '../../../../core/auth/auth.model';
 
 interface MenuItem {
   label: string;
   icon: string;
   route: string;
-  roles?: string[];
+  roles?: UserRole[];
   children?: MenuItem[];
 }
 
@@ -92,8 +93,8 @@ interface MenuItem {
       left: 0;
       height: 100vh;
       width: var(--vinheria-sidebar-width);
-      background: var(--p-surface-card);
-      border-right: 1px solid var(--p-surface-border);
+      background: var(--m3-surface);
+      box-shadow: var(--m3-elevation-1);
       display: flex;
       flex-direction: column;
       transition: width var(--vinheria-transition-normal);
@@ -114,7 +115,7 @@ interface MenuItem {
 
     .sidebar-header {
       padding: var(--vinheria-spacing-lg);
-      border-bottom: 1px solid var(--p-surface-border);
+      border-bottom: 1px solid var(--m3-outline-variant);
     }
 
     .logo {
@@ -124,14 +125,14 @@ interface MenuItem {
 
       i {
         font-size: 1.75rem;
-        color: var(--p-primary-color);
+        color: var(--m3-primary);
       }
 
       .logo-text {
         font-family: var(--vinheria-font-display);
         font-size: var(--vinheria-font-size-xl);
         font-weight: 600;
-        color: var(--p-primary-color);
+        color: var(--m3-primary);
       }
     }
 
@@ -147,10 +148,11 @@ interface MenuItem {
       gap: var(--vinheria-spacing-md);
       padding: var(--vinheria-spacing-sm) var(--vinheria-spacing-md);
       border-radius: var(--vinheria-radius-md);
-      color: var(--p-text-color-secondary);
+      color: var(--m3-on-surface-variant);
       text-decoration: none;
       transition: all var(--vinheria-transition-fast);
       margin-bottom: var(--vinheria-spacing-xs);
+      position: relative;
 
       i {
         font-size: 1.25rem;
@@ -163,24 +165,39 @@ interface MenuItem {
         white-space: nowrap;
       }
 
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: var(--m3-radius-sm);
+        transition: background 150ms ease;
+        pointer-events: none;
+      }
+
       &:hover {
-        background: var(--p-surface-hover);
-        color: var(--p-text-color);
+        color: var(--m3-on-surface);
+
+        &::after {
+          background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+        }
       }
 
       &.active {
-        background: var(--p-primary-50);
-        color: var(--p-primary-color);
+        color: var(--m3-primary);
 
         i {
-          color: var(--p-primary-color);
+          color: var(--m3-primary);
+        }
+
+        &::after {
+          background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-focus-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-focus-opacity)));
         }
       }
     }
 
     .nav-divider {
       height: 1px;
-      background: var(--p-surface-border);
+      background: var(--m3-outline-variant);
       margin: var(--vinheria-spacing-md) 0;
     }
 
@@ -194,27 +211,27 @@ interface MenuItem {
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--p-text-color-muted);
+      color: var(--m3-outline);
     }
 
     .sidebar-footer {
       padding: var(--vinheria-spacing-md);
-      border-top: 1px solid var(--p-surface-border);
+      border-top: 1px solid var(--m3-outline-variant);
     }
 
     .collapse-btn {
       width: 100%;
       padding: var(--vinheria-spacing-sm);
       border: none;
-      background: var(--p-surface-hover);
+      background: var(--m3-surface-container-high);
       border-radius: var(--vinheria-radius-md);
       cursor: pointer;
-      color: var(--p-text-color-secondary);
+      color: var(--m3-on-surface-variant);
       transition: all var(--vinheria-transition-fast);
 
       &:hover {
-        background: var(--p-primary-50);
-        color: var(--p-primary-color);
+        background: var(--m3-primary-container);
+        color: var(--m3-primary);
       }
 
       i {
@@ -222,13 +239,13 @@ interface MenuItem {
       }
     }
 
-    @media (max-width: 768px) {
-      .sidebar {
+    /* Compact: off-screen */
+    @media (max-width: 599px) {
+      :host {
         transform: translateX(-100%);
-
-        &.collapsed {
-          transform: translateX(-100%);
-        }
+      }
+      :host(.sidebar-open) {
+        transform: translateX(0);
       }
     }
   `]
@@ -259,7 +276,7 @@ export class SidebarComponent {
   visibleMenuItems = computed(() => {
     return this.menuItems.filter(item => {
       if (!item.roles) return true;
-      return item.roles.some(role => this.authService.hasRole(role as any));
+      return item.roles.some(role => this.authService.hasRole(role));
     });
   });
 

@@ -3,8 +3,8 @@
 
 :root {
   // Core Bordeaux palette
-  --p-primary-color: #722F37;
-  --p-primary-color-text: #FFFFFF;
+  --p-primary-color:             var(--m3-primary);
+  --p-primary-color-text:        var(--m3-on-primary);
   --p-primary-50: #FDF2F3;
   --p-primary-100: #F9D5D8;
   --p-primary-200: #F0A8AE;
@@ -22,17 +22,24 @@
   --vinheria-accent-gold-dark: #8B6914;
 
   // Surface colors (parchment-like, elegant)
-  --p-surface-ground: #FAF8F5;
-  --p-surface-section: #FFFFFF;
-  --p-surface-card: #FFFFFF;
-  --p-surface-overlay: #FFFFFF;
-  --p-surface-border: #E5E1DC;
-  --p-surface-hover: #F5F3F0;
+  /* Surface — Vinheria (mapped to M3) */
+  --p-surface-ground:            var(--m3-surface-container-lowest);
+  --p-surface-section:           var(--m3-surface-container-low);
+  --p-surface-card:              var(--m3-surface);
+  --p-surface-overlay:           var(--m3-surface-container);
+  --p-surface-border:            var(--m3-outline-variant);
+  --p-surface-hover:             var(--m3-surface-container-high);
+
+  // PrimeNG surface palette (derived from M3 containers)
+  --p-surface-0:   #FFFFFF;
+  --p-surface-50:  var(--m3-surface-container-lowest);
+  --p-surface-100: var(--m3-surface-container-low);
+  --p-surface-200: var(--m3-surface-container);
 
   // Text colors
-  --p-text-color: #1A1A2E;
-  --p-text-color-secondary: #5C5C6D;
-  --p-text-color-muted: #9494A5;
+  --p-text-color:                var(--m3-on-surface);
+  --p-text-color-secondary:      var(--m3-on-surface-variant);
+  --p-text-color-muted:          var(--m3-outline);
 
   // Semantic colors
   --vinheria-success: #2E7D32;
@@ -43,6 +50,67 @@
   --vinheria-error-bg: #FFEBEE;
   --vinheria-info: #0288D1;
   --vinheria-info-bg: #E1F5FE;
+
+  // Wine image placeholder gradient (used in wine-card and wine-detail)
+  --vinheria-wine-image-gradient: linear-gradient(135deg, var(--m3-inverse-surface) 0%, #1a1a2e 100%);
+
+  // Margin indicator colors (for margin-indicator component)
+  --vinheria-margin-high: #2E7D32;
+  --vinheria-margin-medium: #ED6C02;
+  --vinheria-margin-low: #D32F2F;
+  --vinheria-margin-negative: #9C27B0;
+  --vinheria-margin-high-rgb: 46, 125, 50;
+  --vinheria-margin-medium-rgb: 237, 108, 2;
+  --vinheria-margin-low-rgb: 211, 47, 47;
+  --vinheria-margin-negative-rgb: 156, 39, 176;
+
+/* ============================================================
+   Material Design 3 — Surface Container Hierarchy
+   ============================================================ */
+  --m3-surface-dim:                    #DED8D4;
+  --m3-surface:                        #FAF8F5;
+  --m3-surface-bright:                 #FAF8F5;
+  --m3-surface-container-lowest:       #FDF2F3;
+  --m3-surface-container-low:          #F5ECE8;
+  --m3-surface-container:              #EFE7E2;
+  --m3-surface-container-high:         #E9E0DA;
+  --m3-surface-container-highest:      #E3D9D2;
+
+/* ============================================================
+   Material Design 3 — Tonal Palette Pairs
+   Uses existing primary palette, maps to M3 naming convention
+   ============================================================ */
+  --m3-primary:                        #722F37;
+  --m3-on-primary:                     #FFFFFF;
+  --m3-primary-container:              #F9D5D8;
+  --m3-on-primary-container:           #361420;
+  --m3-primary-rgb:                    114, 47, 55;
+
+  --m3-secondary:                      #C9A227;
+  --m3-on-secondary:                   #FFFFFF;
+  --m3-secondary-container:            #E8D48A;
+  --m3-on-secondary-container:         #3D2E04;
+  --m3-secondary-rgb:                  201, 162, 39;
+
+  --m3-tertiary:                       #5D5F7E;
+  --m3-on-tertiary:                    #FFFFFF;
+  --m3-tertiary-container:             #E2E2F4;
+  --m3-on-tertiary-container:          #191A30;
+
+  --m3-error:                          #D32F2F;
+  --m3-on-error:                       #FFFFFF;
+  --m3-error-container:                #FFEBEE;
+  --m3-on-error-container:             #410002;
+
+  --m3-surface-tint:                   #722F37;
+  --m3-on-surface:                     #1A1A2E;
+  --m3-on-surface-variant:             #5C5C6D;
+  --m3-outline:                        #9494A5;
+  --m3-outline-variant:                #E5E1DC;
+  --m3-inverse-surface:                #2E2D37;
+  --m3-inverse-on-surface:             #F1EFF4;
+  --m3-inverse-primary:                #F0A8AE;
+  --m3-scrim:                          rgba(0, 0, 0, 0.38);
 
   // Margin indicators
   --vinheria-margin-high: #2E7D32;
@@ -61,6 +129,9 @@
   --p-font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --vinheria-font-display: 'Playfair Display', Georgia, serif;
 
+  // Monospace font (used for SKU, prices, data tables)
+  --vinheria-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
   // Font sizes
   --vinheria-font-size-xs: 0.75rem;
   --vinheria-font-size-sm: 0.875rem;
@@ -71,6 +142,48 @@
   --vinheria-font-size-3xl: 2rem;
   --vinheria-font-size-4xl: 2.5rem;
 
+  // Medium font size (alias to base, used in wine-card/detail)
+  --vinheria-font-size-md: var(--vinheria-font-size-base);
+
+/* ============================================================
+   Material Design 3 — Typescale Naming Convention
+   Preserves existing Vinheria values, adds M3 semantics
+   ============================================================ */
+  --m3-typescale-display-large-size:      2.5rem;   /* 40px — Playfair */
+  --m3-typescale-display-large-weight:    600;
+  --m3-typescale-display-large-line-height: 1.2;
+  --m3-typescale-display-large-font:      var(--vinheria-font-display);
+
+  --m3-typescale-headline-large-size:     2rem;     /* 32px — Playfair */
+  --m3-typescale-headline-large-weight:   600;
+  --m3-typescale-headline-large-line-height: 1.25;
+  --m3-typescale-headline-large-font:     var(--vinheria-font-display);
+
+  --m3-typescale-title-large-size:        1.5rem;   /* 24px — Source Sans */
+  --m3-typescale-title-large-weight:      600;
+  --m3-typescale-title-large-line-height: 1.3;
+  --m3-typescale-title-large-font:        var(--p-font-family);
+
+  --m3-typescale-body-large-size:         1rem;     /* 16px */
+  --m3-typescale-body-large-weight:       400;
+  --m3-typescale-body-large-line-height:  1.6;
+  --m3-typescale-body-large-font:         var(--p-font-family);
+
+  --m3-typescale-body-medium-size:        0.875rem; /* 14px */
+  --m3-typescale-body-medium-weight:      400;
+  --m3-typescale-body-medium-line-height: 1.5;
+  --m3-typescale-body-medium-font:        var(--p-font-family);
+
+  --m3-typescale-label-large-size:        0.875rem; /* 14px */
+  --m3-typescale-label-large-weight:      600;
+  --m3-typescale-label-large-line-height: 1.4;
+  --m3-typescale-label-large-font:        var(--p-font-family);
+
+  --m3-typescale-body-small-size:         0.75rem; /* 12px */
+  --m3-typescale-body-small-weight:       400;
+  --m3-typescale-body-small-line-height:  1.4;
+  --m3-typescale-body-small-font:         var(--p-font-family);
+
   // Spacing
   --vinheria-spacing-xs: 0.25rem;
   --vinheria-spacing-sm: 0.5rem;
@@ -79,18 +192,74 @@
   --vinheria-spacing-xl: 2rem;
   --vinheria-spacing-2xl: 3rem;
 
-  // Border radius
-  --vinheria-radius-sm: 4px;
-  --vinheria-radius-md: 8px;
-  --vinheria-radius-lg: 12px;
-  --vinheria-radius-xl: 16px;
-  --vinheria-radius-full: 9999px;
+  // Extra large spacing (used in empty states, wine detail)
+  --vinheria-spacing-3xl: 4rem;  /* 64px */
 
-  // Shadows
-  --vinheria-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --vinheria-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --vinheria-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --vinheria-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  // M3 Responsive Breakpoints (Material Design 3)
+  --m3-breakpoint-compact: 600px;
+  --m3-breakpoint-medium: 840px;
+  --m3-breakpoint-expanded: 1200px;
+  --m3-breakpoint-large: 1600px;
+
+  // Empty state icon size
+  --vinheria-empty-state-icon-size: 4rem;
+
+/* ============================================================
+   Material Design 3 — State Layer Opacities
+   Used as overlay on interactive elements for hover/press/focus
+   ============================================================ */
+  --m3-state-hover-opacity:            0.08;
+  --m3-state-focus-opacity:            0.12;
+  --m3-state-press-opacity:            0.12;
+  --m3-state-drag-opacity:             0.16;
+  --m3-state-hover-on-primary:         linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity)));
+  --m3-state-hover-on-surface:         linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+  --m3-state-focus-ring:               0 0 0 2px var(--m3-surface), 0 0 0 4px var(--m3-primary);
+
+
+/* ============================================================
+   Material Design 3 — Border Radius Scale
+   ============================================================ */
+  --m3-radius-xs:                    4px;
+  --m3-radius-sm:                    8px;
+  --m3-radius-md:                    12px;
+  --m3-radius-lg:                    16px;
+  --m3-radius-xl:                    28px;
+  --m3-radius-full:                  9999px;
+
+/* Map existing Vinheria tokens to M3 scale */
+  --vinheria-radius-sm:              var(--m3-radius-xs);
+  --vinheria-radius-md:              var(--m3-radius-sm);
+  --vinheria-radius-lg:              var(--m3-radius-md);
+
+/* Add missing xl in vinheria namespace but as M3 value */
+  --vinheria-radius-xl:              var(--m3-radius-lg);
+
+
+/* ============================================================
+   Material Design 3 — Elevation System (5 levels)
+   Color-tinted shadows instead of pure black
+   ============================================================ */
+  --m3-elevation-0:    none;
+  --m3-elevation-1:    0 1px 2px rgba(var(--m3-primary-rgb), 0.06),
+                        0 1px 3px 1px rgba(var(--m3-primary-rgb), 0.04);
+  --m3-elevation-2:    0 1px 2px rgba(var(--m3-primary-rgb), 0.05),
+                        0 2px 6px 2px rgba(var(--m3-primary-rgb), 0.06);
+  --m3-elevation-3:    0 1px 3px rgba(var(--m3-primary-rgb), 0.04),
+                        0 4px 8px 3px rgba(var(--m3-primary-rgb), 0.08);
+  --m3-elevation-4:    0 2px 3px rgba(var(--m3-primary-rgb), 0.04),
+                        0 6px 10px 4px rgba(var(--m3-primary-rgb), 0.10);
+  --m3-elevation-5:    0 4px 4px rgba(var(--m3-primary-rgb), 0.04),
+                        0 8px 16px 6px rgba(var(--m3-primary-rgb), 0.12);
+
+/* Update existing shadow tokens to use M3 elevation */
+  --vinheria-shadow-sm:  var(--m3-elevation-1);
+  --vinheria-shadow-md:  var(--m3-elevation-2);
+  --vinheria-shadow-lg:  var(--m3-elevation-3);
+  --vinheria-shadow-xl:  var(--m3-elevation-4);
+
+  // PrimeNG card shadow — use M3 elevation
+  --p-card-shadow: var(--m3-elevation-2);
 
   // Layout
   --vinheria-sidebar-width: 280px;
@@ -98,10 +267,24 @@
   --vinheria-topbar-height: 64px;
   --vinheria-content-max-width: 1400px;
 
-  // Transitions
-  --vinheria-transition-fast: 150ms ease;
-  --vinheria-transition-normal: 250ms ease;
-  --vinheria-transition-slow: 350ms ease;
+  // M3 Motion Easing (Material Design 3 spec)
+  --m3-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --m3-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --m3-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --m3-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --m3-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --m3-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+  // Transition durations (M3 spec — used with easing tokens)
+  --m3-motion-duration-short4: 200ms;
+  --m3-motion-duration-medium2: 300ms;
+  --m3-motion-duration-medium4: 400ms;
+  --m3-motion-duration-long2: 500ms;
+
+  // Vinheria transition tokens (updated to M3 emphasized easing)
+  --vinheria-transition-fast: var(--m3-motion-duration-short4) var(--m3-motion-easing-emphasized);
+  --vinheria-transition-normal: var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized);
+  --vinheria-transition-slow: var(--m3-motion-duration-long2) var(--m3-motion-easing-emphasized);
 }
 
 // Dark mode (future)

@@ -11,7 +11,7 @@ import { MenuItem } from 'primeng/api';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CurrencyService } from '../../../../core/currency/currency.service';
-import { LanguageOption, ROLE_INFO } from '../../../../core/auth/auth.model';
+import { LanguageOption, ROLE_INFO, AVAILABLE_LANGUAGES } from '../../../../core/auth/auth.model';
 import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/currency.model';
 
 @Component({
@@ -101,8 +101,8 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
       right: 0;
       left: var(--vinheria-sidebar-width);
       height: var(--vinheria-topbar-height);
-      background: var(--p-surface-card);
-      border-bottom: 1px solid var(--p-surface-border);
+      background: var(--m3-surface);
+      box-shadow: var(--m3-elevation-2);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -124,7 +124,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     .menu-toggle {
       display: none;
 
-      @media (max-width: 768px) {
+      @media (max-width: 599px) {
         display: block;
       }
     }
@@ -145,7 +145,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
       transition: background var(--vinheria-transition-fast);
 
       &:hover {
-        background: var(--p-surface-hover);
+        background: var(--m3-surface-container-high);
       }
     }
 
@@ -154,7 +154,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
       flex-direction: column;
       text-align: left;
 
-      @media (max-width: 768px) {
+      @media (max-width: 599px) {
         display: none;
       }
     }
@@ -162,7 +162,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     .user-name {
       font-weight: 600;
       font-size: var(--vinheria-font-size-sm);
-      color: var(--p-text-color);
+      color: var(--m3-on-surface);
     }
 
     .user-role {
@@ -185,31 +185,35 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
       }
 
       .user-avatar {
-        background: var(--p-primary-color);
-        color: var(--p-primary-color-text);
+        background: var(--m3-primary);
+        color: var(--m3-on-primary);
       }
     }
 
-    @media (max-width: 768px) {
+    /* Compact: full-width topbar */
+    @media (max-width: 599px) {
       .topbar {
         left: 0;
+      }
+    }
+
+    /* Medium: collapsed sidebar offset */
+    @media (min-width: 600px) and (max-width: 839px) {
+      .topbar {
+        left: var(--vinheria-sidebar-collapsed-width, 80px);
       }
     }
   `]
 })
 export class TopbarComponent {
   authService = inject(AuthService);
-  currencyService = inject(CurrencyService);
-  translocoService = inject(TranslocoService);
+  private currencyService = inject(CurrencyService);
+  private translocoService = inject(TranslocoService);
 
   sidebarCollapsed = input(false);
   toggleSidebar = output<void>();
 
-  languages: LanguageOption[] = [
-    { id: 'pt-BR', label: 'Português (Brasil)', flag: '🇧🇷' },
-    { id: 'es-PY', label: 'Español (Paraguay)', flag: '🇵🇾' },
-    { id: 'en-US', label: 'English (USA)', flag: '🇺🇸' }
-  ];
+  languages = AVAILABLE_LANGUAGES;
 
   currencies: CurrencyOption[] = [
     { code: 'BRL', label: 'Real (BRL)', flag: '🇧🇷' },
@@ -252,17 +256,9 @@ export class TopbarComponent {
     this.currencyService.setCurrency(currency);
   }
 
-  getLanguageFlag(option: LanguageOption): string {
-    return option.flag;
-  }
-
-  getLanguageLabel(option: LanguageOption): string {
-    return option.label;
-  }
-
   getRoleColor(): string {
     const role = this.authService.userRole();
-    return role ? ROLE_INFO[role]?.color : '#666';
+    return role ? ROLE_INFO[role]?.color : 'var(--m3-on-surface-variant)';
   }
 
   getInitials(): string {

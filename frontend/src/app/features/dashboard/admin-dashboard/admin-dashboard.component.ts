@@ -6,9 +6,12 @@ import { ChartModule } from 'primeng/chart';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { CurrencyService } from '../../../core/currency/currency.service';
+import { KpiCardComponent } from '../../../shared/components/kpi-card/kpi-card.component';
+import { formatLongDate } from '../../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -20,7 +23,9 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     ChartModule,
     TableModule,
     TagModule,
-    ButtonModule
+    ButtonModule,
+    TooltipModule,
+    KpiCardComponent
   ],
   template: `
     <div class="dashboard" *transloco="let t">
@@ -31,68 +36,39 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 
       <!-- KPI Cards -->
       <div class="kpi-grid">
-        <p-card styleClass="kpi-card">
-          <div class="kpi-content">
-            <div class="kpi-icon" style="background: var(--vinheria-success-bg); color: var(--vinheria-success)">
-              <i class="pi pi-dollar"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-value">{{ formatCurrency(248500) }}</span>
-              <span class="kpi-label">{{ t('dashboard.totalSales') }}</span>
-            </div>
-          </div>
-          <div class="kpi-trend positive">
-            <i class="pi pi-arrow-up"></i>
-            <span>+12.5%</span>
-          </div>
-        </p-card>
+        <app-kpi-card
+          icon="pi pi-dollar"
+          iconBgClass="kpi-icon--success"
+          [value]="formatCurrency(248500)"
+          [label]="t('dashboard.totalSales')"
+          trend="+12.5%"
+          trendDirection="up"
+        />
 
-        <p-card styleClass="kpi-card">
-          <div class="kpi-content">
-            <div class="kpi-icon" style="background: var(--vinheria-info-bg); color: var(--vinheria-info)">
-              <i class="pi pi-shopping-cart"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-value">47</span>
-              <span class="kpi-label">{{ t('dashboard.totalOrders') }}</span>
-            </div>
-          </div>
-          <div class="kpi-trend positive">
-            <i class="pi pi-arrow-up"></i>
-            <span>+8.3%</span>
-          </div>
-        </p-card>
+        <app-kpi-card
+          icon="pi pi-shopping-cart"
+          iconBgClass="kpi-icon--info"
+          value="47"
+          [label]="t('dashboard.totalOrders')"
+          trend="+8.3%"
+          trendDirection="up"
+        />
 
-        <p-card styleClass="kpi-card">
-          <div class="kpi-content">
-            <div class="kpi-icon" style="background: #FFF3E0; color: #ED6C02">
-              <i class="pi pi-percentage"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-value">32.4%</span>
-              <span class="kpi-label">{{ t('dashboard.totalMargin') }}</span>
-            </div>
-          </div>
-          <div class="kpi-trend positive">
-            <i class="pi pi-arrow-up"></i>
-            <span>+2.1%</span>
-          </div>
-        </p-card>
+        <app-kpi-card
+          icon="pi pi-percentage"
+          iconBgClass="kpi-icon--warning"
+          value="32.4%"
+          [label]="t('dashboard.totalMargin')"
+          trend="+2.1%"
+          trendDirection="up"
+        />
 
-        <p-card styleClass="kpi-card">
-          <div class="kpi-content">
-            <div class="kpi-icon" style="background: var(--vinheria-warning-bg); color: var(--vinheria-warning)">
-              <i class="pi pi-clock"></i>
-            </div>
-            <div class="kpi-data">
-              <span class="kpi-value">5</span>
-              <span class="kpi-label">{{ t('dashboard.pendingApprovals') }}</span>
-            </div>
-          </div>
-          <a routerLink="/approvals" class="kpi-action">
-            {{ t('common.view') }} <i class="pi pi-arrow-right"></i>
-          </a>
-        </p-card>
+        <app-kpi-card
+          icon="pi pi-clock"
+          iconBgClass="kpi-icon--warning"
+          value="5"
+          [label]="t('dashboard.pendingApprovals')"
+        />
       </div>
 
       <!-- Charts Row -->
@@ -144,7 +120,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
               </td>
               <td>{{ order.date }}</td>
               <td>
-                <p-button icon="pi pi-eye" text rounded size="small" />
+                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" severity="info" [pTooltip]="t('common.view')" />
               </td>
             </tr>
           </ng-template>
@@ -167,80 +143,16 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: var(--vinheria-spacing-lg);
-      margin-bottom: var(--vinheria-spacing-xl);
-    }
+      gap: var(--vinheria-spacing-md, 16px);
+      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      grid-template-columns: 1fr;
 
-    :host ::ng-deep .kpi-card {
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg);
-      }
-    }
-
-    .kpi-content {
-      display: flex;
-      align-items: center;
-      gap: var(--vinheria-spacing-md);
-    }
-
-    .kpi-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--vinheria-radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      i {
-        font-size: 1.5rem;
-      }
-    }
-
-    .kpi-data {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .kpi-value {
-      font-size: var(--vinheria-font-size-2xl);
-      font-weight: 700;
-      color: var(--p-text-color);
-    }
-
-    .kpi-label {
-      font-size: var(--vinheria-font-size-sm);
-      color: var(--p-text-color-secondary);
-    }
-
-    .kpi-trend {
-      display: flex;
-      align-items: center;
-      gap: var(--vinheria-spacing-xs);
-      margin-top: var(--vinheria-spacing-sm);
-      font-size: var(--vinheria-font-size-sm);
-      font-weight: 600;
-
-      &.positive {
-        color: var(--vinheria-success);
+      @media (min-width: 600px) {
+        grid-template-columns: repeat(2, 1fr);
       }
 
-      &.negative {
-        color: var(--vinheria-error);
-      }
-    }
-
-    .kpi-action {
-      display: flex;
-      align-items: center;
-      gap: var(--vinheria-spacing-xs);
-      margin-top: var(--vinheria-spacing-sm);
-      font-size: var(--vinheria-font-size-sm);
-      color: var(--p-primary-color);
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
+      @media (min-width: 840px) {
+        grid-template-columns: repeat(4, 1fr);
       }
     }
 
@@ -250,7 +162,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       gap: var(--vinheria-spacing-lg);
       margin-bottom: var(--vinheria-spacing-xl);
 
-      @media (max-width: 1200px) {
+      @media (max-width: 839px) {
         grid-template-columns: 1fr;
       }
     }
@@ -277,7 +189,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       transition: background var(--vinheria-transition-fast);
 
       &:hover {
-        background: var(--p-surface-hover);
+        background: var(--m3-surface-container-high);
       }
     }
 
@@ -285,8 +197,8 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: var(--p-primary-50);
-      color: var(--p-primary-color);
+      background: var(--m3-primary-container);
+      color: var(--m3-primary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -306,13 +218,13 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 
       .wine-region {
         font-size: var(--vinheria-font-size-xs);
-        color: var(--p-text-color-secondary);
+        color: var(--m3-on-surface-variant);
       }
     }
 
     .wine-sales {
       font-weight: 600;
-      color: var(--p-primary-color);
+      color: var(--m3-primary);
     }
 
     :host ::ng-deep .orders-card {
@@ -328,7 +240,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 })
 export class AdminDashboardComponent {
   authService = inject(AuthService);
-  currencyService = inject(CurrencyService);
+  private currencyService = inject(CurrencyService);
 
   // Mock data for charts
   salesChartData = {
@@ -338,8 +250,8 @@ export class AdminDashboardComponent {
         label: 'Sales',
         data: [65000, 72000, 68000, 85000, 92000, 88000, 95000, 102000, 98000, 115000, 125000, 135000],
         fill: true,
-        borderColor: '#722F37',
-        backgroundColor: 'rgba(114, 47, 55, 0.1)',
+        borderColor: 'var(--m3-primary)',
+        backgroundColor: 'var(--m3-primary-container)',
         tension: 0.4
       }
     ]
@@ -384,12 +296,7 @@ export class AdminDashboardComponent {
   }
 
   getCurrentDate(): string {
-    return new Intl.DateTimeFormat(this.currencyService.currencyLocale(), {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(new Date());
+    return formatLongDate(new Date());
   }
 
   getMarginClass(margin: number): string {
