@@ -148,7 +148,7 @@ jobs:
         with: { distribution: 'temurin', java-version: '21' }
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew test koverXmlReport detekt
-      - uses: SonarSource/sonarqube-scan-action@v3
+      - uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
