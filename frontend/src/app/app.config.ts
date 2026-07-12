@@ -4,6 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideTransloco } from '@jsverse/transloco';
 import { PrimeNGConfig } from 'primeng/api';
+import { MatIconRegistry } from '@angular/material/icon';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './core/i18n/transloco-loader';
@@ -25,6 +26,16 @@ export const appConfig: ApplicationConfig = {
 
     // Animations (required for PrimeNG)
     provideAnimationsAsync(),
+
+    // Material Icons — set default fontset to Material Symbols Outlined
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (registry: MatIconRegistry) => () => {
+        registry.setDefaultFontSetClass('material-symbols-outlined');
+      },
+      deps: [MatIconRegistry],
+      multi: true,
+    },
 
     // PrimeNG with M3 ripple enabled
     {

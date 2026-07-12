@@ -1,0 +1,51 @@
+// Vinheria Digital — Angular Material M3 theme, DESIGN.md como fonte de verdade
+@use '@angular/material' as mat;
+@use './m3-theme' as m3;
+
+@include mat.core();
+
+html {
+  @include mat.all-component-themes(m3.$light-theme);
+}
+
+// ── DESIGN.md fidelity overrides ──────────────────────────────
+// A paleta tonal gerada aproxima o seed; os tokens abaixo forçam
+// os hex exatos do DESIGN.md nos papéis estruturais.
+// IMPORTANTE (executor): os nomes --mdc-*/--mat-* abaixo são a
+// convenção da major 18 — CONFIRME no CSS emitido (inspecionar
+// dist/ ou DevTools) antes de dar a fase por pronta; ajuste nomes
+// se divergirem.
+:root {
+  // Botões
+  --mdc-filled-button-container-color: var(--color-primary);
+  --mdc-filled-button-label-text-color: var(--color-on-primary);
+  --mdc-filled-button-container-shape: var(--radius-full);
+  --mdc-outlined-button-outline-color: var(--color-hairline);
+  --mdc-outlined-button-label-text-color: var(--color-ink);
+  --mdc-outlined-button-container-shape: var(--radius-full);
+  --mdc-text-button-label-text-color: var(--color-primary);
+
+  // Cards (hairline + flat, elevação Notion barely-there)
+  --mdc-outlined-card-outline-color: var(--color-hairline);
+  --mdc-outlined-card-container-shape: var(--radius-lg);
+  --mdc-outlined-card-container-color: var(--color-surface);
+
+  // Form fields (inputs 4px, tight — DESIGN.md text-input)
+  --mdc-outlined-text-field-container-shape: var(--radius-xs);
+  --mdc-outlined-text-field-outline-color: var(--color-hairline);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
+
+  // Tabela
+  --mat-table-background-color: var(--color-surface);
+  --mat-table-header-headline-color: var(--color-ink-muted);
+  --mat-table-row-item-outline-color: var(--color-hairline);
+
+  // Dialog / snackbar
+  --mdc-dialog-container-shape: var(--radius-xl);
+  --mdc-dialog-container-color: var(--color-surface);
+  --mdc-snackbar-container-color: var(--color-ink-secondary);
+  --mdc-snackbar-supporting-text-color: var(--color-on-primary);
+
+  // Tipografia base
+  --mat-app-body-medium-font: var(--font-family);
+}
