@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
@@ -13,6 +13,10 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
 import { formatDate } from '../../../../shared/utils/date.utils';
@@ -49,10 +53,15 @@ interface StatusOption {
     TooltipModule,
     PriceDisplayComponent,
     MarginIndicatorComponent,
-    StatusBadgeComponent
+    StatusBadgeComponent,
+    DialogModule,
+    InputTextareaModule,
+    ToastModule
   ],
+  providers: [MessageService],
   template: `
     <div class="sales-orders-page" *transloco="let t">
+      <p-toast position="top-right" />
       <!-- Header -->
       <div class="page-header">
         <div class="header-content">
@@ -84,6 +93,7 @@ interface StatusOption {
           <p-dropdown
             [options]="statusOptions"
             [(ngModel)]="selectedStatus"
+            optionLabel="label"
             [placeholder]="t('common.status')"
             [showClear]="true"
             styleClass="status-dropdown"
@@ -163,7 +173,7 @@ interface StatusOption {
                       [text]="true"
                       severity="success"
                       [pTooltip]="t('approvals.approve')"
-                      (onClick)="approveOrder(order)"
+                      (onClick)="openApproveDialog(order)"
                     />
                     <p-button
                       icon="pi pi-times"
@@ -171,7 +181,7 @@ interface StatusOption {
                       [text]="true"
                       severity="danger"
                       [pTooltip]="t('approvals.reject')"
-                      (onClick)="rejectOrder(order)"
+                      (onClick)="openRejectDialog(order)"
                     />
                   }
                 </div>
@@ -190,6 +200,70 @@ interface StatusOption {
           </ng-template>
         </p-table>
       </p-card>
+
+      <!-- Approve Dialog -->
+      <p-dialog
+        [(visible)]="showApproveDialog"
+        [header]="t('approvals.approve')"
+        [modal]="true"
+        [style]="{ width: '400px' }"
+      >
+        @if (selectedOrder()) {
+          <div class="dialog-content">
+            <p>{{ t('approvals.approveConfirmation', { orderNumber: selectedOrder()!.orderNumber }) }}</p>
+            <div class="order-summary">
+              <div class="summary-row">
+                <span class="label">{{ t('common.total') }}:</span>
+                <app-price-display [price]="selectedOrder()!.totalAmount" />
+              </div>
+              @if (selectedOrder()!.marginPercentage !== undefined) {
+                <div class="summary-row">
+                  <span class="label">{{ t('common.margin') }}:</span>
+                  <app-margin-indicator [marginPercentage]="selectedOrder()!.marginPercentage" />
+                </div>
+              }
+            </div>
+          </div>
+        }
+        <ng-template pTemplate="footer">
+          <p-button [label]="t('common.cancel')" [text]="true" (onClick)="closeDialogs()" />
+          <p-button [label]="t('approvals.approve')" icon="pi pi-check" severity="success" (onClick)="approveOrder()" />
+        </ng-template>
+      </p-dialog>
+
+      <!-- Reject Dialog -->
+      <p-dialog
+        [(visible)]="showRejectDialog"
+        [header]="t('approvals.reject')"
+        [modal]="true"
+        [style]="{ width: '450px' }"
+      >
+        @if (selectedOrder()) {
+          <div class="dialog-content">
+            <p>{{ t('approvals.rejectConfirmation', { orderNumber: selectedOrder()!.orderNumber }) }}</p>
+            <div class="form-field">
+              <label>{{ t('approvals.rejectReason') }}</label>
+              <textarea
+                pInputTextarea
+                [(ngModel)]="rejectReason"
+                rows="3"
+                class="w-full"
+                [placeholder]="t('approvals.rejectReasonPlaceholder')"
+              ></textarea>
+            </div>
+          </div>
+        }
+        <ng-template pTemplate="footer">
+          <p-button [label]="t('common.cancel')" [text]="true" (onClick)="closeDialogs()" />
+          <p-button
+            [label]="t('approvals.reject')"
+            icon="pi pi-times"
+            severity="danger"
+            (onClick)="rejectOrder()"
+            [disabled]="!rejectReason"
+          />
+        </ng-template>
+      </p-dialog>
     </div>
   `,
   styles: [`
@@ -259,6 +333,34 @@ interface StatusOption {
       gap: var(--vinheria-spacing-sm, 8px);
     }
 
+    .dialog-content {
+      .order-summary {
+        margin-top: var(--vinheria-spacing-md, 16px);
+        padding: var(--vinheria-spacing-md, 16px);
+        background: var(--p-surface-50);
+        border-radius: var(--vinheria-radius-md, 8px);
+
+        .summary-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: var(--vinheria-spacing-xs, 4px) 0;
+
+          .label { color: var(--m3-on-surface-variant); }
+        }
+      }
+
+      .form-field {
+        margin-top: var(--vinheria-spacing-md, 16px);
+
+        label {
+          display: block;
+          margin-bottom: var(--vinheria-spacing-xs, 4px);
+          font-weight: 600;
+        }
+      }
+    }
+
 
   `]
 })
@@ -266,11 +368,19 @@ export class SalesOrderListComponent {
   private router = inject(Router);
   private currencyService = inject(CurrencyService);
   private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private translocoService = inject(TranslocoService);
 
   orders = SALES_ORDERS;
 
   searchQuery = signal('');
-  selectedStatus = signal<SalesOrderStatus | null>(null);
+  selectedStatus = signal<StatusOption | null>(null);
+
+  showApproveDialog = false;
+  showRejectDialog = false;
+  selectedOrder = signal<SalesOrder | null>(null);
+  rejectReason = '';
+  private processedIds = signal<Set<string>>(new Set());
 
   statusOptions: StatusOption[] = [
     { label: 'Draft', value: 'DRAFT' },
@@ -286,9 +396,11 @@ export class SalesOrderListComponent {
   filteredOrders = computed(() => {
     const search = this.searchQuery().toLowerCase();
     const status = this.selectedStatus();
+    const processed = this.processedIds();
 
     return this.orders.filter(order => {
-      // Search filter
+      if (processed.has(order.id)) return false;
+
       if (search) {
         const searchFields = [
           order.orderNumber,
@@ -298,8 +410,7 @@ export class SalesOrderListComponent {
         if (!searchFields.includes(search)) return false;
       }
 
-      // Status filter
-      if (status && order.status !== status) return false;
+      if (status && order.status !== status.value) return false;
 
       return true;
     });
@@ -324,13 +435,63 @@ export class SalesOrderListComponent {
     this.router.navigate(['/sales', order.id, 'edit']);
   }
 
-  approveOrder(order: SalesOrder): void {
-    console.log('Approve order:', order.id);
-    // TODO: Implement approval
+  openApproveDialog(order: SalesOrder): void {
+    this.selectedOrder.set(order);
+    this.showApproveDialog = true;
   }
 
-  rejectOrder(order: SalesOrder): void {
-    console.log('Reject order:', order.id);
-    // TODO: Implement rejection
+  openRejectDialog(order: SalesOrder): void {
+    this.selectedOrder.set(order);
+    this.rejectReason = '';
+    this.showRejectDialog = true;
+  }
+
+  closeDialogs(): void {
+    this.showApproveDialog = false;
+    this.showRejectDialog = false;
+    this.selectedOrder.set(null);
+    this.rejectReason = '';
+  }
+
+  approveOrder(): void {
+    const order = this.selectedOrder();
+    if (!order) return;
+
+    this.processedIds.update(ids => {
+      const newIds = new Set(ids);
+      newIds.add(order.id);
+      return newIds;
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: this.translocoService.translate('approvals.approvedSummary'),
+      detail: this.translocoService.translate('approvals.approvedDetail', {
+        orderNumber: order.orderNumber
+      })
+    });
+
+    this.closeDialogs();
+  }
+
+  rejectOrder(): void {
+    const order = this.selectedOrder();
+    if (!order || !this.rejectReason) return;
+
+    this.processedIds.update(ids => {
+      const newIds = new Set(ids);
+      newIds.add(order.id);
+      return newIds;
+    });
+
+    this.messageService.add({
+      severity: 'warn',
+      summary: this.translocoService.translate('approvals.rejectedSummary'),
+      detail: this.translocoService.translate('approvals.rejectedDetail', {
+        orderNumber: order.orderNumber
+      })
+    });
+
+    this.closeDialogs();
   }
 }

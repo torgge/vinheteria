@@ -14,7 +14,7 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
       {
         path: 'catalog',
@@ -38,8 +38,13 @@ export const routes: Routes = [
             loadComponent: () => import('./features/sales/pages/sales-order-list/sales-order-list.component').then(m => m.SalesOrderListComponent)
           },
           {
-            path: 'new',
+            path: 'create',
             loadComponent: () => import('./features/sales/pages/sales-order-create/sales-order-create.component').then(m => m.SalesOrderCreateComponent)
+          },
+          {
+            path: 'new',
+            redirectTo: 'create',
+            pathMatch: 'full'
           },
           {
             path: ':id',
@@ -78,6 +83,15 @@ export const routes: Routes = [
             loadComponent: () => import('./features/fulfillments/pages/fulfillment-tracking/fulfillment-tracking.component').then(m => m.FulfillmentTrackingComponent)
           }
         ]
+      },
+      {
+        path: 'customers',
+        loadComponent: () => import('./features/customers/pages/customer-list/customer-list.component').then(m => m.CustomerListComponent)
+      },
+      {
+        path: 'suppliers',
+        canActivate: [purchaserGuard],
+        loadComponent: () => import('./features/suppliers/pages/supplier-list/supplier-list.component').then(m => m.SupplierListComponent)
       },
       {
         path: 'admin',

@@ -11,7 +11,22 @@
       "Bash(git push:*)",
       "Bash(ssh:*)",
       "Bash(ssh-add:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(tree:*)",
+      "Bash(timeout 15 npm start:*)",
+      "Bash(pnpm build:*)",
+      "Bash(docker build:*)",
+      "Bash(docker run:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker ps:*)",
+      "Bash(git *)",
+      "Bash(npx ng *)",
+      "WebSearch",
+      "WebFetch(domain:v18.material.angular.dev)",
+      "Bash(xargs -I {} basename {} .ts)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

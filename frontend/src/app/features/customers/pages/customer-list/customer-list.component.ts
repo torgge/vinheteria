@@ -86,7 +86,6 @@ interface FilterOption<T> {
               [options]="typeOptions"
               [(ngModel)]="selectedType"
               optionLabel="label"
-              optionValue="value"
               [placeholder]="t('customers.type')"
               [showClear]="true"
               styleClass="type-dropdown"
@@ -99,7 +98,6 @@ interface FilterOption<T> {
               [options]="statusOptions"
               [(ngModel)]="selectedStatus"
               optionLabel="label"
-              optionValue="value"
               [placeholder]="t('common.status')"
               [showClear]="true"
               styleClass="status-dropdown"
@@ -112,7 +110,6 @@ interface FilterOption<T> {
               [options]="countryOptions"
               [(ngModel)]="selectedCountry"
               optionLabel="label"
-              optionValue="value"
               [placeholder]="t('catalog.country')"
               [showClear]="true"
               styleClass="country-dropdown"
@@ -488,9 +485,9 @@ export class CustomerListComponent {
 
   // State
   searchQuery = signal('');
-  selectedType = signal<CustomerType | null>(null);
-  selectedStatus = signal<CustomerStatus | null>(null);
-  selectedCountry = signal<string | null>(null);
+  selectedType = signal<FilterOption<CustomerType> | null>(null);
+  selectedStatus = signal<FilterOption<CustomerStatus> | null>(null);
+  selectedCountry = signal<FilterOption<string> | null>(null);
   selectedCustomer = signal<Customer | null>(null);
   showDetailDialog = false;
 
@@ -537,17 +534,17 @@ export class CustomerListComponent {
       }
 
       // Type filter
-      if (type && customer.type !== type) {
+      if (type && customer.type !== type.value) {
         return false;
       }
 
       // Status filter
-      if (status && customer.status !== status) {
+      if (status && customer.status !== status.value) {
         return false;
       }
 
       // Country filter
-      if (country && customer.country !== country) {
+      if (country && customer.country !== country.value) {
         return false;
       }
 
