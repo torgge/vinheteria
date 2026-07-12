@@ -1,103 +1,94 @@
-// Vinheria Digital — Typography
+// Vinheria Digital — Typography (DESIGN.md / Notion-inspired)
+// Font: Inter (NotionInter substitute per DESIGN.md note)
 
-// Google Fonts import
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-// Base typography
 body {
-  font-family: var(--p-font-family);
-  font-size: var(--vinheria-font-size-base);
-  line-height: 1.6;
-  color: var(--p-text-color);
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-// Display headings (wine-elegant)
-.vinheria-display {
-  font-family: var(--vinheria-font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
+// ═══════════════════════════════════════════
+// HEADINGS — DESIGN.md hierarchy
+// ═══════════════════════════════════════════
 
 h1, .h1 {
-  font-family: var(--vinheria-font-display);
-  font-size: var(--vinheria-font-size-4xl);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--vinheria-spacing-lg);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: var(--space-lg);
+  color: var(--color-ink);
 }
 
 h2, .h2 {
-  font-family: var(--vinheria-font-display);
-  font-size: var(--vinheria-font-size-3xl);
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  margin-bottom: var(--vinheria-spacing-md);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.23;
+  letter-spacing: -0.625px;
+  margin-bottom: var(--space-md);
+  color: var(--color-ink);
 }
 
 h3, .h3 {
-  font-family: var(--p-font-family);
-  font-size: var(--vinheria-font-size-2xl);
-  font-weight: 600;
-  line-height: 1.3;
-  margin-bottom: var(--vinheria-spacing-md);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.27;
+  letter-spacing: -0.25px;
+  margin-bottom: var(--space-md);
+  color: var(--color-ink);
 }
 
 h4, .h4 {
-  font-family: var(--p-font-family);
-  font-size: var(--vinheria-font-size-xl);
   font-weight: 600;
+  font-size: 20px;
   line-height: 1.4;
-  margin-bottom: var(--vinheria-spacing-sm);
+  letter-spacing: -0.125px;
+  margin-bottom: var(--space-sm);
+  color: var(--color-ink);
 }
 
 h5, .h5 {
-  font-family: var(--p-font-family);
-  font-size: var(--vinheria-font-size-lg);
   font-weight: 600;
-  line-height: 1.4;
-  margin-bottom: var(--vinheria-spacing-sm);
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: var(--space-sm);
+  color: var(--color-ink-secondary);
 }
 
 h6, .h6 {
-  font-family: var(--p-font-family);
-  font-size: var(--vinheria-font-size-base);
   font-weight: 600;
-  line-height: 1.5;
-  margin-bottom: var(--vinheria-spacing-xs);
+  font-size: 14px;
+  line-height: 1.43;
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-xs);
 }
 
-// Text utilities
-.text-muted {
-  color: var(--p-text-color-muted);
+// ═══════════════════════════════════════════
+// DISPLAY (hero headlines)
+// ═══════════════════════════════════════════
+
+.vinheria-display {
+  font-weight: 700;
+  letter-spacing: var(--tracking-display-1);
 }
 
-.text-secondary {
-  color: var(--p-text-color-secondary);
-}
+// ═══════════════════════════════════════════
+// TEXT UTILITIES
+// ═══════════════════════════════════════════
 
-.text-primary {
-  color: var(--p-primary-color);
-}
-
-.text-success {
-  color: var(--vinheria-success);
-}
-
-.text-warning {
-  color: var(--vinheria-warning);
-}
-
-.text-error {
-  color: var(--vinheria-error);
-}
-
-.text-gold {
-  color: var(--vinheria-accent-gold);
-}
+.text-muted { color: var(--color-ink-muted); }
+.text-secondary { color: var(--color-ink-secondary); }
+.text-primary { color: var(--color-primary); }
+.text-success { color: var(--vinheria-success); }
+.text-warning { color: var(--vinheria-warning); }
+.text-error { color: var(--vinheria-error); }
+.text-gold { color: var(--vinheria-accent-gold); }
 
 // Font weights
 .font-light { font-weight: 300; }
@@ -107,11 +98,11 @@ h6, .h6 {
 .font-bold { font-weight: 700; }
 
 // Text sizes
-.text-xs { font-size: var(--vinheria-font-size-xs); }
-.text-sm { font-size: var(--vinheria-font-size-sm); }
-.text-base { font-size: var(--vinheria-font-size-base); }
-.text-lg { font-size: var(--vinheria-font-size-lg); }
-.text-xl { font-size: var(--vinheria-font-size-xl); }
-.text-2xl { font-size: var(--vinheria-font-size-2xl); }
-.text-3xl { font-size: var(--vinheria-font-size-3xl); }
-.text-4xl { font-size: var(--vinheria-font-size-4xl); }
+.text-xs { font-size: 12px; }
+.text-sm { font-size: 14px; }
+.text-base { font-size: 16px; }
+.text-lg { font-size: 20px; }
+.text-xl { font-size: 22px; }
+.text-2xl { font-size: 26px; }
+.text-3xl { font-size: 40px; }
+.text-4xl { font-size: 54px; }
