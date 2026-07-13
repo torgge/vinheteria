@@ -1,9 +1,9 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule } from '@jsverse/transloco';
 
 import { PriceDisplayComponent, SimplePrices } from '../price-display/price-display.component';
@@ -28,27 +28,27 @@ export interface WineCardData {
   standalone: true,
   imports: [
     CommonModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    TooltipModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
     TranslocoModule,
     PriceDisplayComponent,
     StockBadgeComponent
   ],
   template: `
-    <div class="wine-card vinheria-card-elevated" *transloco="let t">
+    <mat-card appearance="outlined" class="wine-card vinheria-card-elevated" *transloco="let t">
       <div class="wine-image">
         <img [src]="imageSrc()" [alt]="wine().name" (error)="onImageError()" />
         <div class="wine-badges">
-          <p-tag [value]="wine().vintage.toString()" severity="contrast" />
+          <span class="badge badge-contrast">{{ wine().vintage }}</span>
           @if (wine().stockQuantity !== undefined) {
             <app-stock-badge [quantity]="wine().stockQuantity!" [showQuantity]="false" />
           }
         </div>
       </div>
 
-      <div class="wine-content">
+      <mat-card-content class="wine-content">
         <div class="wine-header">
           <h3 class="wine-name">{{ wine().name }}</h3>
           <span class="wine-producer">{{ wine().producer }}</span>
@@ -56,15 +56,15 @@ export interface WineCardData {
 
         <div class="wine-details">
           <div class="wine-detail">
-            <i class="pi pi-map-marker"></i>
+            <mat-icon fontIcon="location_on" />
             <span>{{ wine().region }}, {{ wine().country }}</span>
           </div>
           <div class="wine-detail">
-            <i class="pi pi-tag"></i>
+            <mat-icon fontIcon="sell" />
             <span>{{ wine().grapeVariety }}</span>
           </div>
           <div class="wine-detail wine-sku">
-            <i class="pi pi-barcode"></i>
+            <mat-icon fontIcon="barcode_reader" />
             <span>{{ wine().sku }}</span>
           </div>
         </div>
@@ -73,27 +73,30 @@ export interface WineCardData {
           <app-price-display [price]="wine().prices" size="large" />
           <div class="wine-actions">
             @if (showDetailButton()) {
-              <p-button
-                icon="pi pi-eye"
-                [rounded]="true"
-                [text]="true"
-                severity="info"
-                (onClick)="viewDetail.emit(wine())"
-                [pTooltip]="t('common.viewDetails')"
-              />
+              <button
+                mat-icon-button
+                [matTooltip]="t('common.viewDetails')"
+                (click)="viewDetail.emit(wine())"
+                [attr.aria-label]="t('common.viewDetails')"
+              >
+                <mat-icon fontIcon="visibility" />
+              </button>
             }
             @if (showAddButton()) {
-              <p-button
-                icon="pi pi-plus"
-                [rounded]="true"
-                (onClick)="addToOrder.emit(wine())"
-                [pTooltip]="t('common.addToOrder')"
-              />
+              <button
+                mat-mini-fab
+                color="primary"
+                [matTooltip]="t('common.addToOrder')"
+                (click)="addToOrder.emit(wine())"
+                [attr.aria-label]="t('common.addToOrder')"
+              >
+                <mat-icon fontIcon="add" />
+              </button>
             }
           </div>
         </div>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   `,
   styles: [`
     .wine-card {
@@ -105,6 +108,17 @@ export interface WineCardData {
         transform: translateY(-4px);
         box-shadow: var(--m3-elevation-3);
       }
+    }
+
+    .badge-contrast {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      background: var(--color-ink);
+      color: var(--color-on-primary);
+      white-space: nowrap;
     }
 
     .wine-image {
@@ -173,10 +187,11 @@ export interface WineCardData {
       font-size: var(--vinheria-font-size-sm, 0.875rem);
       color: var(--m3-on-surface-variant);
 
-      i {
-        font-size: 0.75rem;
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
         color: var(--m3-on-surface-variant);
-        width: 16px;
       }
     }
 

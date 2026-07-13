@@ -1,12 +1,14 @@
 import { Component, input, output } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-fab',
   standalone: true,
-  imports: [ButtonModule],
+  imports: [MatButtonModule, MatIconModule],
   template: `
     <button
+      mat-fab
       class="vinheria-fab"
       [class.vinheria-fab-small]="size() === 'small'"
       [class.vinheria-fab-large]="size() === 'large'"
@@ -15,7 +17,7 @@ import { ButtonModule } from 'primeng/button';
       [attr.aria-label]="ariaLabel()"
     >
       @if (icon()) {
-        <span class="material-symbols-outlined">{{ icon() }}</span>
+        <mat-icon [fontIcon]="icon()" />
       }
       @if (extended() && label()) {
         <span class="vinheria-fab-label">{{ label() }}</span>

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TagModule } from 'primeng/tag';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslocoService } from '@jsverse/transloco';
 
 export type OrderStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'FULFILLED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'ORDERED' | 'RECEIVED';
@@ -10,18 +10,74 @@ export type StatusType = OrderStatus | FulfillmentStatus;
 @Component({
   selector: 'app-status-badge',
   standalone: true,
-  imports: [CommonModule, TagModule],
+  imports: [CommonModule, MatIconModule],
   template: `
-    <p-tag [value]="displayText()" [severity]="severity()" [icon]="icon()" />
+    <span class="badge" [class]="'badge-' + severity()">
+      @if (iconName()) {
+        <mat-icon [fontIcon]="iconName()!" />
+      }
+      <span>{{ displayText() }}</span>
+    </span>
   `,
   styles: [`
     :host {
       display: inline-block;
     }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      white-space: nowrap;
+      color: var(--color-on-primary);
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .badge-success {
+      background: var(--color-accent-green);
+    }
+
+    .badge-secondary, .badge-contrast {
+      background: var(--color-ink-muted);
+    }
+
+    .badge-info {
+      background: var(--color-primary);
+    }
+
+    .badge-warning {
+      background: var(--color-accent-orange);
+    }
+
+    .badge-danger {
+      background: var(--color-error);
+    }
   `]
 })
 export class StatusBadgeComponent {
   private transloco = inject(TranslocoService);
+
+  private static readonly PI_TO_MATERIAL: Record<string, string> = {
+    'pi pi-pencil': 'edit',
+    'pi pi-clock': 'schedule',
+    'pi pi-check': 'check',
+    'pi pi-times': 'close',
+    'pi pi-box': 'inventory_2',
+    'pi pi-list': 'list',
+    'pi pi-truck': 'local_shipping',
+    'pi pi-send': 'send',
+    'pi pi-check-circle': 'check_circle',
+    'pi pi-ban': 'block',
+    'pi pi-circle': 'circle',
+  };
 
   /** The status value */
   status = input.required<StatusType>();
@@ -67,6 +123,10 @@ export class StatusBadgeComponent {
       'CANCELLED': 'pi pi-ban'
     };
     return icons[status] ?? 'pi pi-circle';
+  });
+
+  iconName = computed(() => {
+    return StatusBadgeComponent.PI_TO_MATERIAL[this.icon()] ?? null;
   });
 
   displayText = computed(() => {

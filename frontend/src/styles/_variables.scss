@@ -31,6 +31,9 @@
   --color-accent-green:       #1aae39;
   --color-accent-brown:       #523410;
 
+  // Semantic error (app-level extension — DESIGN.md marketing spec has no error ramp)
+  --color-error:              #d32f2f;
+
   // RGB variants for rgba() compositing
   --color-primary-rgb:    0, 117, 222;
   --color-secondary-rgb: 33, 49, 131;

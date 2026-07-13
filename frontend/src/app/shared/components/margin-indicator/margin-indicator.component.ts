@@ -1,13 +1,14 @@
 import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-margin-indicator',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   template: `
     <span class="margin-indicator" [class]="marginClass()">
-      <i [class]="iconClass()"></i>
+      <mat-icon [fontIcon]="iconName()" />
       {{ marginPercentage() | number:'1.1-1' }}%
     </span>
   `,
@@ -21,8 +22,10 @@ import { CommonModule } from '@angular/common';
       padding: 0.25rem 0.5rem;
       border-radius: var(--vinheria-radius-sm, 4px);
 
-      i {
+      mat-icon {
         font-size: 0.75rem;
+        width: 0.75rem;
+        height: 0.75rem;
       }
     }
 
@@ -65,11 +68,11 @@ export class MarginIndicatorComponent {
     return 'margin-low';
   });
 
-  iconClass = computed(() => {
+  iconName = computed(() => {
     const margin = this.marginPercentage();
-    if (margin < 0) return 'pi pi-arrow-down';
-    if (margin >= this.highThreshold()) return 'pi pi-arrow-up';
-    if (margin >= this.mediumThreshold()) return 'pi pi-minus';
-    return 'pi pi-arrow-down';
+    if (margin < 0) return 'arrow_downward';
+    if (margin >= this.highThreshold()) return 'arrow_upward';
+    if (margin >= this.mediumThreshold()) return 'remove';
+    return 'arrow_downward';
   });
 }

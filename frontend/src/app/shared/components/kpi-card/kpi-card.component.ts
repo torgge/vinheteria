@@ -1,24 +1,25 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 export type KpiTrend = 'up' | 'down' | 'neutral';
 
 @Component({
   selector: 'app-kpi-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   template: `
     <div class="kpi-card vinheria-card-elevated" [class]="variant() ? 'kpi-card--' + variant() : ''">
       <div class="kpi-content">
         <div class="kpi-icon" [class]="iconBgClass()">
-          <i [class]="icon()"></i>
+          <mat-icon [fontIcon]="iconName()" />
         </div>
         <div class="kpi-data">
           <div class="kpi-value">{{ value() }}</div>
           <div class="kpi-label">{{ label() }}</div>
           @if (trend(); as t) {
             <div class="kpi-trend" [class]="'trend-' + trendDirection()">
-              <i [class]="trendDirection() === 'up' ? 'pi pi-arrow-up' : trendDirection() === 'down' ? 'pi pi-arrow-down' : 'pi pi-minus'"></i>
+              <mat-icon [fontIcon]="trendIconName()" />
               <span>{{ t }}</span>
             </div>
           }
@@ -53,8 +54,10 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
       border-radius: var(--vinheria-radius-md);
       flex-shrink: 0;
 
-      i {
+      mat-icon {
         font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
       }
     }
 
@@ -103,8 +106,10 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
       font-weight: 600;
       margin-top: 4px;
 
-      i {
-        font-size: 0.75rem;
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
       }
     }
 
@@ -129,4 +134,22 @@ export class KpiCardComponent {
   trend = input<string | null>(null);
   trendDirection = input<KpiTrend>('neutral');
   variant = input<string>('');
+
+  private static readonly PI_TO_MATERIAL: Record<string, string> = {
+    'pi pi-chart-bar': 'bar_chart',
+    'pi pi-arrow-up': 'arrow_upward',
+    'pi pi-arrow-down': 'arrow_downward',
+    'pi pi-minus': 'remove',
+  };
+
+  iconName = computed(() => {
+    return KpiCardComponent.PI_TO_MATERIAL[this.icon()] ?? 'bar_chart';
+  });
+
+  trendIconName = computed(() => {
+    const direction = this.trendDirection();
+    if (direction === 'up') return 'arrow_upward';
+    if (direction === 'down') return 'arrow_downward';
+    return 'remove';
+  });
 }
