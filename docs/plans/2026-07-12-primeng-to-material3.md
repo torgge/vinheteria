@@ -1,6 +1,6 @@
 # Migração PrimeNG → Angular Material 18 (M3) — Plano de Implementação
 
-> **Execução:** delegações via `oc-delegate.sh` (cmux/OpenCode) — modelo `deepseek/deepseek-v4-pro` para implementação, `openrouter/z-ai/glm-5.1` para análise. Uma delegação por fase/fatia, prompt self-contained (delegates não acumulam contexto). Coordenador (Claude) executa a Fase 0 no checkout principal (worktrees não enxergam mudanças não-commitadas), integra e verifica cada retorno contra este plano. Steps usam checkbox (`- [ ]`).
+> **Execução:** delegações via `oc-delegate.sh` (cmux/OpenCode) — `deepseek/deepseek-v4-pro` implementa; **review gate por fase:** após cada commit de delegate, `nvidia/z-ai/glm-5.2` revisa o diff (read-only) — tokens DESIGN.md, APIs públicas, primeng residual, `::ng-deep` — e o coordenador arbitra antes da fase seguinte. Uma delegação por fase/fatia, prompt self-contained (delegates não acumulam contexto). Coordenador (Claude) executa a Fase 0 no checkout principal (worktrees não enxergam mudanças não-commitadas), integra e verifica cada retorno contra este plano. Steps usam checkbox (`- [ ]`).
 
 **Goal:** Remover 100% das referências a PrimeNG/PrimeIcons do frontend e adotar Angular Material 18 (Material 3) como biblioteca de componentes, tematizada pelos tokens canônicos do `DESIGN.md` (Notion-inspired).
 
