@@ -212,11 +212,13 @@ interface StockInfo extends StockPosition {
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-              <tr mat-no-data-row>
-                <td [attr.colspan]="displayedColumns.length" class="text-center p-4">
-                  {{ t('catalog.noStockAvailable') }}
-                </td>
-              </tr>
+              <ng-template matNoDataRow>
+                <tr class="mat-mdc-row">
+                  <td [attr.colspan]="displayedColumns.length" class="text-center p-4">
+                    {{ t('catalog.noStockAvailable') }}
+                  </td>
+                </tr>
+              </ng-template>
             </table>
           </mat-card-content>
         </mat-card>
