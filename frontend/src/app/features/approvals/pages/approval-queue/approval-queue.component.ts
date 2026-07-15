@@ -1,20 +1,20 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@jsverse/transloco';
-
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { TabViewModule } from 'primeng/tabview';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ToastModule } from 'primeng/toast';
-import { TooltipModule } from 'primeng/tooltip';
-import { MessageService } from 'primeng/api';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { formatDate } from '../../../../shared/utils/date.utils';
 import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
 import { MarginIndicatorComponent } from '../../../../shared/components/margin-indicator/margin-indicator.component';
@@ -47,23 +47,21 @@ interface PendingOrder {
     CommonModule,
     FormsModule,
     TranslocoModule,
-    CardModule,
-    TableModule,
-    ButtonModule,
-    TagModule,
-    TabViewModule,
-    DialogModule,
-    InputTextareaModule,
-    ToastModule,
-    TooltipModule,
+    MatTableModule,
+    MatSortModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTooltipModule,
+    MatDialogModule,
+    MatTabsModule,
     PriceDisplayComponent,
     MarginIndicatorComponent
   ],
-  providers: [MessageService],
   template: `
     <div class="approval-page" *transloco="let t">
-      <p-toast />
-
       <!-- Header -->
       <div class="page-header">
         <div class="header-content">
@@ -79,217 +77,240 @@ interface PendingOrder {
       </div>
 
       <!-- Tabs -->
-      <p-tabView>
-        <p-tabPanel [header]="t('common.all') + ' (' + pendingOrders().length + ')'">
+      <mat-tab-group>
+        <mat-tab>
+          <ng-template mat-tab-label>{{ t('common.all') }} ({{ pendingOrders().length }})</ng-template>
           <ng-container *ngTemplateOutlet="ordersTable; context: { orders: pendingOrders() }" />
-        </p-tabPanel>
-        <p-tabPanel [header]="t('nav.sales') + ' (' + pendingSalesOrders().length + ')'">
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>{{ t('nav.sales') }} ({{ pendingSalesOrders().length }})</ng-template>
           <ng-container *ngTemplateOutlet="ordersTable; context: { orders: pendingSalesOrders() }" />
-        </p-tabPanel>
-        <p-tabPanel [header]="t('nav.purchases') + ' (' + pendingPurchaseOrders().length + ')'">
+        </mat-tab>
+        <mat-tab>
+          <ng-template mat-tab-label>{{ t('nav.purchases') }} ({{ pendingPurchaseOrders().length }})</ng-template>
           <ng-container *ngTemplateOutlet="ordersTable; context: { orders: pendingPurchaseOrders() }" />
-        </p-tabPanel>
-      </p-tabView>
+        </mat-tab>
+      </mat-tab-group>
 
       <!-- Orders Table Template -->
       <ng-template #ordersTable let-orders="orders">
-        <p-table [value]="orders" [tableStyle]="{ 'min-width': '60rem' }" styleClass="p-datatable-striped">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>{{ t('approvals.orderType') }}</th>
-              <th>Order #</th>
-              <th>Customer/Supplier</th>
-              <th>{{ t('common.total') }}</th>
-              <th>{{ t('common.margin') }}</th>
-              <th>Items</th>
-              <th>{{ t('approvals.requester') }}</th>
-              <th>{{ t('common.date') }}</th>
-              <th>{{ t('common.actions') }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-order>
-            <tr>
-              <td>
-                <p-tag
-                  [value]="order.type === 'sales' ? t('nav.sales') : t('nav.purchases')"
-                  [severity]="order.type === 'sales' ? 'info' : 'warning'"
-                />
-              </td>
-              <td><strong class="order-number">{{ order.orderNumber }}</strong></td>
-              <td>{{ order.entityName }}</td>
-              <td><app-price-display [price]="order.totalAmount" /></td>
-              <td>
-                @if (order.marginPercentage !== undefined) {
-                  <app-margin-indicator [marginPercentage]="order.marginPercentage" />
-                } @else {
-                  <span class="na">N/A</span>
-                }
-              </td>
-              <td>{{ order.itemCount }} item(s)</td>
-              <td>{{ order.createdBy }}</td>
-              <td>{{ formatDate(order.createdAt) }}</td>
-              <td>
-                <div class="actions">
-                  <p-button
-                    icon="pi pi-eye"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="info"
-                    [pTooltip]="t('common.view')"
-                    (onClick)="viewOrder(order)"
-                  />
-                  <p-button
-                    icon="pi pi-check"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="success"
-                    [pTooltip]="t('approvals.approve')"
-                    (onClick)="openApproveDialog(order)"
-                  />
-                  <p-button
-                    icon="pi pi-times"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="danger"
-                    [pTooltip]="t('approvals.reject')"
-                    (onClick)="openRejectDialog(order)"
-                  />
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="9">
-                <div class="vinheria-empty-state">
-                  <i class="pi pi-check-circle"></i>
-                  <h3>{{ t('approvals.noApprovals') }}</h3>
-                  <p>All orders have been processed.</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <mat-card appearance="outlined" class="table-card">
+          <mat-card-content>
+            <table mat-table [dataSource]="orders" style="min-width: 60rem">
+              <!-- orderType Column -->
+              <ng-container matColumnDef="orderType">
+                <th mat-header-cell *matHeaderCellDef>{{ t('approvals.orderType') }}</th>
+                <td mat-cell *matCellDef="let order">
+                  <span class="badge badge-{{ order.type === 'sales' ? 'info' : 'warning' }}">
+                    {{ order.type === 'sales' ? t('nav.sales') : t('nav.purchases') }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- orderNumber Column -->
+              <ng-container matColumnDef="orderNumber">
+                <th mat-header-cell *matHeaderCellDef>Order #</th>
+                <td mat-cell *matCellDef="let order">
+                  <strong class="order-number">{{ order.orderNumber }}</strong>
+                </td>
+              </ng-container>
+
+              <!-- entityName Column -->
+              <ng-container matColumnDef="entityName">
+                <th mat-header-cell *matHeaderCellDef>Customer/Supplier</th>
+                <td mat-cell *matCellDef="let order">{{ order.entityName }}</td>
+              </ng-container>
+
+              <!-- total Column -->
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.total') }}</th>
+                <td mat-cell *matCellDef="let order">
+                  <app-price-display [price]="order.totalAmount" />
+                </td>
+              </ng-container>
+
+              <!-- margin Column -->
+              <ng-container matColumnDef="margin">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.margin') }}</th>
+                <td mat-cell *matCellDef="let order">
+                  @if (order.marginPercentage !== undefined) {
+                    <app-margin-indicator [marginPercentage]="order.marginPercentage" />
+                  } @else {
+                    <span class="na">N/A</span>
+                  }
+                </td>
+              </ng-container>
+
+              <!-- items Column -->
+              <ng-container matColumnDef="items">
+                <th mat-header-cell *matHeaderCellDef>Items</th>
+                <td mat-cell *matCellDef="let order">{{ order.itemCount }} item(s)</td>
+              </ng-container>
+
+              <!-- createdBy Column -->
+              <ng-container matColumnDef="createdBy">
+                <th mat-header-cell *matHeaderCellDef>{{ t('approvals.requester') }}</th>
+                <td mat-cell *matCellDef="let order">{{ order.createdBy }}</td>
+              </ng-container>
+
+              <!-- createdAt Column -->
+              <ng-container matColumnDef="createdAt">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.date') }}</th>
+                <td mat-cell *matCellDef="let order">{{ formatDate(order.createdAt) }}</td>
+              </ng-container>
+
+              <!-- actions Column -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
+                <td mat-cell *matCellDef="let order">
+                  <div class="actions">
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ t('common.view') }}"
+                      (click)="viewOrder(order)"
+                    >
+                      <mat-icon fontIcon="visibility" />
+                    </button>
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ t('approvals.approve') }}"
+                      (click)="openApproveDialog(order)"
+                    >
+                      <mat-icon fontIcon="check" />
+                    </button>
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ t('approvals.reject') }}"
+                      (click)="openRejectDialog(order)"
+                    >
+                      <mat-icon fontIcon="close" />
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+              @if (orders.length === 0) {
+                <tr class="mat-row">
+                  <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                    <div class="vinheria-empty-state">
+                      <mat-icon fontIcon="check_circle" />
+                      <h3>{{ t('approvals.noApprovals') }}</h3>
+                      <p>All orders have been processed.</p>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </table>
+          </mat-card-content>
+        </mat-card>
       </ng-template>
 
       <!-- Approve Dialog -->
-      <p-dialog
-        [(visible)]="showApproveDialog"
-        [header]="t('approvals.approve')"
-        [modal]="true"
-        [style]="{ width: '400px' }"
-      >
-        @if (selectedOrder()) {
-          <div class="dialog-content">
+      <ng-template #approveDialogTemplate>
+        <h2 mat-dialog-title>{{ t('approvals.approve') }}</h2>
+        <mat-dialog-content>
+          @if (selectedOrder()) {
             <p>Are you sure you want to approve order <strong>{{ selectedOrder()!.orderNumber }}</strong>?</p>
-
             <div class="order-summary">
               <div class="summary-row">
-                <span class="label">Total:</span>
+                <span class="label">{{ t('common.total') }}:</span>
                 <app-price-display [price]="selectedOrder()!.totalAmount" />
               </div>
               @if (selectedOrder()!.marginPercentage !== undefined) {
                 <div class="summary-row">
-                  <span class="label">Margin:</span>
+                  <span class="label">{{ t('common.margin') }}:</span>
                   <app-margin-indicator [marginPercentage]="selectedOrder()!.marginPercentage!" />
                 </div>
               }
             </div>
-          </div>
-        }
-        <ng-template pTemplate="footer">
-          <p-button
-            [label]="t('common.cancel')"
-            [text]="true"
-            (onClick)="closeDialogs()"
-          />
-          <p-button
-            [label]="t('approvals.approve')"
-            icon="pi pi-check"
-            severity="success"
-            (onClick)="approveOrder()"
-          />
-        </ng-template>
-      </p-dialog>
+          }
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-stroked-button (click)="dialog.closeAll()">{{ t('common.cancel') }}</button>
+          <button mat-flat-button (click)="approveOrder()">
+            <mat-icon fontIcon="check" />
+            {{ t('approvals.approve') }}
+          </button>
+        </mat-dialog-actions>
+      </ng-template>
 
       <!-- Reject Dialog -->
-      <p-dialog
-        [(visible)]="showRejectDialog"
-        [header]="t('approvals.reject')"
-        [modal]="true"
-        [style]="{ width: '450px' }"
-      >
-        @if (selectedOrder()) {
-          <div class="dialog-content">
+      <ng-template #rejectDialogTemplate>
+        <h2 mat-dialog-title>{{ t('approvals.reject') }}</h2>
+        <mat-dialog-content>
+          @if (selectedOrder()) {
             <p>Reject order <strong>{{ selectedOrder()!.orderNumber }}</strong>?</p>
-
-            <div class="form-field">
-              <label>{{ t('approvals.rejectReason') }}</label>
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>{{ t('approvals.rejectReason') }}</mat-label>
               <textarea
-                pInputTextarea
+                matInput
                 [(ngModel)]="rejectReason"
-                rows="3"
-                class="w-full"
+                rows="4"
                 placeholder="Enter reason for rejection..."
               ></textarea>
-            </div>
-          </div>
-        }
-        <ng-template pTemplate="footer">
-          <p-button
-            [label]="t('common.cancel')"
-            [text]="true"
-            (onClick)="closeDialogs()"
-          />
-          <p-button
-            [label]="t('approvals.reject')"
-            icon="pi pi-times"
-            severity="danger"
-            (onClick)="rejectOrder()"
+            </mat-form-field>
+          }
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-stroked-button (click)="dialog.closeAll()">{{ t('common.cancel') }}</button>
+          <button
+            mat-flat-button
+            color="warn"
+            (click)="rejectOrder()"
             [disabled]="!rejectReason"
-          />
-        </ng-template>
-      </p-dialog>
+          >
+            <mat-icon fontIcon="close" />
+            {{ t('approvals.reject') }}
+          </button>
+        </mat-dialog-actions>
+      </ng-template>
     </div>
   `,
   styles: [`
     .approval-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal);
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg);
 
-      h1 { margin-bottom: var(--vinheria-spacing-xs, 4px); }
+      h1 { margin-bottom: var(--space-xxs); }
     }
 
     .stats {
       display: flex;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md);
     }
 
     .stat-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-md, 16px) var(--vinheria-spacing-lg, 24px);
+      padding: var(--space-md) var(--space-lg);
       background: var(--m3-surface);
-      border-radius: var(--vinheria-radius-md, 8px);
+      border-radius: var(--radius-md);
       box-shadow: var(--p-card-shadow);
 
       .stat-value {
         font-size: var(--vinheria-font-size-2xl, 1.5rem);
         font-weight: 700;
-        color: var(--vinheria-warning, #ed6c02);
+        color: var(--color-accent-orange, #ed6c02);
       }
 
       .stat-label {
         font-size: var(--vinheria-font-size-sm, 0.875rem);
         color: var(--m3-on-surface-variant);
       }
+    }
+
+    .table-card {
+      margin-top: var(--space-md);
     }
 
     .order-number {
@@ -302,52 +323,53 @@ interface PendingOrder {
       font-style: italic;
     }
 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-xxs) var(--space-xs);
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      white-space: nowrap;
+      color: var(--color-on-primary);
+    }
+    .badge-info { background: var(--color-primary); }
+    .badge-warning { background: var(--color-accent-orange); }
+
     .actions {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
     }
 
-    .dialog-content {
-      .order-summary {
-        margin-top: var(--vinheria-spacing-md, 16px);
-        padding: var(--vinheria-spacing-md, 16px);
-        background: var(--p-surface-50);
-        border-radius: var(--vinheria-radius-md, 8px);
+    .order-summary {
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-md);
 
-        .summary-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: var(--vinheria-spacing-xs, 4px) 0;
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-xxs) 0;
 
-          .label { color: var(--m3-on-surface-variant); }
-        }
-      }
-
-      .form-field {
-        margin-top: var(--vinheria-spacing-md, 16px);
-
-        label {
-          display: block;
-          margin-bottom: var(--vinheria-spacing-xs, 4px);
-          font-weight: 600;
-        }
+        .label { color: var(--m3-on-surface-variant); }
       }
     }
-
-
   `]
 })
 export class ApprovalQueueComponent {
   private currencyService = inject(CurrencyService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
+  readonly dialog = inject(MatDialog);
+  @ViewChild('approveDialogTemplate', { read: TemplateRef }) approveDialogTemplate!: TemplateRef<unknown>;
+  @ViewChild('rejectDialogTemplate', { read: TemplateRef }) rejectDialogTemplate!: TemplateRef<unknown>;
 
   // Dialogs
-  showApproveDialog = false;
-  showRejectDialog = false;
   selectedOrder = signal<PendingOrder | null>(null);
   rejectReason = '';
+
+  readonly displayedColumns = ['orderType', 'orderNumber', 'entityName', 'total', 'margin', 'items', 'createdBy', 'createdAt', 'actions'];
 
   // Pending orders
   private allPendingSales = SALES_ORDERS.filter(o => o.status === 'PENDING_APPROVAL');
@@ -401,25 +423,17 @@ export class ApprovalQueueComponent {
 
   viewOrder(order: PendingOrder): void {
     console.log('View order:', order);
-    // In real app, would navigate to order detail
   }
 
   openApproveDialog(order: PendingOrder): void {
     this.selectedOrder.set(order);
-    this.showApproveDialog = true;
+    this.dialog.open(this.approveDialogTemplate, { width: '400px' });
   }
 
   openRejectDialog(order: PendingOrder): void {
     this.selectedOrder.set(order);
     this.rejectReason = '';
-    this.showRejectDialog = true;
-  }
-
-  closeDialogs(): void {
-    this.showApproveDialog = false;
-    this.showRejectDialog = false;
-    this.selectedOrder.set(null);
-    this.rejectReason = '';
+    this.dialog.open(this.rejectDialogTemplate, { width: '450px' });
   }
 
   approveOrder(): void {
@@ -432,13 +446,13 @@ export class ApprovalQueueComponent {
       return newIds;
     });
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'success',
       summary: 'Order Approved',
       detail: `${order.orderNumber} has been approved`
     });
 
-    this.closeDialogs();
+    this.dialog.closeAll();
   }
 
   rejectOrder(): void {
@@ -451,12 +465,12 @@ export class ApprovalQueueComponent {
       return newIds;
     });
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'warn',
       summary: 'Order Rejected',
       detail: `${order.orderNumber} has been rejected`
     });
 
-    this.closeDialogs();
+    this.dialog.closeAll();
   }
 }
