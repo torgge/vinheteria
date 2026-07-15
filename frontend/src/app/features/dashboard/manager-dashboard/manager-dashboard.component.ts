@@ -3,12 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { ChartModule } from 'primeng/chart';
-import { TooltipModule } from 'primeng/tooltip';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { PriceDisplayComponent } from '../../../shared/components/price-display/price-display.component';
@@ -27,12 +26,11 @@ import {
     CommonModule,
     RouterLink,
     TranslocoModule,
-    CardModule,
-    TableModule,
-    TagModule,
-    ButtonModule,
-    ChartModule,
-    TooltipModule,
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
     PriceDisplayComponent,
     StatusBadgeComponent,
     KpiCardComponent
@@ -79,100 +77,120 @@ import {
       <!-- Tables Row -->
       <div class="tables-row">
         <!-- Pending Approvals -->
-        <p-card [header]="t('approvals.queue') + ' (' + pendingApprovals + ')'" styleClass="table-card">
-          @if (pendingOrders.length > 0) {
-            <p-table [value]="pendingOrders" [rows]="5" styleClass="p-datatable-sm">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>{{ t('common.orderNumber') }}</th>
-                  <th>{{ t('approvals.orderType') }}</th>
-                  <th>{{ t('common.total') }}</th>
-                  <th>{{ t('approvals.requester') }}</th>
-                  <th>{{ t('common.actions') }}</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-order>
-                <tr>
-                  <td><strong>{{ order.orderNumber }}</strong></td>
-                  <td>
-                    <p-tag
-                      [value]="order.type === 'sales' ? t('nav.sales') : t('nav.purchases')"
-                      [severity]="order.type === 'sales' ? 'info' : 'warning'"
-                    />
+        <mat-card appearance="outlined" class="table-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('approvals.queue') + ' (' + pendingApprovals + ')' }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (pendingOrders.length > 0) {
+              <table mat-table [dataSource]="pendingOrders">
+                <ng-container matColumnDef="orderNumber">
+                  <th mat-header-cell *matHeaderCellDef>{{ t('common.orderNumber') }}</th>
+                  <td mat-cell *matCellDef="let order"><strong>{{ order.orderNumber }}</strong></td>
+                </ng-container>
+
+                <ng-container matColumnDef="orderType">
+                  <th mat-header-cell *matHeaderCellDef>{{ t('approvals.orderType') }}</th>
+                  <td mat-cell *matCellDef="let order">
+                    <span class="badge" [class]="order.type === 'sales' ? 'badge-info' : 'badge-warning'">
+                      {{ order.type === 'sales' ? t('nav.sales') : t('nav.purchases') }}
+                    </span>
                   </td>
-                  <td><app-price-display [price]="order.totalAmount" /></td>
-                  <td>{{ order.createdBy }}</td>
-                  <td>
-                    <p-button
-                      icon="pi pi-eye"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="info"
-                      [pTooltip]="t('common.view')"
-                      routerLink="/approvals"
-                    />
+                </ng-container>
+
+                <ng-container matColumnDef="total">
+                  <th mat-header-cell *matHeaderCellDef>{{ t('common.total') }}</th>
+                  <td mat-cell *matCellDef="let order"><app-price-display [price]="order.totalAmount" /></td>
+                </ng-container>
+
+                <ng-container matColumnDef="requester">
+                  <th mat-header-cell *matHeaderCellDef>{{ t('approvals.requester') }}</th>
+                  <td mat-cell *matCellDef="let order">{{ order.createdBy }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
+                  <td mat-cell *matCellDef="let order">
+                    <button mat-icon-button [matTooltip]="t('common.view')" routerLink="/approvals">
+                      <mat-icon fontIcon="visibility" />
+                    </button>
                   </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          } @else {
-            <div class="empty-state">
-              <i class="pi pi-check-circle"></i>
-              <p>{{ t('approvals.noApprovals') }}</p>
-            </div>
-          }
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsApprovals"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsApprovals;"></tr>
+              </table>
+            } @else {
+              <div class="empty-state">
+                <mat-icon fontIcon="check_circle" />
+                <p>{{ t('approvals.noApprovals') }}</p>
+              </div>
+            }
+          </mat-card-content>
           <div class="card-footer">
-            <p-button
-              [label]="t('dashboard.viewAllApprovals')"
-              [link]="true"
-              routerLink="/approvals"
-            />
+            <button mat-button routerLink="/approvals">{{ t('dashboard.viewAllApprovals') }}</button>
           </div>
-        </p-card>
+        </mat-card>
 
         <!-- Team Performance -->
-        <p-card [header]="t('dashboard.teamPerformance')" styleClass="table-card">
-          <p-table [value]="teamMetrics" styleClass="p-datatable-sm">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>{{ t('dashboard.seller') }}</th>
-                <th>{{ t('dashboard.orders') }}</th>
-                <th>{{ t('dashboard.revenue') }}</th>
-                <th>{{ t('common.margin') }}</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-member>
-              <tr>
-                <td><strong>{{ member.name }}</strong></td>
-                <td>{{ member.orderCount }}</td>
-                <td><app-price-display [price]="member.revenue" /></td>
-                <td>
+        <mat-card appearance="outlined" class="table-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('dashboard.teamPerformance') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="teamMetrics">
+              <ng-container matColumnDef="seller">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.seller') }}</th>
+                <td mat-cell *matCellDef="let member"><strong>{{ member.name }}</strong></td>
+              </ng-container>
+
+              <ng-container matColumnDef="orders">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.orders') }}</th>
+                <td mat-cell *matCellDef="let member">{{ member.orderCount }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="revenue">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.revenue') }}</th>
+                <td mat-cell *matCellDef="let member"><app-price-display [price]="member.revenue" /></td>
+              </ng-container>
+
+              <ng-container matColumnDef="margin">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.margin') }}</th>
+                <td mat-cell *matCellDef="let member">
                   <span [class]="getMarginClass(member.margin)">
                     {{ member.margin.toFixed(1) }}%
                   </span>
                 </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </p-card>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsTeam"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsTeam;"></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
       </div>
 
       <!-- Fulfillment Status -->
-      <p-card [header]="t('dashboard.fulfillmentStatus')" styleClass="full-width-card">
-        <div class="fulfillment-summary">
-          @for (status of fulfillmentStats; track status.status) {
-            <div class="fulfillment-stat">
-              <div class="stat-icon" [ngClass]="status.class">
-                <i [class]="status.icon"></i>
+      <mat-card appearance="outlined" class="full-width-card">
+        <mat-card-header>
+          <mat-card-title>{{ t('dashboard.fulfillmentStatus') }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="fulfillment-summary">
+            @for (status of fulfillmentStats; track status.status) {
+              <div class="fulfillment-stat">
+                <div class="stat-icon" [ngClass]="status.class">
+                  <mat-icon [fontIcon]="status.icon" />
+                </div>
+                <div class="stat-info">
+                  <span class="stat-value">{{ status.count }}</span>
+                  <span class="stat-label">{{ t('fulfillments.status.' + status.status) }}</span>
+                </div>
               </div>
-              <div class="stat-info">
-                <span class="stat-value">{{ status.count }}</span>
-                <span class="stat-label">{{ t('fulfillments.status.' + status.status) }}</span>
-              </div>
-            </div>
-          }
-        </div>
-      </p-card>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
@@ -210,15 +228,13 @@ import {
       margin-bottom: var(--vinheria-spacing-lg, 24px);
     }
 
-    :host ::ng-deep .table-card {
-      .p-card-body {
-        padding: 0;
-      }
+    .table-card mat-card-content {
+      padding: 0;
+    }
 
-      .p-card-header {
-        padding: var(--vinheria-spacing-md, 16px);
-        border-bottom: 1px solid var(--m3-outline-variant);
-      }
+    .table-card mat-card-header {
+      padding: var(--vinheria-spacing-md, 16px);
+      border-bottom: 1px solid var(--m3-outline-variant);
     }
 
     .card-footer {
@@ -234,22 +250,40 @@ import {
       padding: var(--vinheria-spacing-xl, 32px);
       color: var(--m3-on-surface-variant);
 
-      i {
+      mat-icon {
         font-size: 2.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
         opacity: 0.3;
         color: var(--vinheria-success);
         margin-bottom: var(--vinheria-spacing-sm, 8px);
       }
     }
 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      white-space: nowrap;
+      color: var(--color-on-primary);
+    }
+
+    .badge-info {
+      background: var(--color-primary);
+    }
+
+    .badge-warning {
+      background: var(--color-accent-orange);
+    }
+
     .margin-high { color: var(--vinheria-success, #2e7d32); font-weight: 600; }
     .margin-medium { color: var(--vinheria-warning, #ed6c02); font-weight: 600; }
     .margin-low { color: var(--vinheria-error, #d32f2f); font-weight: 600; }
 
-    :host ::ng-deep .full-width-card {
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg, 24px);
-      }
+    .full-width-card mat-card-content {
+      padding: var(--vinheria-spacing-lg, 24px);
     }
 
     .fulfillment-summary {
@@ -273,7 +307,7 @@ import {
       align-items: center;
       justify-content: center;
 
-      i { font-size: 1.5rem; }
+      mat-icon { font-size: 1.5rem; width: 1.5rem; height: 1.5rem; }
 
       &.pending   { background: var(--vinheria-warning-bg); color: var(--vinheria-warning); }
       &.picking   { background: var(--vinheria-info-bg); color: var(--vinheria-info); }
@@ -297,12 +331,13 @@ import {
       font-size: 0.875rem;
       color: var(--m3-on-surface-variant);
     }
-
-
   `]
 })
 export class ManagerDashboardComponent {
   authService = inject(AuthService);
+
+  displayedColumnsApprovals = ['orderNumber', 'orderType', 'total', 'requester', 'actions'];
+  displayedColumnsTeam = ['seller', 'orders', 'revenue', 'margin'];
 
   // Calculated metrics
   pendingApprovals = SALES_ORDERS.filter(o => o.status === 'PENDING_APPROVAL').length +
@@ -346,11 +381,11 @@ export class ManagerDashboardComponent {
 
   // Fulfillment stats
   fulfillmentStats = [
-    { status: 'PENDING', count: FULFILLMENTS.filter(f => f.status === 'PENDING').length, icon: 'pi pi-clock', class: 'pending' },
-    { status: 'PICKING', count: FULFILLMENTS.filter(f => f.status === 'PICKING').length, icon: 'pi pi-list', class: 'picking' },
-    { status: 'PACKED', count: FULFILLMENTS.filter(f => f.status === 'PACKED').length, icon: 'pi pi-box', class: 'packed' },
-    { status: 'SHIPPED', count: FULFILLMENTS.filter(f => f.status === 'SHIPPED').length, icon: 'pi pi-truck', class: 'shipped' },
-    { status: 'DELIVERED', count: FULFILLMENTS.filter(f => f.status === 'DELIVERED').length, icon: 'pi pi-check-circle', class: 'delivered' }
+    { status: 'PENDING', count: FULFILLMENTS.filter(f => f.status === 'PENDING').length, icon: 'schedule', class: 'pending' },
+    { status: 'PICKING', count: FULFILLMENTS.filter(f => f.status === 'PICKING').length, icon: 'list', class: 'picking' },
+    { status: 'PACKED', count: FULFILLMENTS.filter(f => f.status === 'PACKED').length, icon: 'inventory_2', class: 'packed' },
+    { status: 'SHIPPED', count: FULFILLMENTS.filter(f => f.status === 'SHIPPED').length, icon: 'local_shipping', class: 'shipped' },
+    { status: 'DELIVERED', count: FULFILLMENTS.filter(f => f.status === 'DELIVERED').length, icon: 'check_circle', class: 'delivered' }
   ];
 
   getMarginClass(margin: number): string {

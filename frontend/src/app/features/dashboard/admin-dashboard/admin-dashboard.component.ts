@@ -1,16 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
-import { CardModule } from 'primeng/card';
-import { ChartModule } from 'primeng/chart';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
+
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { CurrencyService } from '../../../core/currency/currency.service';
 import { KpiCardComponent } from '../../../shared/components/kpi-card/kpi-card.component';
+import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
+import { ChartComponent } from '../../../shared/components/chart/chart.component';
 import { formatLongDate } from '../../../shared/utils/date.utils';
 
 @Component({
@@ -19,13 +21,14 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
   imports: [
     CommonModule,
     TranslocoModule,
-    CardModule,
-    ChartModule,
-    TableModule,
-    TagModule,
-    ButtonModule,
-    TooltipModule,
-    KpiCardComponent
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    KpiCardComponent,
+    StatusBadgeComponent,
+    ChartComponent,
   ],
   template: `
     <div class="dashboard" *transloco="let t">
@@ -73,59 +76,91 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
 
       <!-- Charts Row -->
       <div class="charts-row">
-        <p-card [header]="t('dashboard.salesChart')" styleClass="chart-card">
-          <p-chart type="line" [data]="salesChartData" [options]="chartOptions" />
-        </p-card>
+        <mat-card appearance="outlined" class="chart-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('dashboard.salesChart') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <app-chart type="line" [data]="salesChartData" [options]="chartOptions" />
+          </mat-card-content>
+        </mat-card>
 
-        <p-card [header]="t('dashboard.topWines')" styleClass="top-wines-card">
-          <div class="top-wines-list">
-            @for (wine of topWines; track wine.sku) {
-              <div class="top-wine-item">
-                <div class="wine-rank">{{ $index + 1 }}</div>
-                <div class="wine-info">
-                  <span class="wine-name">{{ wine.name }}</span>
-                  <span class="wine-region">{{ wine.region }}</span>
+        <mat-card appearance="outlined" class="top-wines-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('dashboard.topWines') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="top-wines-list">
+              @for (wine of topWines; track wine.sku) {
+                <div class="top-wine-item">
+                  <div class="wine-rank">{{ $index + 1 }}</div>
+                  <div class="wine-info">
+                    <span class="wine-name">{{ wine.name }}</span>
+                    <span class="wine-region">{{ wine.region }}</span>
+                  </div>
+                  <div class="wine-sales">{{ formatCurrency(wine.sales) }}</div>
                 </div>
-                <div class="wine-sales">{{ formatCurrency(wine.sales) }}</div>
-              </div>
-            }
-          </div>
-        </p-card>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
 
       <!-- Recent Orders -->
-      <p-card [header]="t('dashboard.recentOrders')" styleClass="orders-card">
-        <p-table [value]="recentOrders" [tableStyle]="{ 'min-width': '60rem' }">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>ID</th>
-              <th>Customer</th>
-              <th>{{ t('common.total') }}</th>
-              <th>{{ t('common.margin') }}</th>
-              <th>{{ t('common.status') }}</th>
-              <th>{{ t('common.date') }}</th>
-              <th>{{ t('common.actions') }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-order>
-            <tr>
-              <td><strong>#{{ order.id }}</strong></td>
-              <td>{{ order.customer }}</td>
-              <td>{{ formatCurrency(order.total) }}</td>
-              <td [class]="getMarginClass(order.marginPercentage)">
+      <mat-card appearance="outlined" class="orders-card">
+        <mat-card-header>
+          <mat-card-title>{{ t('dashboard.recentOrders') }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="recentOrders">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>ID</th>
+              <td mat-cell *matCellDef="let order"><strong>#{{ order.id }}</strong></td>
+            </ng-container>
+
+            <ng-container matColumnDef="customer">
+              <th mat-header-cell *matHeaderCellDef>Customer</th>
+              <td mat-cell *matCellDef="let order">{{ order.customer }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.total') }}</th>
+              <td mat-cell *matCellDef="let order">{{ formatCurrency(order.total) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="margin">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.margin') }}</th>
+              <td mat-cell *matCellDef="let order" [class]="getMarginClass(order.marginPercentage)">
                 {{ order.marginPercentage }}%
               </td>
-              <td>
-                <p-tag [value]="t('sales.status.' + order.status)" [severity]="getStatusSeverity(order.status)" />
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.status') }}</th>
+              <td mat-cell *matCellDef="let order">
+                <app-status-badge [status]="order.status" context="sales" />
               </td>
-              <td>{{ order.date }}</td>
-              <td>
-                <p-button icon="pi pi-eye" [text]="true" [rounded]="true" severity="info" [pTooltip]="t('common.view')" />
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.date') }}</th>
+              <td mat-cell *matCellDef="let order">{{ order.date }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
+              <td mat-cell *matCellDef="let order">
+                <button mat-icon-button [matTooltip]="t('common.view')">
+                  <mat-icon fontIcon="visibility" />
+                </button>
               </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
@@ -167,11 +202,9 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
       }
     }
 
-    :host ::ng-deep .chart-card,
-    :host ::ng-deep .top-wines-card {
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg);
-      }
+    .chart-card mat-card-content,
+    .top-wines-card mat-card-content {
+      padding: var(--vinheria-spacing-lg);
     }
 
     .top-wines-list {
@@ -227,10 +260,8 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
       color: var(--m3-primary);
     }
 
-    :host ::ng-deep .orders-card {
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg);
-      }
+    .orders-card mat-card-content {
+      padding: var(--vinheria-spacing-lg);
     }
 
     .margin-high { color: var(--vinheria-margin-high); font-weight: 600; }
@@ -241,6 +272,8 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
 export class AdminDashboardComponent {
   authService = inject(AuthService);
   private currencyService = inject(CurrencyService);
+
+  displayedColumns = ['id', 'customer', 'total', 'margin', 'status', 'date', 'actions'];
 
   // Mock data for charts
   salesChartData = {
@@ -269,7 +302,7 @@ export class AdminDashboardComponent {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: number) => this.formatCurrency(value)
+          callback: (value: string | number) => this.formatCurrency(Number(value))
         }
       }
     }
@@ -303,19 +336,5 @@ export class AdminDashboardComponent {
     if (margin >= 30) return 'margin-high';
     if (margin >= 15) return 'margin-medium';
     return 'margin-low';
-  }
-
-  getStatusSeverity(status: string): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' | undefined {
-    const severities: Record<string, 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast'> = {
-      'DRAFT': 'secondary',
-      'PENDING_APPROVAL': 'warning',
-      'APPROVED': 'success',
-      'REJECTED': 'danger',
-      'FULFILLED': 'info',
-      'SHIPPED': 'info',
-      'DELIVERED': 'success',
-      'CANCELLED': 'danger'
-    };
-    return severities[status] ?? 'secondary';
   }
 }
