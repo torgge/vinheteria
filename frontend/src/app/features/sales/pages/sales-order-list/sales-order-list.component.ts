@@ -1,26 +1,24 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-
-import { TableModule } from 'primeng/table';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputIconModule } from 'primeng/inputicon';
-import { IconFieldModule } from 'primeng/iconfield';
-import { TooltipModule } from 'primeng/tooltip';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
-import { formatDate } from '../../../../shared/utils/date.utils';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { formatDate } from '../../../../shared/utils/date.utils';
 import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
 import { MarginIndicatorComponent } from '../../../../shared/components/margin-indicator/margin-indicator.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
@@ -42,26 +40,22 @@ interface StatusOption {
     CommonModule,
     FormsModule,
     TranslocoModule,
-    TableModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    DropdownModule,
-    InputTextModule,
-    InputIconModule,
-    IconFieldModule,
-    TooltipModule,
+    MatTableModule,
+    MatSortModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatDialogModule,
     PriceDisplayComponent,
     MarginIndicatorComponent,
-    StatusBadgeComponent,
-    DialogModule,
-    InputTextareaModule,
-    ToastModule
+    StatusBadgeComponent
   ],
-  providers: [MessageService],
   template: `
     <div class="sales-orders-page" *transloco="let t">
-      <p-toast position="top-right" />
       <!-- Header -->
       <div class="page-header">
         <div class="header-content">
@@ -69,147 +63,182 @@ interface StatusOption {
           <p class="text-secondary">{{ t('sales.orderList') }}</p>
         </div>
         <div class="header-actions">
-          <p-button
-            [label]="t('sales.createOrder')"
-            icon="pi pi-plus"
-            (onClick)="createOrder()"
-          />
+          <button mat-flat-button (click)="createOrder()">
+            <mat-icon fontIcon="add" />
+            {{ t('sales.createOrder') }}
+          </button>
         </div>
       </div>
 
       <!-- Filters -->
-      <p-card styleClass="filters-card">
-        <div class="filters-row">
-          <p-iconField iconPosition="left" class="search-field">
-            <p-inputIcon styleClass="pi pi-search" />
-            <input
-              type="text"
-              pInputText
-              [placeholder]="t('common.search')"
-              [(ngModel)]="searchQuery"
-            />
-          </p-iconField>
+      <mat-card appearance="outlined" class="filters-card">
+        <mat-card-content>
+          <div class="filters-row">
+            <mat-form-field appearance="outline" class="search-filter">
+              <mat-icon matPrefix fontIcon="search" />
+              <input
+                matInput
+                [placeholder]="t('common.search')"
+                [(ngModel)]="searchQuery"
+              />
+            </mat-form-field>
 
-          <p-dropdown
-            [options]="statusOptions"
-            [(ngModel)]="selectedStatus"
-            optionLabel="label"
-            [placeholder]="t('common.status')"
-            [showClear]="true"
-            styleClass="status-dropdown"
-          />
-        </div>
-      </p-card>
+            <mat-form-field appearance="outline">
+              <mat-label>{{ t('common.status') }}</mat-label>
+              <mat-select [(ngModel)]="selectedStatus">
+                <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                @for (opt of statusOptions; track opt.value) {
+                  <mat-option [value]="opt">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <button
+              mat-stroked-button
+              matTooltip="{{ t('common.clearFilters') }}"
+              (click)="clearFilters()"
+            >
+              <mat-icon fontIcon="filter_list" />
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Orders Table -->
-      <p-card styleClass="table-card">
-        <p-table
-          [value]="filteredOrders()"
-          [paginator]="true"
-          [rows]="10"
-          [showCurrentPageReport]="true"
-          [rowsPerPageOptions]="[10, 25, 50]"
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
-          [tableStyle]="{ 'min-width': '70rem' }"
-          styleClass="p-datatable-striped"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="orderNumber">Order # <p-sortIcon field="orderNumber" /></th>
-              <th pSortableColumn="customerName">Customer <p-sortIcon field="customerName" /></th>
-              <th pSortableColumn="totalAmount.BRL">{{ t('common.total') }} <p-sortIcon field="totalAmount.BRL" /></th>
-              <th>{{ t('common.margin') }}</th>
-              <th pSortableColumn="status">{{ t('common.status') }} <p-sortIcon field="status" /></th>
-              <th>Items</th>
-              <th pSortableColumn="createdAt">{{ t('common.date') }} <p-sortIcon field="createdAt" /></th>
-              <th>{{ t('common.actions') }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-order>
-            <tr>
-              <td>
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <table
+            mat-table
+            [dataSource]="filteredOrders()"
+            matSort
+            (matSortChange)="onSortChange($event)"
+            style="min-width: 70rem"
+          >
+            <ng-container matColumnDef="orderNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="orderNumber">
+                Order #
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <strong class="order-number">{{ order.orderNumber }}</strong>
               </td>
-              <td>{{ order.customerName }}</td>
-              <td>
+            </ng-container>
+
+            <ng-container matColumnDef="customerName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="customerName">
+                Customer
+              </th>
+              <td mat-cell *matCellDef="let order">{{ order.customerName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="total">
+                {{ t('common.total') }}
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <app-price-display [price]="order.totalAmount" />
               </td>
-              <td>
+            </ng-container>
+
+            <ng-container matColumnDef="margin">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('common.margin') }}
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <app-margin-indicator [marginPercentage]="order.marginPercentage" />
               </td>
-              <td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="status">
+                {{ t('common.status') }}
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <app-status-badge [status]="order.status" context="sales" />
               </td>
-              <td>
+            </ng-container>
+
+            <ng-container matColumnDef="items">
+              <th mat-header-cell *matHeaderCellDef>
+                Items
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <span class="items-count">{{ order.items.length }} item(s)</span>
               </td>
-              <td>
+            </ng-container>
+
+            <ng-container matColumnDef="createdAt">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt">
+                {{ t('common.date') }}
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <span class="date">{{ formatDate(order.createdAt) }}</span>
               </td>
-              <td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('common.actions') }}
+              </th>
+              <td mat-cell *matCellDef="let order">
                 <div class="actions">
-                  <p-button
-                    icon="pi pi-eye"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="info"
-                    [pTooltip]="t('common.viewDetails')"
-                    (onClick)="viewOrder(order)"
-                  />
+                  <button
+                    mat-icon-button
+                    matTooltip="{{ t('common.viewDetails') }}"
+                    (click)="$event.stopPropagation(); viewOrder(order)"
+                  >
+                    <mat-icon fontIcon="visibility" />
+                  </button>
                   @if (order.status === 'DRAFT') {
-                    <p-button
-                      icon="pi pi-pencil"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="warning"
-                      [pTooltip]="t('common.edit')"
-                      (onClick)="editOrder(order)"
-                    />
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ t('common.edit') }}"
+                      (click)="$event.stopPropagation(); editOrder(order)"
+                    >
+                      <mat-icon fontIcon="edit" />
+                    </button>
                   }
                   @if (canApprove() && order.status === 'PENDING_APPROVAL') {
-                    <p-button
-                      icon="pi pi-check"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="success"
-                      [pTooltip]="t('approvals.approve')"
-                      (onClick)="openApproveDialog(order)"
-                    />
-                    <p-button
-                      icon="pi pi-times"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="danger"
-                      [pTooltip]="t('approvals.reject')"
-                      (onClick)="openRejectDialog(order)"
-                    />
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ t('approvals.approve') }}"
+                      (click)="$event.stopPropagation(); openApproveDialog(order)"
+                    >
+                      <mat-icon fontIcon="check" />
+                    </button>
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ t('approvals.reject') }}"
+                      (click)="$event.stopPropagation(); openRejectDialog(order)"
+                    >
+                      <mat-icon fontIcon="close" />
+                    </button>
                   }
                 </div>
               </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="8">
-                <div class="vinheria-empty-state">
-                  <i class="pi pi-inbox"></i>
-                  <p>{{ t('common.noResults') }}</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewOrder(row)"></tr>
+
+            @if (filteredOrders().length === 0) {
+              <tr class="mat-row">
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                  <div class="vinheria-empty-state">
+                    <mat-icon fontIcon="receipt_long" />
+                    <p>{{ t('common.noResults') }}</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </table>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Approve Dialog -->
-      <p-dialog
-        [(visible)]="showApproveDialog"
-        [header]="t('approvals.approve')"
-        [modal]="true"
-        [style]="{ width: '400px' }"
-      >
-        @if (selectedOrder()) {
-          <div class="dialog-content">
+      <ng-template #approveDialog>
+        <h2 mat-dialog-title>{{ t('approvals.approve') }}</h2>
+        <mat-dialog-content>
+          @if (selectedOrder()) {
             <p>{{ t('approvals.approveConfirmation', { orderNumber: selectedOrder()!.orderNumber }) }}</p>
             <div class="order-summary">
               <div class="summary-row">
@@ -223,94 +252,85 @@ interface StatusOption {
                 </div>
               }
             </div>
-          </div>
-        }
-        <ng-template pTemplate="footer">
-          <p-button [label]="t('common.cancel')" [text]="true" (onClick)="closeDialogs()" />
-          <p-button [label]="t('approvals.approve')" icon="pi pi-check" severity="success" (onClick)="approveOrder()" />
-        </ng-template>
-      </p-dialog>
+          }
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-stroked-button (click)="dialog.closeAll()">{{ t('common.cancel') }}</button>
+          <button mat-flat-button (click)="approveOrder()">
+            <mat-icon fontIcon="check" />
+            {{ t('approvals.approve') }}
+          </button>
+        </mat-dialog-actions>
+      </ng-template>
 
       <!-- Reject Dialog -->
-      <p-dialog
-        [(visible)]="showRejectDialog"
-        [header]="t('approvals.reject')"
-        [modal]="true"
-        [style]="{ width: '450px' }"
-      >
-        @if (selectedOrder()) {
-          <div class="dialog-content">
+      <ng-template #rejectDialog>
+        <h2 mat-dialog-title>{{ t('approvals.reject') }}</h2>
+        <mat-dialog-content>
+          @if (selectedOrder()) {
             <p>{{ t('approvals.rejectConfirmation', { orderNumber: selectedOrder()!.orderNumber }) }}</p>
-            <div class="form-field">
-              <label>{{ t('approvals.rejectReason') }}</label>
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>{{ t('approvals.rejectReason') }}</mat-label>
               <textarea
-                pInputTextarea
+                matInput
                 [(ngModel)]="rejectReason"
                 rows="3"
-                class="w-full"
                 [placeholder]="t('approvals.rejectReasonPlaceholder')"
               ></textarea>
-            </div>
-          </div>
-        }
-        <ng-template pTemplate="footer">
-          <p-button [label]="t('common.cancel')" [text]="true" (onClick)="closeDialogs()" />
-          <p-button
-            [label]="t('approvals.reject')"
-            icon="pi pi-times"
-            severity="danger"
-            (onClick)="rejectOrder()"
+            </mat-form-field>
+          }
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-stroked-button (click)="dialog.closeAll()">{{ t('common.cancel') }}</button>
+          <button
+            mat-flat-button
+            color="warn"
+            (click)="rejectOrder()"
             [disabled]="!rejectReason"
-          />
-        </ng-template>
-      </p-dialog>
+          >
+            <mat-icon fontIcon="close" />
+            {{ t('approvals.reject') }}
+          </button>
+        </mat-dialog-actions>
+      </ng-template>
     </div>
   `,
   styles: [`
     .sales-orders-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal);
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg);
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs, 4px);
+        margin-bottom: var(--space-xxs);
       }
     }
 
-    :host ::ng-deep .filters-card {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
-
-      .p-card-body {
-        padding: var(--vinheria-spacing-md, 16px);
-      }
+    .filters-card {
+      margin-bottom: var(--space-lg);
     }
 
     .filters-row {
       display: flex;
-      gap: var(--vinheria-spacing-md, 16px);
+      align-items: center;
+      gap: var(--space-md);
       flex-wrap: wrap;
+
+      mat-form-field {
+        min-width: 150px;
+      }
     }
 
-    .search-field {
+    .search-filter {
       flex: 1;
       min-width: 250px;
-    }
-
-    :host ::ng-deep .status-dropdown {
-      min-width: 200px;
-    }
-
-    :host ::ng-deep .table-card {
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg, 24px);
-      }
     }
 
     .order-number {
@@ -330,57 +350,48 @@ interface StatusOption {
     .actions {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
     }
 
-    .dialog-content {
-      .order-summary {
-        margin-top: var(--vinheria-spacing-md, 16px);
-        padding: var(--vinheria-spacing-md, 16px);
-        background: var(--p-surface-50);
-        border-radius: var(--vinheria-radius-md, 8px);
+    .order-summary {
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-md);
 
-        .summary-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: var(--vinheria-spacing-xs, 4px) 0;
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-xxs) 0;
 
-          .label { color: var(--m3-on-surface-variant); }
-        }
-      }
-
-      .form-field {
-        margin-top: var(--vinheria-spacing-md, 16px);
-
-        label {
-          display: block;
-          margin-bottom: var(--vinheria-spacing-xs, 4px);
-          font-weight: 600;
+        .label {
+          color: var(--m3-on-surface-variant);
         }
       }
     }
-
-
   `]
 })
 export class SalesOrderListComponent {
   private router = inject(Router);
   private currencyService = inject(CurrencyService);
   private authService = inject(AuthService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
   private translocoService = inject(TranslocoService);
+  readonly dialog = inject(MatDialog);
+  @ViewChild('approveDialog', { read: TemplateRef }) approveDialog!: TemplateRef<unknown>;
+  @ViewChild('rejectDialog', { read: TemplateRef }) rejectDialog!: TemplateRef<unknown>;
 
   orders = SALES_ORDERS;
 
   searchQuery = signal('');
   selectedStatus = signal<StatusOption | null>(null);
-
-  showApproveDialog = false;
-  showRejectDialog = false;
   selectedOrder = signal<SalesOrder | null>(null);
   rejectReason = '';
   private processedIds = signal<Set<string>>(new Set());
+  sort = signal<Sort>({ active: '', direction: '' });
+
+  readonly displayedColumns = ['orderNumber', 'customerName', 'total', 'margin', 'status', 'items', 'createdAt', 'actions'];
 
   statusOptions: StatusOption[] = [
     { label: 'Draft', value: 'DRAFT' },
@@ -397,8 +408,9 @@ export class SalesOrderListComponent {
     const search = this.searchQuery().toLowerCase();
     const status = this.selectedStatus();
     const processed = this.processedIds();
+    const sort = this.sort();
 
-    return this.orders.filter(order => {
+    let results = this.orders.filter(order => {
       if (processed.has(order.id)) return false;
 
       if (search) {
@@ -414,6 +426,28 @@ export class SalesOrderListComponent {
 
       return true;
     });
+
+    if (sort.active && sort.direction) {
+      results = [...results].sort((a, b) => {
+        const dir = sort.direction === 'asc' ? 1 : -1;
+        let aVal: unknown, bVal: unknown;
+
+        switch (sort.active) {
+          case 'orderNumber': aVal = a.orderNumber; bVal = b.orderNumber; break;
+          case 'customerName': aVal = a.customerName; bVal = b.customerName; break;
+          case 'total': aVal = a.totalAmount.BRL; bVal = b.totalAmount.BRL; break;
+          case 'status': aVal = a.status; bVal = b.status; break;
+          case 'createdAt': aVal = a.createdAt; bVal = b.createdAt; break;
+          default: return 0;
+        }
+
+        if (aVal == null) return 1;
+        if (bVal == null) return -1;
+        return aVal < bVal ? -dir : aVal > bVal ? dir : 0;
+      });
+    }
+
+    return results;
   });
 
   canApprove = computed(() => {
@@ -422,6 +456,11 @@ export class SalesOrderListComponent {
   });
 
   formatDate = formatDate;
+
+  clearFilters(): void {
+    this.searchQuery.set('');
+    this.selectedStatus.set(null);
+  }
 
   createOrder(): void {
     this.router.navigate(['/sales/create']);
@@ -437,20 +476,13 @@ export class SalesOrderListComponent {
 
   openApproveDialog(order: SalesOrder): void {
     this.selectedOrder.set(order);
-    this.showApproveDialog = true;
+    this.dialog.open(this.approveDialog, { width: '400px' });
   }
 
   openRejectDialog(order: SalesOrder): void {
     this.selectedOrder.set(order);
     this.rejectReason = '';
-    this.showRejectDialog = true;
-  }
-
-  closeDialogs(): void {
-    this.showApproveDialog = false;
-    this.showRejectDialog = false;
-    this.selectedOrder.set(null);
-    this.rejectReason = '';
+    this.dialog.open(this.rejectDialog, { width: '450px' });
   }
 
   approveOrder(): void {
@@ -463,7 +495,7 @@ export class SalesOrderListComponent {
       return newIds;
     });
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'success',
       summary: this.translocoService.translate('approvals.approvedSummary'),
       detail: this.translocoService.translate('approvals.approvedDetail', {
@@ -471,7 +503,7 @@ export class SalesOrderListComponent {
       })
     });
 
-    this.closeDialogs();
+    this.dialog.closeAll();
   }
 
   rejectOrder(): void {
@@ -484,7 +516,7 @@ export class SalesOrderListComponent {
       return newIds;
     });
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'warn',
       summary: this.translocoService.translate('approvals.rejectedSummary'),
       detail: this.translocoService.translate('approvals.rejectedDetail', {
@@ -492,6 +524,10 @@ export class SalesOrderListComponent {
       })
     });
 
-    this.closeDialogs();
+    this.dialog.closeAll();
+  }
+
+  onSortChange(sort: Sort): void {
+    this.sort.set(sort);
   }
 }

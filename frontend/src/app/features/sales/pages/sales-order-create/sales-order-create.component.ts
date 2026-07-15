@@ -3,22 +3,21 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
-
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { TableModule } from 'primeng/table';
-import { DividerModule } from 'primeng/divider';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DialogModule } from 'primeng/dialog';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { TooltipModule } from 'primeng/tooltip';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { PriceDisplayComponent, SimplePrices } from '../../../../shared/components/price-display/price-display.component';
 import { MarginIndicatorComponent } from '../../../../shared/components/margin-indicator/margin-indicator.component';
 import { StockBadgeComponent } from '../../../../shared/components/stock-badge/stock-badge.component';
@@ -45,13 +44,6 @@ interface OrderItem {
   availableStock: number;
 }
 
-interface WineOption {
-  id: string;
-  sku: string;
-  name: string;
-  wine: Wine;
-}
-
 @Component({
   selector: 'app-sales-order-create',
   standalone: true,
@@ -59,27 +51,23 @@ interface WineOption {
     CommonModule,
     FormsModule,
     TranslocoModule,
-    CardModule,
-    ButtonModule,
-    DropdownModule,
-    InputNumberModule,
-    TableModule,
-    DividerModule,
-    ToastModule,
-    ConfirmDialogModule,
-    DialogModule,
-    AutoCompleteModule,
-    TooltipModule,
+    MatAutocompleteModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTableModule,
+    MatDividerModule,
+    MatTooltipModule,
+    MatDialogModule,
     PriceDisplayComponent,
     MarginIndicatorComponent,
     StockBadgeComponent
   ],
-  providers: [MessageService, ConfirmationService],
   template: `
     <div class="create-order-page" *transloco="let t">
-      <p-toast />
-      <p-confirmDialog />
-
       <!-- Header -->
       <div class="page-header">
         <div class="header-content">
@@ -87,303 +75,354 @@ interface WineOption {
           <p class="text-secondary">{{ t('sales.orderDetail') }}</p>
         </div>
         <div class="header-actions">
-          <p-button
-            [label]="t('common.cancel')"
-            icon="pi pi-times"
-            [text]="true"
-            severity="danger"
-            (onClick)="cancel()"
-          />
-          <p-button
-            [label]="t('sales.saveDraft')"
-            icon="pi pi-save"
-            [outlined]="true"
-            (onClick)="saveDraft()"
+          <button mat-stroked-button (click)="cancel()">
+            <mat-icon fontIcon="close" />
+            {{ t('common.cancel') }}
+          </button>
+          <button
+            mat-stroked-button
+            (click)="saveDraft()"
             [disabled]="!canSave()"
-          />
-          <p-button
-            [label]="t('sales.submitOrder')"
-            icon="pi pi-send"
-            (onClick)="submitOrder()"
+          >
+            <mat-icon fontIcon="save" />
+            {{ t('sales.saveDraft') }}
+          </button>
+          <button
+            mat-flat-button
+            (click)="submitOrder()"
             [disabled]="!canSubmit()"
-          />
+          >
+            <mat-icon fontIcon="send" />
+            {{ t('sales.submitOrder') }}
+          </button>
         </div>
       </div>
 
       <div class="order-grid">
         <!-- Customer Selection -->
-        <p-card [header]="t('sales.selectCustomer')" styleClass="customer-card vinheria-card-elevated">
-          <p-dropdown
-            [options]="customerOptions"
-            [(ngModel)]="selectedCustomer"
-            optionLabel="tradeName"
-            [placeholder]="t('sales.selectCustomer')"
-            [filter]="true"
-            filterBy="tradeName,companyName"
-            [showClear]="true"
-            styleClass="w-full"
-          >
-            <ng-template pTemplate="selectedItem" let-customer>
-              <div class="customer-selected">
-                <span class="customer-name">{{ customer.tradeName }}</span>
-                <span class="customer-type">{{ customer.type }}</span>
-              </div>
-            </ng-template>
-            <ng-template pTemplate="item" let-customer>
-              <div class="customer-option">
-                <div class="customer-info">
-                  <span class="customer-name">{{ customer.tradeName }}</span>
-                  <span class="customer-company">{{ customer.companyName }}</span>
-                </div>
-                <span class="customer-type-badge">{{ customer.type }}</span>
-              </div>
-            </ng-template>
-          </p-dropdown>
+        <mat-card appearance="outlined" class="customer-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('sales.selectCustomer') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>{{ t('sales.selectCustomer') }}</mat-label>
+              <mat-select
+                [(ngModel)]="selectedCustomer"
+                [compareWith]="compareCustomers"
+              >
+                <mat-option [value]="null">{{ t('sales.selectCustomer') }}</mat-option>
+                @for (customer of customerOptions; track customer.id) {
+                  <mat-option [value]="customer">
+                    <div class="customer-option">
+                      <div class="customer-info">
+                        <span class="customer-name">{{ customer.tradeName }}</span>
+                        <span class="customer-company">{{ customer.companyName }}</span>
+                      </div>
+                      <span class="customer-type-badge">{{ customer.type }}</span>
+                    </div>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          @if (selectedCustomer()) {
-            <div class="customer-details">
-              <p-divider />
-              <div class="details-grid">
-                <div class="detail">
-                  <span class="label">{{ t('customers.taxId') }}</span>
-                  <span class="value">{{ selectedCustomer()!.taxId }}</span>
-                </div>
-                <div class="detail">
-                  <span class="label">{{ t('customers.paymentTerms') }}</span>
-                  <span class="value">{{ selectedCustomer()!.salesCondition.paymentTermDays }} {{ t('common.days') }}</span>
-                </div>
-                <div class="detail">
-                  <span class="label">{{ t('customers.discount') }}</span>
-                  <span class="value">{{ selectedCustomer()!.salesCondition.discountPercentage }}%</span>
-                </div>
-                <div class="detail">
-                  <span class="label">{{ t('customers.creditLimit') }}</span>
-                  <span class="value">{{ formatPrice(selectedCustomer()!.salesCondition.creditLimit.BRL) }}</span>
+            @if (selectedCustomer()) {
+              <div class="customer-details">
+                <mat-divider />
+                <div class="details-grid">
+                  <div class="detail">
+                    <span class="label">{{ t('customers.taxId') }}</span>
+                    <span class="value">{{ selectedCustomer()!.taxId }}</span>
+                  </div>
+                  <div class="detail">
+                    <span class="label">{{ t('customers.paymentTerms') }}</span>
+                    <span class="value">{{ selectedCustomer()!.salesCondition.paymentTermDays }} {{ t('common.days') }}</span>
+                  </div>
+                  <div class="detail">
+                    <span class="label">{{ t('customers.discount') }}</span>
+                    <span class="value">{{ selectedCustomer()!.salesCondition.discountPercentage }}%</span>
+                  </div>
+                  <div class="detail">
+                    <span class="label">{{ t('customers.creditLimit') }}</span>
+                    <span class="value">{{ formatPrice(selectedCustomer()!.salesCondition.creditLimit.BRL) }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-        </p-card>
+            }
+          </mat-card-content>
+        </mat-card>
 
         <!-- Order Summary -->
-        <p-card [header]="t('sales.orderSummary')" styleClass="summary-card vinheria-card-elevated">
-          <div class="summary-content">
-            <div class="summary-row">
-              <span class="summary-label">{{ t('sales.subtotal') }}</span>
-              <app-price-display [price]="orderTotals().totalPrice" size="medium" />
+        <mat-card appearance="outlined" class="summary-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('sales.orderSummary') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="summary-content">
+              <div class="summary-row">
+                <span class="summary-label">{{ t('sales.subtotal') }}</span>
+                <app-price-display [price]="orderTotals().totalPrice" size="medium" />
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">{{ t('common.margin') }}</span>
+                <app-price-display [price]="orderTotals().totalMargin" size="medium" />
+              </div>
+              <mat-divider />
+              <div class="summary-row total">
+                <span class="summary-label">{{ t('common.total') }}</span>
+                <app-price-display [price]="orderTotals().totalPrice" size="large" />
+              </div>
+              <div class="summary-row margin-total">
+                <span class="summary-label">{{ t('sales.marginPercentage') }}</span>
+                <app-margin-indicator [marginPercentage]="orderTotals().marginPercentage" />
+              </div>
             </div>
-            <div class="summary-row">
-              <span class="summary-label">{{ t('common.margin') }}</span>
-              <app-price-display [price]="orderTotals().totalMargin" size="medium" />
-            </div>
-            <p-divider />
-            <div class="summary-row total">
-              <span class="summary-label">{{ t('common.total') }}</span>
-              <app-price-display [price]="orderTotals().totalPrice" size="large" />
-            </div>
-            <div class="summary-row margin-total">
-              <span class="summary-label">{{ t('sales.marginPercentage') }}</span>
-              <app-margin-indicator [marginPercentage]="orderTotals().marginPercentage" />
-            </div>
-          </div>
-        </p-card>
+          </mat-card-content>
+        </mat-card>
       </div>
 
       <!-- Add Item Section -->
-      <p-card [header]="t('sales.addItem')" styleClass="add-item-card vinheria-card-elevated">
-        <div class="add-item-form">
-          <div class="form-row">
-            <div class="form-field wine-field">
-              <label>{{ t('sales.selectWine') }}</label>
-              <p-autoComplete
-                [(ngModel)]="selectedWine"
-                [suggestions]="filteredWines()"
-                (completeMethod)="searchWines($event)"
-                field="name"
-                [dropdown]="true"
-                [placeholder]="t('sales.selectWine')"
-                styleClass="w-full"
-              >
-                <ng-template let-wine pTemplate="item">
-                  <div class="wine-option">
-                    <div class="wine-info">
-                      <span class="wine-name">{{ wine.name }}</span>
-                      <span class="wine-sku">{{ wine.sku }}</span>
-                    </div>
-                    <span class="wine-price">{{ formatPrice(wine.prices.BRL) }}</span>
-                  </div>
-                </ng-template>
-              </p-autoComplete>
+      <mat-card appearance="outlined" class="add-item-card">
+        <mat-card-header>
+          <mat-card-title>{{ t('sales.addItem') }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="add-item-form">
+            <div class="form-row">
+              <div class="form-field wine-field">
+                <label>{{ t('sales.selectWine') }}</label>
+                <mat-form-field appearance="outline" style="width: 100%;">
+                  <input
+                    matInput
+                    [matAutocomplete]="auto"
+                    [ngModel]="searchText()"
+                    (ngModelChange)="searchText.set($event)"
+                    (input)="searchWines($event)"
+                    [placeholder]="t('sales.selectWine')"
+                  />
+                  <mat-autocomplete
+                    #auto="matAutocomplete"
+                    [displayWith]="displayFn"
+                    (optionSelected)="onWineSelected($event)"
+                  >
+                    @for (wine of filteredWines(); track wine.id) {
+                      <mat-option [value]="wine">
+                        <div class="wine-option">
+                          <div class="wine-info">
+                            <span class="wine-name">{{ wine.name }}</span>
+                            <span class="wine-sku">{{ wine.sku }}</span>
+                          </div>
+                          <span class="wine-price">{{ formatPrice(wine.prices.BRL) }}</span>
+                        </div>
+                      </mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+
+              <div class="form-field warehouse-field">
+                <label>{{ t('sales.selectWarehouse') }}</label>
+                <mat-form-field appearance="outline" style="width: 100%;">
+                  <mat-select
+                    [(ngModel)]="selectedWarehouse"
+                    [disabled]="!selectedWine()"
+                    [compareWith]="compareWarehouses"
+                  >
+                    <mat-option [value]="null">{{ t('sales.selectWarehouse') }}</mat-option>
+                    @for (wh of availableWarehouses(); track wh.id) {
+                      <mat-option [value]="wh">
+                        <div class="warehouse-option">
+                          <span class="wh-code">{{ wh.code }}</span>
+                          <span class="wh-name">{{ wh.name }}</span>
+                          <app-stock-badge [quantity]="getStockForWarehouse(wh.id)" />
+                        </div>
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="form-field quantity-field">
+                <label>{{ t('common.quantity') }}</label>
+                <mat-form-field appearance="outline" style="width: 100%;">
+                  <input
+                    matInput
+                    type="number"
+                    [ngModel]="itemQuantity()"
+                    (ngModelChange)="itemQuantity.set($event)"
+                    min="1"
+                    [max]="maxQuantity()"
+                    [disabled]="!selectedWarehouse()"
+                  />
+                </mat-form-field>
+              </div>
+
+              <div class="form-field action-field">
+                <button
+                  mat-flat-button
+                  (click)="addItem()"
+                  [disabled]="!canAddItem()"
+                  style="width: 100%;"
+                >
+                  <mat-icon fontIcon="add" />
+                  {{ t('sales.addItem') }}
+                </button>
+              </div>
             </div>
 
-            <div class="form-field warehouse-field">
-              <label>{{ t('sales.selectWarehouse') }}</label>
-              <p-dropdown
-                [options]="availableWarehouses()"
-                [(ngModel)]="selectedWarehouse"
-                optionLabel="code"
-                [placeholder]="t('sales.selectWarehouse')"
-                [disabled]="!selectedWine()"
-                styleClass="w-full"
-              >
-                <ng-template pTemplate="selectedItem" let-wh>
-                  <span>{{ wh.code }} - {{ wh.name }}</span>
-                </ng-template>
-                <ng-template pTemplate="item" let-wh>
-                  <div class="warehouse-option">
-                    <span class="wh-code">{{ wh.code }}</span>
-                    <span class="wh-name">{{ wh.name }}</span>
-                    <app-stock-badge [quantity]="getStockForWarehouse(wh.id)" />
-                  </div>
-                </ng-template>
-              </p-dropdown>
-            </div>
-
-            <div class="form-field quantity-field">
-              <label>{{ t('common.quantity') }}</label>
-              <p-inputNumber
-                [(ngModel)]="itemQuantity"
-                [min]="1"
-                [max]="maxQuantity()"
-                [showButtons]="true"
-                [disabled]="!selectedWarehouse()"
-                styleClass="w-full"
-              />
-            </div>
-
-            <div class="form-field action-field">
-              <p-button
-                [label]="t('sales.addItem')"
-                icon="pi pi-plus"
-                (onClick)="addItem()"
-                [disabled]="!canAddItem()"
-                styleClass="w-full"
-              />
-            </div>
+            @if (selectedWine() && selectedWarehouse()) {
+              <div class="item-preview">
+                <div class="preview-row">
+                  <span class="preview-label">{{ t('common.price') }}:</span>
+                  <app-price-display [price]="selectedWine()!.prices" />
+                </div>
+                <div class="preview-row">
+                  <span class="preview-label">{{ t('common.margin') }}:</span>
+                  <app-margin-indicator [marginPercentage]="calculateItemMargin(selectedWine()!)" />
+                </div>
+              </div>
+            }
           </div>
-
-          @if (selectedWine() && selectedWarehouse()) {
-            <div class="item-preview">
-              <div class="preview-row">
-                <span class="preview-label">{{ t('common.price') }}:</span>
-                <app-price-display [price]="selectedWine()!.prices" />
-              </div>
-              <div class="preview-row">
-                <span class="preview-label">{{ t('common.margin') }}:</span>
-                <app-margin-indicator [marginPercentage]="calculateItemMargin(selectedWine()!)" />
-              </div>
-            </div>
-          }
-        </div>
-      </p-card>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Order Items -->
-      <p-card [header]="t('sales.orderItems')" styleClass="items-card vinheria-card-elevated">
-        <p-table [value]="orderItems()" [tableStyle]="{ 'min-width': '60rem' }">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>{{ t('catalog.wine.sku') }}</th>
-              <th>{{ t('catalog.wine.name') }}</th>
-              <th>{{ t('warehouse.code') }}</th>
-              <th>{{ t('common.quantity') }}</th>
-              <th>{{ t('common.price') }}</th>
-              <th>{{ t('common.total') }}</th>
-              <th>{{ t('common.margin') }}</th>
-              <th>{{ t('common.actions') }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
-            <tr>
-              <td><span class="sku">{{ item.wine.sku }}</span></td>
-              <td>
+      <mat-card appearance="outlined" class="items-card">
+        <mat-card-header>
+          <mat-card-title>{{ t('sales.orderItems') }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="orderItems()" style="min-width: 60rem">
+            <ng-container matColumnDef="sku">
+              <th mat-header-cell *matHeaderCellDef>{{ t('catalog.wine.sku') }}</th>
+              <td mat-cell *matCellDef="let item"><span class="sku">{{ item.wine.sku }}</span></td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>{{ t('catalog.wine.name') }}</th>
+              <td mat-cell *matCellDef="let item">
                 <div class="item-wine">
                   <span class="wine-name">{{ item.wine.name }}</span>
                   <span class="wine-producer">{{ item.wine.producer }}</span>
                 </div>
               </td>
-              <td><strong>{{ item.warehouse.code }}</strong></td>
-              <td>
-                <p-inputNumber
-                  [(ngModel)]="item.quantity"
-                  [min]="1"
-                  [max]="item.availableStock"
-                  [showButtons]="true"
-                  (onInput)="updateItemQuantity(rowIndex)"
-                  styleClass="quantity-input"
-                />
+            </ng-container>
+
+            <ng-container matColumnDef="warehouse">
+              <th mat-header-cell *matHeaderCellDef>{{ t('warehouse.code') }}</th>
+              <td mat-cell *matCellDef="let item"><strong>{{ item.warehouse.code }}</strong></td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.quantity') }}</th>
+              <td mat-cell *matCellDef="let item; let i = index">
+                <mat-form-field appearance="outline" class="quantity-input-form">
+                  <input
+                    matInput
+                    type="number"
+                    [ngModel]="item.quantity"
+                    (ngModelChange)="updateItemQuantity(i, $event)"
+                    min="1"
+                    [max]="item.availableStock"
+                  />
+                </mat-form-field>
               </td>
-              <td><app-price-display [price]="item.unitPrice" /></td>
-              <td><app-price-display [price]="item.totalPrice" /></td>
-              <td><app-margin-indicator [marginPercentage]="item.marginPercentage" /></td>
-              <td>
-                <p-button
-                  icon="pi pi-trash"
-                  [rounded]="true"
-                  [text]="true"
-                  severity="danger"
-                  [pTooltip]="t('common.delete')"
-                  (onClick)="removeItem(rowIndex)"
-                />
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.price') }}</th>
+              <td mat-cell *matCellDef="let item"><app-price-display [price]="item.unitPrice" /></td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.total') }}</th>
+              <td mat-cell *matCellDef="let item"><app-price-display [price]="item.totalPrice" /></td>
+            </ng-container>
+
+            <ng-container matColumnDef="margin">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.margin') }}</th>
+              <td mat-cell *matCellDef="let item"><app-margin-indicator [marginPercentage]="item.marginPercentage" /></td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
+              <td mat-cell *matCellDef="let item; let i = index">
+                <button
+                  mat-icon-button
+                  matTooltip="{{ t('common.delete') }}"
+                  (click)="removeItem(i)"
+                >
+                  <mat-icon fontIcon="delete" />
+                </button>
               </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="8">
-                <div class="vinheria-empty-state">
-                  <i class="pi pi-shopping-cart"></i>
-                  <p>{{ t('sales.noItemsAdded') }}</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            @if (orderItems().length === 0) {
+              <tr class="mat-row">
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                  <div class="vinheria-empty-state">
+                    <mat-icon fontIcon="shopping_cart" />
+                    <p>{{ t('sales.noItemsAdded') }}</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </table>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
     .create-order-page {
-      animation: fadeIn var(--vinheria-transition-normal);
+      animation: fadeIn var(--motion-normal);
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg);
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md);
 
-      h1 { margin-bottom: var(--vinheria-spacing-xs, 4px); }
+      h1 { margin-bottom: var(--space-xxs); }
     }
 
     .header-actions {
       display: flex;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
     }
 
     .order-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: var(--vinheria-spacing-lg, 24px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-lg);
 
       @media (max-width: 839px) {
         grid-template-columns: 1fr;
       }
     }
 
-    :host ::ng-deep .customer-card,
-    :host ::ng-deep .summary-card,
-    :host ::ng-deep .add-item-card,
-    :host ::ng-deep .items-card {
-      .p-card-body { padding: var(--vinheria-spacing-lg, 24px); }
+    .customer-card,
+    .summary-card {
+      margin-bottom: 0;
+    }
+
+    .customer-card mat-card-header,
+    .summary-card mat-card-header,
+    .add-item-card mat-card-header,
+    .items-card mat-card-header {
+      padding-bottom: 0;
     }
 
     .customer-selected {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
 
       .customer-name { font-weight: 600; }
       .customer-type {
@@ -396,7 +435,7 @@ interface WineOption {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: var(--vinheria-spacing-xs, 4px) 0;
+      padding: var(--space-xxs) 0;
     }
 
     .customer-info {
@@ -413,18 +452,19 @@ interface WineOption {
     .customer-type-badge {
       font-size: var(--vinheria-font-size-xs, 0.75rem);
       padding: 2px 8px;
-      border-radius: var(--vinheria-radius-sm, 4px);
-        background: var(--m3-surface-container-low);
+      border-radius: var(--radius-sm);
+      background: var(--m3-surface-container-low);
     }
 
     .customer-details {
-      margin-top: var(--vinheria-spacing-md, 16px);
+      margin-top: var(--space-md);
     }
 
     .details-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md);
+      margin-top: var(--space-md);
     }
 
     .detail {
@@ -442,7 +482,7 @@ interface WineOption {
     .summary-content {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
     }
 
     .summary-row {
@@ -460,7 +500,7 @@ interface WineOption {
       .form-row {
         display: grid;
         grid-template-columns: 2fr 1fr 150px auto;
-        gap: var(--vinheria-spacing-md, 16px);
+        gap: var(--space-md);
         align-items: end;
 
         @media (max-width: 839px) {
@@ -471,7 +511,7 @@ interface WineOption {
       .form-field {
         display: flex;
         flex-direction: column;
-        gap: var(--vinheria-spacing-xs, 4px);
+        gap: var(--space-xxs);
 
         label {
           font-size: var(--vinheria-font-size-sm, 0.875rem);
@@ -489,7 +529,7 @@ interface WineOption {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: var(--vinheria-spacing-xs, 4px) 0;
+      padding: var(--space-xxs) 0;
 
       .wine-info {
         display: flex;
@@ -512,7 +552,7 @@ interface WineOption {
     .warehouse-option {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
 
       .wh-code { font-weight: 600; }
       .wh-name {
@@ -523,16 +563,16 @@ interface WineOption {
 
     .item-preview {
       display: flex;
-      gap: var(--vinheria-spacing-lg, 24px);
-      margin-top: var(--vinheria-spacing-md, 16px);
-      padding: var(--vinheria-spacing-md, 16px);
-        background: var(--m3-surface-container-lowest);
-      border-radius: var(--vinheria-radius-md, 8px);
+      gap: var(--space-lg);
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: var(--m3-surface-container-lowest);
+      border-radius: var(--radius-md);
 
       .preview-row {
         display: flex;
         align-items: center;
-        gap: var(--vinheria-spacing-sm, 8px);
+        gap: var(--space-sm);
       }
 
       .preview-label {
@@ -541,9 +581,9 @@ interface WineOption {
       }
     }
 
-    :host ::ng-deep .add-item-card,
-    :host ::ng-deep .items-card {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+    .add-item-card,
+    .items-card {
+      margin-bottom: var(--space-lg);
     }
 
     .sku {
@@ -562,18 +602,16 @@ interface WineOption {
       }
     }
 
-    :host ::ng-deep .quantity-input {
+    .quantity-input-form {
       width: 100px;
     }
-
-
   `]
 })
 export class SalesOrderCreateComponent {
   private router = inject(Router);
   private currencyService = inject(CurrencyService);
   private authService = inject(AuthService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
 
   // Customer selection
   customerOptions = CUSTOMERS.filter(c => c.status === 'ACTIVE');
@@ -583,6 +621,7 @@ export class SalesOrderCreateComponent {
   allWines = WINES;
   wineSearchResults = signal<Wine[]>([]);
   selectedWine = signal<Wine | null>(null);
+  searchText = signal('');
 
   // Warehouse selection
   selectedWarehouse = signal<Warehouse | null>(null);
@@ -592,6 +631,8 @@ export class SalesOrderCreateComponent {
 
   // Order items
   orderItems = signal<OrderItem[]>([]);
+
+  readonly displayedColumns = ['sku', 'name', 'warehouse', 'quantity', 'price', 'total', 'margin', 'actions'];
 
   // Computed: filtered wines based on search
   filteredWines = computed(() => this.wineSearchResults());
@@ -666,8 +707,28 @@ export class SalesOrderCreateComponent {
     return this.canSave();
   });
 
-  searchWines(event: { query: string }): void {
-    const query = event.query.toLowerCase();
+  displayFn = (value: Wine | string | null): string => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return value.name;
+  };
+
+  compareCustomers(a: Customer | null, b: Customer | null): boolean {
+    return a?.id === b?.id;
+  }
+
+  compareWarehouses(a: Warehouse | null, b: Warehouse | null): boolean {
+    return a?.id === b?.id;
+  }
+
+  searchWines(event: Event): void {
+    this.selectedWine.set(null);
+    const query = (event.target as HTMLInputElement).value.toLowerCase();
+    if (!query) {
+      this.wineSearchResults.set([]);
+      return;
+    }
+
     this.wineSearchResults.set(
       this.allWines.filter(wine =>
         wine.name.toLowerCase().includes(query) ||
@@ -675,6 +736,12 @@ export class SalesOrderCreateComponent {
         wine.producer.toLowerCase().includes(query)
       ).slice(0, 20)
     );
+  }
+
+  onWineSelected(event: MatAutocompleteSelectedEvent): void {
+    const wine = event.option.value as Wine;
+    this.selectedWine.set(wine);
+    this.searchText.set(wine.name);
   }
 
   getStockForWarehouse(warehouseId: string): number {
@@ -724,21 +791,23 @@ export class SalesOrderCreateComponent {
     this.selectedWine.set(null);
     this.selectedWarehouse.set(null);
     this.itemQuantity.set(1);
+    this.searchText.set('');
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'success',
       summary: 'Item Added',
       detail: `${wine.name} added to order`
     });
   }
 
-  updateItemQuantity(index: number): void {
+  updateItemQuantity(index: number, quantity: number): void {
     this.orderItems.update(items => {
       const item = items[index];
+      item.quantity = quantity;
       item.totalPrice = {
-        BRL: item.unitPrice.BRL * item.quantity,
-        PYG: item.unitPrice.PYG * item.quantity,
-        USD: item.unitPrice.USD * item.quantity
+        BRL: item.unitPrice.BRL * quantity,
+        PYG: item.unitPrice.PYG * quantity,
+        USD: item.unitPrice.USD * quantity
       };
       return [...items];
     });
@@ -749,7 +818,7 @@ export class SalesOrderCreateComponent {
   }
 
   saveDraft(): void {
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'info',
       summary: 'Draft Saved',
       detail: 'Order saved as draft'
@@ -760,7 +829,7 @@ export class SalesOrderCreateComponent {
   submitOrder(): void {
     const isAdmin = this.authService.userRole() === 'ADMIN';
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'success',
       summary: 'Order Submitted',
       detail: isAdmin ? 'Order has been auto-approved' : 'Order sent for approval'
