@@ -291,19 +291,19 @@ interface PendingOrder {
       flex-direction: column;
       align-items: center;
       padding: var(--space-md) var(--space-lg);
-      background: var(--m3-surface);
+      background: var(--color-surface);
       border-radius: var(--radius-md);
-      box-shadow: var(--p-card-shadow);
+      box-shadow: var(--shadow-level-1);
 
       .stat-value {
-        font-size: var(--vinheria-font-size-2xl, 1.5rem);
+        font-size: var(--font-size-2xl, 1.5rem);
         font-weight: 700;
         color: var(--color-accent-orange, #ed6c02);
       }
 
       .stat-label {
-        font-size: var(--vinheria-font-size-sm, 0.875rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-sm, 0.875rem);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -312,12 +312,12 @@ interface PendingOrder {
     }
 
     .order-number {
-      font-family: var(--vinheria-font-mono, monospace);
-      color: var(--m3-primary);
+      font-family: var(--font-mono, monospace);
+      color: var(--color-primary);
     }
 
     .na {
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
       font-style: italic;
     }
 
@@ -351,7 +351,7 @@ interface PendingOrder {
         align-items: center;
         padding: var(--space-xxs) 0;
 
-        .label { color: var(--m3-on-surface-variant); }
+        .label { color: var(--color-ink-secondary); }
       }
     }
   `]

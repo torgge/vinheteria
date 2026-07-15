@@ -100,13 +100,13 @@ export interface WineCardData {
   `,
   styles: [`
     .wine-card {
-      border-radius: var(--vinheria-radius-lg);
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      transition: transform var(--vinheria-transition-fast, 0.15s), box-shadow var(--vinheria-transition-fast, 0.15s);
+      transition: transform var(--motion-fast, 0.15s), box-shadow var(--motion-fast, 0.15s);
 
       &:hover {
         transform: translateY(-4px);
-        box-shadow: var(--m3-elevation-3);
+        box-shadow: var(--shadow-level-2);
       }
     }
 
@@ -124,7 +124,7 @@ export interface WineCardData {
     .wine-image {
       position: relative;
       height: 180px;
-      background: var(--vinheria-wine-image-gradient);
+      background: var(--wine-placeholder-gradient);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -140,27 +140,27 @@ export interface WineCardData {
 
     .wine-badges {
       position: absolute;
-      top: var(--vinheria-spacing-sm, 8px);
-      right: var(--vinheria-spacing-sm, 8px);
+      top: var(--space-xs, 8px);
+      right: var(--space-xs, 8px);
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-xs, 4px);
+      gap: var(--space-xxs, 4px);
       align-items: flex-end;
     }
 
     .wine-content {
-      padding: var(--vinheria-spacing-md, 16px);
+      padding: var(--space-md, 16px);
     }
 
     .wine-header {
-      margin-bottom: var(--vinheria-spacing-sm, 8px);
+      margin-bottom: var(--space-xs, 8px);
     }
 
     .wine-name {
-      font-size: var(--vinheria-font-size-md, 1rem);
+      font-size: var(--font-size-md, 1rem);
       font-weight: 600;
-      color: var(--m3-on-surface);
-      margin: 0 0 var(--vinheria-spacing-xs, 4px) 0;
+      color: var(--color-ink);
+      margin: 0 0 var(--space-xxs, 4px) 0;
       line-height: 1.3;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -169,48 +169,48 @@ export interface WineCardData {
     }
 
     .wine-producer {
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
     }
 
     .wine-details {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-xs, 4px);
-      margin-bottom: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-xxs, 4px);
+      margin-bottom: var(--space-md, 16px);
     }
 
     .wine-detail {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-xs, 4px);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface-variant);
+      gap: var(--space-xxs, 4px);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
 
       mat-icon {
         font-size: 14px;
         width: 14px;
         height: 14px;
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
       }
     }
 
     .wine-sku {
-      font-family: var(--vinheria-font-mono, 'JetBrains Mono', monospace);
-      font-size: var(--vinheria-font-size-xs, 0.75rem);
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: var(--font-size-xs, 0.75rem);
     }
 
     .wine-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: var(--vinheria-spacing-sm, 8px);
-      border-top: 1px solid var(--m3-outline-variant);
+      padding-top: var(--space-xs, 8px);
+      border-top: 1px solid var(--color-hairline);
     }
 
     .wine-actions {
       display: flex;
-      gap: var(--vinheria-spacing-xs, 4px);
+      gap: var(--space-xxs, 4px);
     }
   `]
 })

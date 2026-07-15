@@ -49,3 +49,45 @@ html {
   // Tipografia base
   --mat-app-body-medium-font: var(--font-family);
 }
+
+// ── Card variants (DESIGN.md) — consumed by login, wine-card, kpi-card ──
+.card-elevated {
+  box-shadow: var(--shadow-level-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline) !important;
+}
+
+.card-filled {
+  box-shadow: none;
+  background: var(--color-canvas-soft);
+  border: none !important;
+}
+
+.card-outlined {
+  box-shadow: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline) !important;
+
+  &:hover {
+    border-color: var(--color-ink-muted) !important;
+  }
+}
+
+// ── State layer hover utility ──
+.state-layer-hover {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: transparent;
+    transition: background var(--motion-fast);
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+  }
+}

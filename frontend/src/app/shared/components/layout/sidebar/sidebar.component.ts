@@ -96,16 +96,16 @@ interface MenuItem {
       top: 0;
       left: 0;
       height: 100vh;
-      width: var(--vinheria-sidebar-width);
-      background: var(--m3-surface);
-      box-shadow: var(--m3-elevation-1);
+      width: var(--layout-sidebar-width);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-level-1);
       display: flex;
       flex-direction: column;
-      transition: width var(--vinheria-transition-normal);
+      transition: width var(--motion-normal);
       z-index: 1000;
 
       &.collapsed {
-        width: var(--vinheria-sidebar-collapsed-width);
+        width: var(--layout-sidebar-collapsed-width);
 
         .logo-text {
           display: none;
@@ -118,46 +118,46 @@ interface MenuItem {
     }
 
     .sidebar-header {
-      padding: var(--vinheria-spacing-lg);
-      border-bottom: 1px solid var(--m3-outline-variant);
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--color-hairline);
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm);
+      gap: var(--space-xs);
 
       mat-icon {
         font-size: 1.75rem;
         width: 1.75rem;
         height: 1.75rem;
-        color: var(--m3-primary);
+        color: var(--color-primary);
       }
 
       .logo-text {
-        font-family: var(--vinheria-font-display);
-        font-size: var(--vinheria-font-size-xl);
+        font-family: var(--font-family);
+        font-size: var(--font-size-xl);
         font-weight: 600;
-        color: var(--m3-primary);
+        color: var(--color-primary);
       }
     }
 
     .sidebar-nav {
       flex: 1;
-      padding: var(--vinheria-spacing-md);
+      padding: var(--space-md);
       overflow-y: auto;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
-      padding: var(--vinheria-spacing-sm) var(--vinheria-spacing-md);
-      border-radius: var(--vinheria-radius-md);
-      color: var(--m3-on-surface-variant);
+      gap: var(--space-md);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--radius-md);
+      color: var(--color-ink-secondary);
       text-decoration: none;
-      transition: all var(--vinheria-transition-fast);
-      margin-bottom: var(--vinheria-spacing-xs);
+      transition: all var(--motion-fast);
+      margin-bottom: var(--space-xxs);
       position: relative;
 
       mat-icon {
@@ -176,69 +176,69 @@ interface MenuItem {
         content: '';
         position: absolute;
         inset: 0;
-        border-radius: var(--m3-radius-sm);
+        border-radius: var(--radius-sm);
         transition: background 150ms ease;
         pointer-events: none;
       }
 
       &:hover {
-        color: var(--m3-on-surface);
+        color: var(--color-ink);
 
         &::after {
-          background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+          background: linear-gradient(rgba(var(--color-primary-rgb), var(--state-hover-opacity)), rgba(var(--color-primary-rgb), var(--state-hover-opacity)));
         }
       }
 
       &.active {
-        color: var(--m3-primary);
+        color: var(--color-primary);
 
         mat-icon {
-          color: var(--m3-primary);
+          color: var(--color-primary);
         }
 
         &::after {
-          background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-focus-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-focus-opacity)));
+          background: linear-gradient(rgba(var(--color-primary-rgb), var(--state-focus-opacity)), rgba(var(--color-primary-rgb), var(--state-focus-opacity)));
         }
       }
     }
 
     .nav-divider {
       height: 1px;
-      background: var(--m3-outline-variant);
-      margin: var(--vinheria-spacing-md) 0;
+      background: var(--color-hairline);
+      margin: var(--space-md) 0;
     }
 
     .nav-section {
-      padding: var(--vinheria-spacing-xs) var(--vinheria-spacing-md);
-      margin-bottom: var(--vinheria-spacing-xs);
+      padding: var(--space-xxs) var(--space-md);
+      margin-bottom: var(--space-xxs);
     }
 
     .nav-section-title {
-      font-size: var(--vinheria-font-size-xs);
+      font-size: var(--font-size-xs);
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--m3-outline);
+      color: var(--color-ink-muted);
     }
 
     .sidebar-footer {
-      padding: var(--vinheria-spacing-md);
-      border-top: 1px solid var(--m3-outline-variant);
+      padding: var(--space-md);
+      border-top: 1px solid var(--color-hairline);
     }
 
     .collapse-btn {
       width: 100%;
-      padding: var(--vinheria-spacing-sm);
+      padding: var(--space-xs);
       border: none;
-      background: var(--m3-surface-container-high);
-      border-radius: var(--vinheria-radius-md);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-md);
       cursor: pointer;
-      color: var(--m3-on-surface-variant);
-      transition: all var(--vinheria-transition-fast);
+      color: var(--color-ink-secondary);
+      transition: all var(--motion-fast);
 
       &:hover {
-        background: var(--m3-primary-container);
-        color: var(--m3-primary);
+        background: var(--color-canvas-soft);
+        color: var(--color-primary);
       }
 
       mat-icon {

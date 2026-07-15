@@ -394,12 +394,12 @@ interface FilterOption<T> {
       gap: 2px;
 
       strong {
-        color: var(--m3-on-surface);
+        color: var(--color-ink);
       }
 
       .company-name, .location {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -413,8 +413,8 @@ interface FilterOption<T> {
       }
 
       .email {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -425,8 +425,8 @@ interface FilterOption<T> {
       align-items: center;
 
       .more-regions {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -444,8 +444,8 @@ interface FilterOption<T> {
 
     .lead-time, .payment-terms {
       .discount {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--vinheria-success, #2e7d32);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-accent-green, #2e7d32);
         font-weight: 600;
       }
     }
@@ -466,8 +466,8 @@ interface FilterOption<T> {
 
         h4 {
           margin: 0 0 var(--space-sm) 0;
-          color: var(--m3-primary);
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
+          color: var(--color-primary);
+          font-size: var(--font-size-sm, 0.875rem);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -488,8 +488,8 @@ interface FilterOption<T> {
         border-radius: var(--radius-sm);
 
         .label {
-          color: var(--m3-on-surface-variant);
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
+          color: var(--color-ink-secondary);
+          font-size: var(--font-size-sm, 0.875rem);
         }
       }
     }

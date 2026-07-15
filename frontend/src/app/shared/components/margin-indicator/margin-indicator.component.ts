@@ -20,7 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
       font-weight: 600;
       font-size: 0.875rem;
       padding: 0.25rem 0.5rem;
-      border-radius: var(--vinheria-radius-sm, 4px);
+      border-radius: var(--radius-sm, 4px);
 
       mat-icon {
         font-size: 0.75rem;
@@ -30,23 +30,23 @@ import { MatIconModule } from '@angular/material/icon';
     }
 
     .margin-high {
-      color: var(--vinheria-margin-high);
-      background: rgba(var(--vinheria-margin-high-rgb), 0.1);
+      color: var(--color-accent-green);
+      background: rgba(var(--color-margin-high-rgb), 0.1);
     }
 
     .margin-medium {
-      color: var(--vinheria-margin-medium);
-      background: rgba(var(--vinheria-margin-medium-rgb), 0.1);
+      color: var(--color-accent-orange);
+      background: rgba(var(--color-margin-medium-rgb), 0.1);
     }
 
     .margin-low {
-      color: var(--vinheria-margin-low);
-      background: rgba(var(--vinheria-margin-low-rgb), 0.1);
+      color: var(--color-accent-pink);
+      background: rgba(var(--color-margin-low-rgb), 0.1);
     }
 
     .margin-negative {
-      color: var(--vinheria-margin-negative);
-      background: rgba(var(--vinheria-margin-negative-rgb), 0.1);
+      color: var(--color-accent-purple-deep);
+      background: rgba(var(--color-margin-negative-rgb), 0.1);
     }
   `]
 })

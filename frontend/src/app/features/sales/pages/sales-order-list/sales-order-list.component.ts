@@ -334,17 +334,17 @@ interface StatusOption {
     }
 
     .order-number {
-      font-family: var(--vinheria-font-mono, 'JetBrains Mono', monospace);
-      color: var(--m3-primary);
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      color: var(--color-primary);
     }
 
     .items-count {
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
     }
 
     .date {
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     .actions {
@@ -366,7 +366,7 @@ interface StatusOption {
         padding: var(--space-xxs) 0;
 
         .label {
-          color: var(--m3-on-surface-variant);
+          color: var(--color-ink-secondary);
         }
       }
     }

@@ -29,20 +29,20 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
   `,
   styles: [`
     .kpi-card {
-      padding: var(--vinheria-spacing-lg, 24px);
-      border-radius: var(--vinheria-radius-lg);
-      background: var(--m3-surface-container-low);
+      padding: var(--space-lg, 24px);
+      border-radius: var(--radius-lg);
+      background: var(--color-canvas-soft);
       border: none;
     }
 
     .kpi-card--warning {
-      border-left: 4px solid var(--vinheria-warning);
+      border-left: 4px solid var(--color-accent-orange);
     }
 
     .kpi-content {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
     }
 
     .kpi-icon {
@@ -51,7 +51,7 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: var(--vinheria-radius-md);
+      border-radius: var(--radius-md);
       flex-shrink: 0;
 
       mat-icon {
@@ -62,23 +62,23 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
     }
 
     .kpi-icon--success {
-      background: var(--vinheria-success-bg);
-      color: var(--vinheria-success);
+      background: var(--color-success-bg);
+      color: var(--color-accent-green);
     }
 
     .kpi-icon--warning {
-      background: var(--vinheria-warning-bg);
-      color: var(--vinheria-warning);
+      background: var(--color-warning-bg);
+      color: var(--color-accent-orange);
     }
 
     .kpi-icon--info {
-      background: var(--vinheria-info-bg);
-      color: var(--vinheria-info);
+      background: var(--color-info-bg);
+      color: var(--color-accent-sky);
     }
 
     .kpi-icon--primary {
-      background: var(--m3-primary-container);
-      color: var(--m3-on-primary-container);
+      background: var(--color-canvas-soft);
+      color: var(--color-ink);
     }
 
     .kpi-data {
@@ -86,15 +86,15 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
     }
 
     .kpi-value {
-      font-size: var(--vinheria-font-size-2xl);
+      font-size: var(--font-size-2xl);
       font-weight: 700;
-      color: var(--m3-on-surface);
+      color: var(--color-ink);
       line-height: 1.2;
     }
 
     .kpi-label {
-      font-size: var(--vinheria-font-size-sm);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-sm);
+      color: var(--color-ink-secondary);
       margin-top: 2px;
     }
 
@@ -102,7 +102,7 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: var(--vinheria-font-size-sm);
+      font-size: var(--font-size-sm);
       font-weight: 600;
       margin-top: 4px;
 
@@ -114,15 +114,15 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
     }
 
     .trend-up {
-      color: var(--vinheria-success);
+      color: var(--color-accent-green);
     }
 
     .trend-down {
-      color: var(--vinheria-error);
+      color: var(--color-error);
     }
 
     .trend-neutral {
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
   `]
 })

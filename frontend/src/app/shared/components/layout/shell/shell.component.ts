@@ -41,25 +41,25 @@ import { TopbarComponent } from '../topbar/topbar.component';
     .shell-container {
       display: flex;
       min-height: 100vh;
-      background: var(--m3-surface-container-lowest);
+      background: var(--color-canvas-soft);
     }
 
     .shell-main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      margin-left: var(--vinheria-sidebar-width);
-      transition: margin-left var(--vinheria-transition-normal);
+      margin-left: var(--layout-sidebar-width);
+      transition: margin-left var(--motion-normal);
     }
 
     .sidebar-collapsed .shell-main {
-      margin-left: var(--vinheria-sidebar-collapsed-width);
+      margin-left: var(--layout-sidebar-collapsed-width);
     }
 
     .shell-content {
       flex: 1;
-      padding: var(--vinheria-spacing-xl);
-      margin-top: var(--vinheria-topbar-height);
+      padding: var(--space-xl);
+      margin-top: var(--layout-topbar-height);
       overflow-y: auto;
     }
 
@@ -70,21 +70,21 @@ import { TopbarComponent } from '../topbar/topbar.component';
       }
 
       .shell-content {
-        padding: var(--vinheria-spacing-md, 16px);
+        padding: var(--space-md, 16px);
       }
     }
 
     /* Medium: collapsed sidebar */
     @media (min-width: 600px) and (max-width: 839px) {
       .shell-main {
-        margin-left: var(--vinheria-sidebar-collapsed-width, 80px);
+        margin-left: var(--layout-sidebar-collapsed-width, 80px);
       }
     }
 
     /* Expanded+: full sidebar */
     @media (min-width: 840px) {
       .shell-main {
-        margin-left: var(--vinheria-sidebar-width, 280px);
+        margin-left: var(--layout-sidebar-width, 280px);
       }
     }
 

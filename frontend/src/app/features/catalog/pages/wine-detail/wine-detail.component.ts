@@ -235,18 +235,18 @@ interface StockInfo extends StockPosition {
   `,
   styles: [`
     .wine-detail-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal, 0.3s);
     }
 
     .back-nav {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
     }
 
     .wine-detail-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: var(--vinheria-spacing-xl, 32px);
-      margin-bottom: var(--vinheria-spacing-xl, 32px);
+      gap: var(--space-xl, 32px);
+      margin-bottom: var(--space-xl, 32px);
 
       @media (min-width: 840px) {
         grid-template-columns: minmax(300px, 400px) 1fr;
@@ -255,7 +255,7 @@ interface StockInfo extends StockPosition {
 
     .wine-image-section {
       position: sticky;
-      top: var(--vinheria-spacing-lg, 24px);
+      top: var(--space-lg, 24px);
       height: fit-content;
 
       @media (max-width: 839px) {
@@ -265,9 +265,9 @@ interface StockInfo extends StockPosition {
     }
 
     .wine-image-container {
-      background: var(--vinheria-wine-image-gradient);
-      border-radius: var(--vinheria-radius-lg, 12px);
-      padding: var(--vinheria-spacing-xl, 32px);
+      background: var(--wine-placeholder-gradient);
+      border-radius: var(--radius-lg, 12px);
+      padding: var(--space-xl, 32px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -282,19 +282,19 @@ interface StockInfo extends StockPosition {
     }
 
     .wine-info-section {
-      background: var(--m3-surface);
-      border-radius: var(--vinheria-radius-lg, 12px);
-      padding: var(--vinheria-spacing-xl, 32px);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg, 12px);
+      padding: var(--space-xl, 32px);
     }
 
     .wine-header {
-      margin-bottom: var(--vinheria-spacing-md, 16px);
+      margin-bottom: var(--space-md, 16px);
     }
 
     .wine-badges {
       display: flex;
-      gap: var(--vinheria-spacing-sm, 8px);
-      margin-bottom: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-xs, 8px);
+      margin-bottom: var(--space-md, 16px);
       flex-wrap: wrap;
     }
 
@@ -321,35 +321,35 @@ interface StockInfo extends StockPosition {
     }
 
     .wine-header h1 {
-      font-size: var(--vinheria-font-size-2xl, 1.5rem);
-      margin-bottom: var(--vinheria-spacing-xs, 4px);
+      font-size: var(--font-size-2xl, 1.5rem);
+      margin-bottom: var(--space-xxs, 4px);
     }
 
     .wine-producer {
-      font-size: var(--vinheria-font-size-md, 1rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-md, 1rem);
+      color: var(--color-ink-secondary);
     }
 
     .wine-pricing {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
     }
 
     .price-main {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
     }
 
     .price-label {
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
     }
 
     .price-currencies {
       display: flex;
-      gap: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
       flex-wrap: wrap;
     }
 
@@ -360,29 +360,29 @@ interface StockInfo extends StockPosition {
     }
 
     .currency-code {
-      font-size: var(--vinheria-font-size-xs, 0.75rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-ink-secondary);
       font-weight: 600;
     }
 
     .currency-value {
-      font-family: var(--vinheria-font-mono, 'JetBrains Mono', monospace);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     .wine-details-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
     }
 
     .detail-item {
       display: flex;
       align-items: flex-start;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
 
       mat-icon {
-        color: var(--m3-primary);
+        color: var(--color-primary);
         font-size: 1rem;
         width: 1rem;
         height: 1rem;
@@ -396,45 +396,45 @@ interface StockInfo extends StockPosition {
     }
 
     .detail-label {
-      font-size: var(--vinheria-font-size-xs, 0.75rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-ink-secondary);
     }
 
     .detail-value {
       font-weight: 600;
 
       &.sku {
-        font-family: var(--vinheria-font-mono, 'JetBrains Mono', monospace);
+        font-family: var(--font-mono, 'JetBrains Mono', monospace);
       }
     }
 
     .wine-description,
     .wine-tasting {
       h3 {
-        font-size: var(--vinheria-font-size-md, 1rem);
-        margin-bottom: var(--vinheria-spacing-sm, 8px);
+        font-size: var(--font-size-md, 1rem);
+        margin-bottom: var(--space-xs, 8px);
       }
 
       p {
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
         line-height: 1.6;
       }
     }
 
     .wine-tasting {
-      margin-top: var(--vinheria-spacing-md, 16px);
+      margin-top: var(--space-md, 16px);
     }
 
     .stock-card {
-      margin-top: var(--vinheria-spacing-xl, 32px);
+      margin-top: var(--space-xl, 32px);
     }
 
     .quantity {
       font-weight: 600;
-      font-family: var(--vinheria-font-mono, 'JetBrains Mono', monospace);
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
 
       &.reserved {
-        color: var(--vinheria-warning, #ed6c02);
+        color: var(--color-accent-orange, #ed6c02);
       }
     }
 
@@ -443,25 +443,25 @@ interface StockInfo extends StockPosition {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: var(--vinheria-spacing-3xl, 64px);
+      padding: var(--space-3xl, 64px);
       text-align: center;
 
       mat-icon {
         font-size: 5rem;
         width: 5rem;
         height: 5rem;
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
         opacity: 0.3;
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        margin-bottom: var(--space-lg, 24px);
       }
 
       h2 {
-        margin-bottom: var(--vinheria-spacing-sm, 8px);
+        margin-bottom: var(--space-xs, 8px);
       }
 
       p {
-        color: var(--m3-on-surface-variant);
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        color: var(--color-ink-secondary);
+        margin-bottom: var(--space-lg, 24px);
       }
     }
   `]

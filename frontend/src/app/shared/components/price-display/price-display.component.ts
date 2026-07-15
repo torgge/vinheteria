@@ -21,15 +21,15 @@ export interface SimplePrices {
   styles: [`
     .price {
       font-weight: 600;
-      font-family: var(--vinheria-font-mono, 'JetBrains Mono', monospace);
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
     }
 
     .price.large {
-      font-size: var(--vinheria-font-size-xl, 1.25rem);
+      font-size: var(--font-size-xl, 1.25rem);
     }
 
     .price.small {
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
+      font-size: var(--font-size-sm, 0.875rem);
     }
   `]
 })

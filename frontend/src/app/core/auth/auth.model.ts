@@ -114,21 +114,21 @@ export const ROLE_INFO: Record<UserRole, { label: string; icon: string; color: s
   SELLER: {
     label: 'Seller',
     icon: 'shopping_cart',
-    color: 'var(--vinheria-success)'
+    color: 'var(--color-accent-green)'
   },
   PURCHASER: {
     label: 'Purchaser',
     icon: 'local_shipping',
-    color: 'var(--vinheria-info)'
+    color: 'var(--color-accent-sky)'
   },
   MANAGER: {
     label: 'Manager',
     icon: 'group',
-    color: 'var(--vinheria-warning)'
+    color: 'var(--color-accent-orange)'
   },
   ADMIN: {
     label: 'Administrator',
     icon: 'verified_user',
-    color: 'var(--m3-primary)'
+    color: 'var(--color-primary)'
   }
 };

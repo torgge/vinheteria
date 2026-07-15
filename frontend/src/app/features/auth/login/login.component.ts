@@ -27,7 +27,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     <div class="login-container" *transloco="let t">
       <div class="login-header">
         <div class="logo">
-          <mat-icon fontIcon="inventory_2" style="font-size: 3rem; width: 3rem; height: 3rem; color: var(--m3-primary)" />
+          <mat-icon fontIcon="inventory_2" style="font-size: 3rem; width: 3rem; height: 3rem; color: var(--color-primary)" />
         </div>
         <h1 class="vinheria-display">{{ t('common.appName') }}</h1>
         <p class="text-secondary">B2B Wine Distribution Platform</p>
@@ -90,51 +90,51 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-xl);
-      background: linear-gradient(135deg, var(--m3-surface-container-lowest) 0%, var(--m3-primary-container) 100%);
+      padding: var(--space-xl);
+      background: linear-gradient(135deg, var(--color-canvas-soft) 0%, var(--color-canvas-soft) 100%);
     }
 
     .login-header {
       text-align: center;
-      margin-bottom: var(--vinheria-spacing-lg);
+      margin-bottom: var(--space-lg);
 
       .logo {
-        margin-bottom: var(--vinheria-spacing-md);
+        margin-bottom: var(--space-md);
       }
 
       h1 {
-        color: var(--m3-primary);
-        margin-bottom: var(--vinheria-spacing-xs);
+        color: var(--color-primary);
+        margin-bottom: var(--space-xxs);
       }
     }
 
     .login-settings {
-      margin-bottom: var(--vinheria-spacing-lg);
+      margin-bottom: var(--space-lg);
     }
 
     .demo-badge {
       display: inline-flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm);
-      padding: var(--vinheria-spacing-sm) var(--vinheria-spacing-md);
-      background: var(--vinheria-info-bg);
-      color: var(--vinheria-info);
-      border-radius: var(--vinheria-radius-full);
-      font-size: var(--vinheria-font-size-sm);
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-md);
+      background: var(--color-info-bg);
+      color: var(--color-accent-sky);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
       font-weight: 600;
-      margin-bottom: var(--vinheria-spacing-lg);
+      margin-bottom: var(--space-lg);
     }
 
     .select-user-title {
       font-family: var(--font-family);
-      font-size: var(--vinheria-font-size-xl);
-      color: var(--m3-on-surface-variant);
-      margin-bottom: var(--vinheria-spacing-lg);
+      font-size: var(--font-size-xl);
+      color: var(--color-ink-secondary);
+      margin-bottom: var(--space-lg);
     }
 
     .user-cards {
       display: grid;
-      gap: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
       max-width: 1400px;
       width: 100%;
       grid-template-columns: 1fr;
@@ -153,20 +153,20 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     }
 
     .user-card {
-      background: var(--m3-surface-container-low);
+      background: var(--color-canvas-soft);
       border: none;
-      border-radius: var(--m3-radius-md);
-      box-shadow: var(--m3-elevation-1);
-      padding: var(--vinheria-spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-level-1);
+      padding: var(--space-lg);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
+      gap: var(--space-md);
       cursor: pointer;
-      transition: all var(--vinheria-transition-normal);
+      transition: all var(--motion-normal);
 
       &:hover {
-        box-shadow: var(--m3-elevation-3);
+        box-shadow: var(--shadow-level-2);
         transform: translateY(-4px);
       }
 
@@ -175,7 +175,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
         height: 80px;
         border-radius: 50%;
         overflow: hidden;
-        border: 3px solid var(--m3-primary-container);
+        border: 3px solid var(--color-canvas-soft);
 
         img {
           width: 100%;
@@ -188,23 +188,23 @@ import { CurrencyService } from '../../../core/currency/currency.service';
         text-align: center;
 
         h3 {
-          font-family: var(--vinheria-font-display);
-          font-size: var(--vinheria-font-size-xl);
-          margin-bottom: var(--vinheria-spacing-xs);
+          font-family: var(--font-family);
+          font-size: var(--font-size-xl);
+          margin-bottom: var(--space-xxs);
         }
 
         .user-role {
           display: inline-flex;
           align-items: center;
-          gap: var(--vinheria-spacing-xs);
+          gap: var(--space-xxs);
           font-weight: 600;
-          font-size: var(--vinheria-font-size-sm);
-          margin-bottom: var(--vinheria-spacing-sm);
+          font-size: var(--font-size-sm);
+          margin-bottom: var(--space-xs);
         }
 
         .user-description {
-          color: var(--m3-on-surface-variant);
-          font-size: var(--vinheria-font-size-sm);
+          color: var(--color-ink-secondary);
+          font-size: var(--font-size-sm);
           line-height: 1.5;
           max-width: 280px;
         }
@@ -217,9 +217,9 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 
     .login-footer {
       margin-top: auto;
-      padding-top: var(--vinheria-spacing-xl);
-      color: var(--m3-outline);
-      font-size: var(--vinheria-font-size-sm);
+      padding-top: var(--space-xl);
+      color: var(--color-ink-muted);
+      font-size: var(--font-size-sm);
     }
   `]
 })
@@ -249,7 +249,7 @@ export class LoginComponent {
   }
 
   getRoleColor(role: UserRole): string {
-    return ROLE_INFO[role]?.color ?? 'var(--m3-on-surface-variant)';
+    return ROLE_INFO[role]?.color ?? 'var(--color-ink-secondary)';
   }
 
   getRoleIcon(role: UserRole): string {

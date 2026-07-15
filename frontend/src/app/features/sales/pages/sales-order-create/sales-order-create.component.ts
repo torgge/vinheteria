@@ -426,8 +426,8 @@ interface OrderItem {
 
       .customer-name { font-weight: 600; }
       .customer-type {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -444,16 +444,16 @@ interface OrderItem {
 
       .customer-name { font-weight: 600; }
       .customer-company {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
     .customer-type-badge {
-      font-size: var(--vinheria-font-size-xs, 0.75rem);
+      font-size: var(--font-size-xs, 0.75rem);
       padding: 2px 8px;
       border-radius: var(--radius-sm);
-      background: var(--m3-surface-container-low);
+      background: var(--color-canvas-soft);
     }
 
     .customer-details {
@@ -473,8 +473,8 @@ interface OrderItem {
       gap: 2px;
 
       .label {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
       .value { font-weight: 600; }
     }
@@ -491,7 +491,7 @@ interface OrderItem {
       align-items: center;
 
       &.total {
-        font-size: var(--vinheria-font-size-lg, 1.125rem);
+        font-size: var(--font-size-lg, 1.125rem);
         font-weight: 700;
       }
     }
@@ -514,9 +514,9 @@ interface OrderItem {
         gap: var(--space-xxs);
 
         label {
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
+          font-size: var(--font-size-sm, 0.875rem);
           font-weight: 600;
-          color: var(--m3-on-surface-variant);
+          color: var(--color-ink-secondary);
         }
       }
 
@@ -537,15 +537,15 @@ interface OrderItem {
 
         .wine-name { font-weight: 600; }
         .wine-sku {
-          font-size: var(--vinheria-font-size-xs, 0.75rem);
-          font-family: var(--vinheria-font-mono, monospace);
-          color: var(--m3-on-surface-variant);
+          font-size: var(--font-size-xs, 0.75rem);
+          font-family: var(--font-mono, monospace);
+          color: var(--color-ink-secondary);
         }
       }
 
       .wine-price {
         font-weight: 600;
-        color: var(--m3-primary);
+        color: var(--color-primary);
       }
     }
 
@@ -557,7 +557,7 @@ interface OrderItem {
       .wh-code { font-weight: 600; }
       .wh-name {
         flex: 1;
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -566,7 +566,7 @@ interface OrderItem {
       gap: var(--space-lg);
       margin-top: var(--space-md);
       padding: var(--space-md);
-      background: var(--m3-surface-container-lowest);
+      background: var(--color-canvas-soft);
       border-radius: var(--radius-md);
 
       .preview-row {
@@ -576,8 +576,8 @@ interface OrderItem {
       }
 
       .preview-label {
-        font-size: var(--vinheria-font-size-sm, 0.875rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-sm, 0.875rem);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -587,8 +587,8 @@ interface OrderItem {
     }
 
     .sku {
-      font-family: var(--vinheria-font-mono, monospace);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     .item-wine {
@@ -597,8 +597,8 @@ interface OrderItem {
 
       .wine-name { font-weight: 600; }
       .wine-producer {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 

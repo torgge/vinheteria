@@ -104,26 +104,26 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
       position: fixed;
       top: 0;
       right: 0;
-      left: var(--vinheria-sidebar-width);
-      height: var(--vinheria-topbar-height);
-      background: var(--m3-surface);
-      box-shadow: var(--m3-elevation-2);
+      left: var(--layout-sidebar-width);
+      height: var(--layout-topbar-height);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-level-1);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--vinheria-spacing-lg);
+      padding: 0 var(--space-lg);
       z-index: 999;
-      transition: left var(--vinheria-transition-normal);
+      transition: left var(--motion-normal);
     }
 
     :host-context(.sidebar-collapsed) .topbar {
-      left: var(--vinheria-sidebar-collapsed-width);
+      left: var(--layout-sidebar-collapsed-width);
     }
 
     .topbar-start {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
+      gap: var(--space-md);
     }
 
     .menu-toggle {
@@ -137,7 +137,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     .topbar-end {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
+      gap: var(--space-md);
     }
 
     .topbar-select {
@@ -153,14 +153,14 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     .user-menu {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm);
-      padding: var(--vinheria-spacing-xs) var(--vinheria-spacing-sm);
-      border-radius: var(--vinheria-radius-md);
+      gap: var(--space-xs);
+      padding: var(--space-xxs) var(--space-xs);
+      border-radius: var(--radius-md);
       cursor: pointer;
-      transition: background var(--vinheria-transition-fast);
+      transition: background var(--motion-fast);
 
       &:hover {
-        background: var(--m3-surface-container-high);
+        background: var(--color-canvas-soft);
       }
     }
 
@@ -196,12 +196,12 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
 
     .user-name {
       font-weight: 600;
-      font-size: var(--vinheria-font-size-sm);
-      color: var(--m3-on-surface);
+      font-size: var(--font-size-sm);
+      color: var(--color-ink);
     }
 
     .user-role {
-      font-size: var(--vinheria-font-size-xs);
+      font-size: var(--font-size-xs);
       font-weight: 500;
     }
 
@@ -219,7 +219,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     /* Medium: collapsed sidebar offset */
     @media (min-width: 600px) and (max-width: 839px) {
       .topbar {
-        left: var(--vinheria-sidebar-collapsed-width, 80px);
+        left: var(--layout-sidebar-collapsed-width, 80px);
       }
     }
   `]
@@ -263,7 +263,7 @@ export class TopbarComponent {
 
   getRoleColor(): string {
     const role = this.authService.userRole();
-    return role ? ROLE_INFO[role]?.color : 'var(--m3-on-surface-variant)';
+    return role ? ROLE_INFO[role]?.color : 'var(--color-ink-secondary)';
   }
 
   getInitials(): string {

@@ -259,23 +259,23 @@ interface StatusOption {
   `,
   styles: [`
     .fulfillment-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal, 0.3s);
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
 
-      h1 { margin-bottom: var(--vinheria-spacing-xs, 4px); }
+      h1 { margin-bottom: var(--space-xxs, 4px); }
     }
 
     .stats-row {
       display: flex;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
       flex-wrap: wrap;
     }
 
@@ -283,36 +283,36 @@ interface StatusOption {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-sm, 8px) var(--vinheria-spacing-md, 16px);
-      background: var(--m3-surface);
-      border-radius: var(--vinheria-radius-md, 8px);
+      padding: var(--space-xs, 8px) var(--space-md, 16px);
+      background: var(--color-surface);
+      border-radius: var(--radius-md, 8px);
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       min-width: 80px;
 
       .stat-value {
-        font-size: var(--vinheria-font-size-xl, 1.25rem);
+        font-size: var(--font-size-xl, 1.25rem);
         font-weight: 700;
       }
 
       .stat-label {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
 
-      &.status-pending .stat-value { color: var(--vinheria-warning, #ed6c02); }
-      &.status-picking .stat-value { color: var(--vinheria-info, #0288d1); }
-      &.status-packed .stat-value { color: var(--vinheria-info, #0288d1); }
-      &.status-shipped .stat-value { color: var(--m3-primary); }
-      &.status-delivered .stat-value { color: var(--vinheria-success, #2e7d32); }
+      &.status-pending .stat-value { color: var(--color-accent-orange, #ed6c02); }
+      &.status-picking .stat-value { color: var(--color-accent-sky, #0288d1); }
+      &.status-packed .stat-value { color: var(--color-accent-sky, #0288d1); }
+      &.status-shipped .stat-value { color: var(--color-primary); }
+      &.status-delivered .stat-value { color: var(--color-accent-green, #2e7d32); }
     }
 
     .filters-card {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
     }
 
     .filters-row {
       display: flex;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
       flex-wrap: wrap;
     }
 
@@ -323,41 +323,41 @@ interface StatusOption {
 
     .table-card {
       mat-card-content {
-        padding: var(--vinheria-spacing-lg, 24px);
+        padding: var(--space-lg, 24px);
       }
     }
 
     .fulfillment-id {
-      font-family: var(--vinheria-font-mono, monospace);
-      font-size: var(--vinheria-font-size-xs, 0.75rem);
-      color: var(--m3-on-surface-variant);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-ink-secondary);
     }
 
     .order-number {
-      font-family: var(--vinheria-font-mono, monospace);
-      color: var(--m3-primary);
+      font-family: var(--font-mono, monospace);
+      color: var(--color-primary);
     }
 
     .warehouse-code {
       font-weight: 600;
       padding: 2px 8px;
       background: var(--color-canvas-soft);
-      border-radius: var(--vinheria-radius-sm, 4px);
+      border-radius: var(--radius-sm, 4px);
     }
 
     .tracking-code {
-      font-family: var(--vinheria-font-mono, monospace);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     .na {
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
 
     .actions {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
     }
 
     .detail-content {
@@ -365,19 +365,19 @@ interface StatusOption {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        margin-bottom: var(--space-lg, 24px);
 
-        h3 { margin: 0 0 var(--vinheria-spacing-xs, 4px) 0; }
-        p { margin: 0; color: var(--m3-on-surface-variant); }
+        h3 { margin: 0 0 var(--space-xxs, 4px) 0; }
+        p { margin: 0; color: var(--color-ink-secondary); }
       }
 
       .detail-section {
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        margin-bottom: var(--space-lg, 24px);
 
         h4 {
-          margin: 0 0 var(--vinheria-spacing-sm, 8px) 0;
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
-          color: var(--m3-on-surface-variant);
+          margin: 0 0 var(--space-xs, 8px) 0;
+          font-size: var(--font-size-sm, 0.875rem);
+          color: var(--color-ink-secondary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -387,21 +387,21 @@ interface StatusOption {
     .items-list {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-xs, 4px);
+      gap: var(--space-xxs, 4px);
     }
 
     .item-row {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
-      padding: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-md, 16px);
+      padding: var(--space-xs, 8px);
       background: var(--color-canvas-soft);
-      border-radius: var(--vinheria-radius-sm, 4px);
+      border-radius: var(--radius-sm, 4px);
 
       .item-sku {
-        font-family: var(--vinheria-font-mono, monospace);
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-family: var(--font-mono, monospace);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
         width: 120px;
       }
 
@@ -409,17 +409,17 @@ interface StatusOption {
 
       .item-qty {
         font-weight: 600;
-        color: var(--m3-primary);
+        color: var(--color-primary);
       }
     }
 
     .tracking-info {
       display: flex;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
 
-      .tracking-label { color: var(--m3-on-surface-variant); }
+      .tracking-label { color: var(--color-ink-secondary); }
       .tracking-value {
-        font-family: var(--vinheria-font-mono, monospace);
+        font-family: var(--font-mono, monospace);
         font-weight: 600;
       }
     }
@@ -525,31 +525,31 @@ export class FulfillmentListComponent {
     return [
       {
         icon: 'add',
-        color: 'var(--m3-on-surface-variant)',
+        color: 'var(--color-ink-secondary)',
         title: 'Created',
         subtitle: fulfillment.createdAt ? formatDateTime(fulfillment.createdAt) : 'Pending'
       },
       {
         icon: 'list',
-        color: fulfillment.pickedAt ? 'var(--vinheria-info)' : 'var(--m3-outline-variant)',
+        color: fulfillment.pickedAt ? 'var(--color-accent-sky)' : 'var(--color-hairline)',
         title: 'Picking',
         subtitle: fulfillment.pickedAt ? formatDateTime(fulfillment.pickedAt) : undefined
       },
       {
         icon: 'inventory_2',
-        color: fulfillment.packedAt ? 'var(--vinheria-info)' : 'var(--m3-outline-variant)',
+        color: fulfillment.packedAt ? 'var(--color-accent-sky)' : 'var(--color-hairline)',
         title: 'Packed',
         subtitle: fulfillment.packedAt ? formatDateTime(fulfillment.packedAt) : undefined
       },
       {
         icon: 'local_shipping',
-        color: fulfillment.shippedAt ? 'var(--m3-primary)' : 'var(--m3-outline-variant)',
+        color: fulfillment.shippedAt ? 'var(--color-primary)' : 'var(--color-hairline)',
         title: 'Shipped',
         subtitle: fulfillment.shippedAt ? formatDateTime(fulfillment.shippedAt) : undefined
       },
       {
         icon: 'check_circle',
-        color: fulfillment.deliveredAt ? 'var(--vinheria-success)' : 'var(--m3-outline-variant)',
+        color: fulfillment.deliveredAt ? 'var(--color-accent-green)' : 'var(--color-hairline)',
         title: 'Delivered',
         subtitle: fulfillment.deliveredAt ? formatDateTime(fulfillment.deliveredAt) : undefined
       }

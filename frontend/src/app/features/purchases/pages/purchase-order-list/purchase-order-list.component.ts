@@ -362,8 +362,8 @@ interface StatusOption {
     }
 
     .order-number {
-      font-family: var(--vinheria-font-mono, monospace);
-      color: var(--m3-primary);
+      font-family: var(--font-mono, monospace);
+      color: var(--color-primary);
     }
 
     .actions {
@@ -398,7 +398,7 @@ interface StatusOption {
         padding: var(--space-xxs) 0;
 
         .label {
-          color: var(--m3-on-surface-variant);
+          color: var(--color-ink-secondary);
         }
       }
     }

@@ -195,21 +195,21 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
   `,
   styles: [`
     .dashboard {
-      animation: fadeIn var(--vinheria-transition-normal) ease-out;
+      animation: fadeIn var(--motion-normal) ease-out;
     }
 
     .dashboard-header {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs, 4px);
+        margin-bottom: var(--space-xxs, 4px);
       }
     }
 
     .kpi-grid {
       display: grid;
-      gap: var(--vinheria-spacing-md, 16px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-md, 16px);
+      margin-bottom: var(--space-lg, 24px);
       grid-template-columns: 1fr;
 
       @media (min-width: 600px) {
@@ -223,16 +223,16 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
     .quick-actions {
       display: flex;
-      gap: var(--vinheria-spacing-md, 16px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-md, 16px);
+      margin-bottom: var(--space-lg, 24px);
       flex-wrap: wrap;
     }
 
     .tables-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: var(--vinheria-spacing-lg, 24px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
     }
 
     .table-card mat-card-content {
@@ -240,13 +240,13 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
     }
 
     .table-card mat-card-header {
-      padding: var(--vinheria-spacing-md, 16px);
-      border-bottom: 1px solid var(--m3-outline-variant);
+      padding: var(--space-md, 16px);
+      border-bottom: 1px solid var(--color-hairline);
     }
 
     .card-footer {
-      padding: var(--vinheria-spacing-sm, 8px) var(--vinheria-spacing-md, 16px);
-      border-top: 1px solid var(--m3-outline-variant);
+      padding: var(--space-xs, 8px) var(--space-md, 16px);
+      border-top: 1px solid var(--color-hairline);
       text-align: center;
     }
 
@@ -256,18 +256,18 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
       .customer-type {
         font-size: 0.75rem;
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
       }
     }
 
     .target-card mat-card-content {
-      padding: var(--vinheria-spacing-lg, 24px);
+      padding: var(--space-lg, 24px);
     }
 
     .target-content {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-xl, 32px);
+      gap: var(--space-xl, 32px);
     }
 
     .target-progress {
@@ -276,16 +276,16 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
     .progress-bar {
       height: 16px;
-      background: var(--m3-surface-container-high);
-      border-radius: var(--vinheria-radius-md);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-md);
       overflow: hidden;
-      margin-bottom: var(--vinheria-spacing-sm, 8px);
+      margin-bottom: var(--space-xs, 8px);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--m3-primary) 0%, var(--vinheria-success) 100%);
-      border-radius: var(--vinheria-radius-md);
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent-green) 100%);
+      border-radius: var(--radius-md);
       transition: width 0.5s ease-out;
     }
 
@@ -293,27 +293,27 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
       display: flex;
       justify-content: space-between;
       font-size: 0.875rem;
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
 
     .target-percentage {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-md, 16px);
-      background: var(--m3-surface-container-low);
-      border-radius: var(--vinheria-radius-lg, 12px);
+      padding: var(--space-md, 16px);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-lg, 12px);
     }
 
     .percentage-value {
-      font-size: var(--vinheria-font-size-3xl);
+      font-size: var(--font-size-3xl);
       font-weight: 700;
-      color: var(--m3-primary);
+      color: var(--color-primary);
     }
 
     .percentage-label {
       font-size: 0.875rem;
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
   `]
 })

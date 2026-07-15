@@ -28,13 +28,13 @@ import { MatIconModule } from '@angular/material/icon';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--m3-surface-container-lowest);
+      background: var(--color-canvas-soft);
     }
     .unauthorized-content {
       text-align: center;
-      mat-icon { font-size: 4rem; width: 4rem; height: 4rem; color: var(--vinheria-error); margin-bottom: 1rem; }
-      h1 { color: var(--m3-on-surface); margin-bottom: 0.5rem; }
-      p { color: var(--m3-on-surface-variant); margin-bottom: 1.5rem; }
+      mat-icon { font-size: 4rem; width: 4rem; height: 4rem; color: var(--color-error); margin-bottom: 1rem; }
+      h1 { color: var(--color-ink); margin-bottom: 0.5rem; }
+      p { color: var(--color-ink-secondary); margin-bottom: 1.5rem; }
     }
   `]
 })

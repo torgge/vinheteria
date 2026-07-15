@@ -195,21 +195,21 @@ import {
   `,
   styles: [`
     .dashboard {
-      animation: fadeIn var(--vinheria-transition-normal) ease-out;
+      animation: fadeIn var(--motion-normal) ease-out;
     }
 
     .dashboard-header {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs, 4px);
+        margin-bottom: var(--space-xxs, 4px);
       }
     }
 
     .kpi-grid {
       display: grid;
-      gap: var(--vinheria-spacing-md, 16px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-md, 16px);
+      margin-bottom: var(--space-lg, 24px);
       grid-template-columns: 1fr;
 
       @media (min-width: 600px) {
@@ -224,8 +224,8 @@ import {
     .tables-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: var(--vinheria-spacing-lg, 24px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
     }
 
     .table-card mat-card-content {
@@ -233,13 +233,13 @@ import {
     }
 
     .table-card mat-card-header {
-      padding: var(--vinheria-spacing-md, 16px);
-      border-bottom: 1px solid var(--m3-outline-variant);
+      padding: var(--space-md, 16px);
+      border-bottom: 1px solid var(--color-hairline);
     }
 
     .card-footer {
-      padding: var(--vinheria-spacing-sm, 8px) var(--vinheria-spacing-md, 16px);
-      border-top: 1px solid var(--m3-outline-variant);
+      padding: var(--space-xs, 8px) var(--space-md, 16px);
+      border-top: 1px solid var(--color-hairline);
       text-align: center;
     }
 
@@ -247,16 +247,16 @@ import {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-xl, 32px);
-      color: var(--m3-on-surface-variant);
+      padding: var(--space-xl, 32px);
+      color: var(--color-ink-secondary);
 
       mat-icon {
         font-size: 2.5rem;
         width: 2.5rem;
         height: 2.5rem;
         opacity: 0.3;
-        color: var(--vinheria-success);
-        margin-bottom: var(--vinheria-spacing-sm, 8px);
+        color: var(--color-accent-green);
+        margin-bottom: var(--space-xs, 8px);
       }
     }
 
@@ -278,25 +278,25 @@ import {
       background: var(--color-accent-orange);
     }
 
-    .margin-high { color: var(--vinheria-success, #2e7d32); font-weight: 600; }
-    .margin-medium { color: var(--vinheria-warning, #ed6c02); font-weight: 600; }
-    .margin-low { color: var(--vinheria-error, #d32f2f); font-weight: 600; }
+    .margin-high { color: var(--color-accent-green, #2e7d32); font-weight: 600; }
+    .margin-medium { color: var(--color-accent-orange, #ed6c02); font-weight: 600; }
+    .margin-low { color: var(--color-error, #d32f2f); font-weight: 600; }
 
     .full-width-card mat-card-content {
-      padding: var(--vinheria-spacing-lg, 24px);
+      padding: var(--space-lg, 24px);
     }
 
     .fulfillment-summary {
       display: flex;
       justify-content: space-around;
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
     }
 
     .fulfillment-stat {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
     }
 
     .stat-icon {
@@ -309,11 +309,11 @@ import {
 
       mat-icon { font-size: 1.5rem; width: 1.5rem; height: 1.5rem; }
 
-      &.pending   { background: var(--vinheria-warning-bg); color: var(--vinheria-warning); }
-      &.picking   { background: var(--vinheria-info-bg); color: var(--vinheria-info); }
-      &.packed    { background: var(--m3-tertiary-container); color: var(--m3-on-tertiary-container); }
-      &.shipped   { background: var(--m3-secondary-container); color: var(--m3-on-secondary-container); }
-      &.delivered { background: var(--vinheria-success-bg); color: var(--vinheria-success); }
+      &.pending   { background: var(--color-warning-bg); color: var(--color-accent-orange); }
+      &.picking   { background: var(--color-info-bg); color: var(--color-accent-sky); }
+      &.packed    { background: var(--color-canvas-soft); color: var(--color-ink); }
+      &.shipped   { background: var(--color-canvas-soft); color: var(--color-ink); }
+      &.delivered { background: var(--color-success-bg); color: var(--color-accent-green); }
     }
 
     .stat-info {
@@ -322,14 +322,14 @@ import {
     }
 
     .stat-value {
-      font-size: var(--vinheria-font-size-xl);
+      font-size: var(--font-size-xl);
       font-weight: 700;
-      color: var(--m3-on-surface);
+      color: var(--color-ink);
     }
 
     .stat-label {
       font-size: 0.875rem;
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
   `]
 })

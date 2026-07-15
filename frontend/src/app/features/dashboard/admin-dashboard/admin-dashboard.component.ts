@@ -165,21 +165,21 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
   `,
   styles: [`
     .dashboard {
-      animation: fadeIn var(--vinheria-transition-normal);
+      animation: fadeIn var(--motion-normal);
     }
 
     .dashboard-header {
-      margin-bottom: var(--vinheria-spacing-xl);
+      margin-bottom: var(--space-xl);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs);
+        margin-bottom: var(--space-xxs);
       }
     }
 
     .kpi-grid {
       display: grid;
-      gap: var(--vinheria-spacing-md, 16px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-md, 16px);
+      margin-bottom: var(--space-lg, 24px);
       grid-template-columns: 1fr;
 
       @media (min-width: 600px) {
@@ -194,8 +194,8 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
     .charts-row {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: var(--vinheria-spacing-lg);
-      margin-bottom: var(--vinheria-spacing-xl);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
 
       @media (max-width: 839px) {
         grid-template-columns: 1fr;
@@ -204,25 +204,25 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
 
     .chart-card mat-card-content,
     .top-wines-card mat-card-content {
-      padding: var(--vinheria-spacing-lg);
+      padding: var(--space-lg);
     }
 
     .top-wines-list {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-sm);
+      gap: var(--space-xs);
     }
 
     .top-wine-item {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
-      padding: var(--vinheria-spacing-sm);
-      border-radius: var(--vinheria-radius-md);
-      transition: background var(--vinheria-transition-fast);
+      gap: var(--space-md);
+      padding: var(--space-xs);
+      border-radius: var(--radius-md);
+      transition: background var(--motion-fast);
 
       &:hover {
-        background: var(--m3-surface-container-high);
+        background: var(--color-canvas-soft);
       }
     }
 
@@ -230,13 +230,13 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: var(--m3-primary-container);
-      color: var(--m3-primary);
+      background: var(--color-canvas-soft);
+      color: var(--color-primary);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: var(--vinheria-font-size-sm);
+      font-size: var(--font-size-sm);
     }
 
     .wine-info {
@@ -246,27 +246,27 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
 
       .wine-name {
         font-weight: 600;
-        font-size: var(--vinheria-font-size-sm);
+        font-size: var(--font-size-sm);
       }
 
       .wine-region {
-        font-size: var(--vinheria-font-size-xs);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs);
+        color: var(--color-ink-secondary);
       }
     }
 
     .wine-sales {
       font-weight: 600;
-      color: var(--m3-primary);
+      color: var(--color-primary);
     }
 
     .orders-card mat-card-content {
-      padding: var(--vinheria-spacing-lg);
+      padding: var(--space-lg);
     }
 
-    .margin-high { color: var(--vinheria-margin-high); font-weight: 600; }
-    .margin-medium { color: var(--vinheria-margin-medium); font-weight: 600; }
-    .margin-low { color: var(--vinheria-margin-low); font-weight: 600; }
+    .margin-high { color: var(--color-accent-green); font-weight: 600; }
+    .margin-medium { color: var(--color-accent-orange); font-weight: 600; }
+    .margin-low { color: var(--color-accent-pink); font-weight: 600; }
   `]
 })
 export class AdminDashboardComponent {
@@ -283,8 +283,8 @@ export class AdminDashboardComponent {
         label: 'Sales',
         data: [65000, 72000, 68000, 85000, 92000, 88000, 95000, 102000, 98000, 115000, 125000, 135000],
         fill: true,
-        borderColor: 'var(--m3-primary)',
-        backgroundColor: 'var(--m3-primary-container)',
+        borderColor: 'var(--color-primary)',
+        backgroundColor: 'var(--color-canvas-soft)',
         tension: 0.4
       }
     ]

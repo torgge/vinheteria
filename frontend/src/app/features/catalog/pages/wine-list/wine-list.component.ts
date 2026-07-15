@@ -188,24 +188,24 @@ interface FilterOption {
   `,
   styles: [`
     .catalog-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal, 0.3s);
     }
 
     .page-header {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs, 4px);
+        margin-bottom: var(--space-xxs, 4px);
       }
     }
 
     .filters-card {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
     }
 
     .filters-grid {
       display: grid;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
       align-items: end;
       grid-template-columns: 1fr;
 
@@ -221,12 +221,12 @@ interface FilterOption {
     .filter-item {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-xs, 4px);
+      gap: var(--space-xxs, 4px);
 
       label {
-        font-size: var(--vinheria-font-size-sm, 0.875rem);
+        font-size: var(--font-size-sm, 0.875rem);
         font-weight: 600;
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
       }
     }
 
@@ -249,11 +249,11 @@ interface FilterOption {
     .price-range-display {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface);
+      gap: var(--space-xs, 8px);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink);
       font-weight: 600;
-      margin-bottom: var(--vinheria-spacing-xs, 4px);
+      margin-bottom: var(--space-xxs, 4px);
     }
 
     .filter-actions {
@@ -267,21 +267,21 @@ interface FilterOption {
     }
 
     .results-section {
-      margin-top: var(--vinheria-spacing-lg, 24px);
+      margin-top: var(--space-lg, 24px);
     }
 
     .results-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--vinheria-spacing-md, 16px);
+      margin-bottom: var(--space-md, 16px);
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
     }
 
     .results-count {
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
     }
 
     .sort-dropdown {
@@ -290,7 +290,7 @@ interface FilterOption {
 
     .vinheria-card-grid {
       display: grid;
-      gap: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
       grid-template-columns: 1fr;
 
       @media (min-width: 600px) {
@@ -312,8 +312,8 @@ interface FilterOption {
         width: 64px;
         height: 64px;
         opacity: 0.3;
-        margin-bottom: var(--vinheria-spacing-md, 16px);
-        color: var(--m3-on-surface-variant);
+        margin-bottom: var(--space-md, 16px);
+        color: var(--color-ink-secondary);
       }
     }
   `]
