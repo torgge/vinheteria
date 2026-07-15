@@ -27,8 +27,8 @@ export type StatusType = OrderStatus | FulfillmentStatus;
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 8px;
+      gap: var(--space-xxs);
+      padding: var(--space-xxs) var(--space-xs);
       border-radius: var(--radius-full);
       font: var(--font-eyebrow);
       white-space: nowrap;

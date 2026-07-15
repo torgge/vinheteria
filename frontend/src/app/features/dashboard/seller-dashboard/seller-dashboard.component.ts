@@ -42,7 +42,7 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
       <!-- KPI Cards -->
       <div class="kpi-grid">
         <app-kpi-card
-          icon="pi pi-dollar"
+          icon="attach_money"
           iconBgClass="kpi-icon--success"
           [value]="formatCurrency(myTotalSales.BRL)"
           [label]="t('dashboard.mySales')"
@@ -51,21 +51,21 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
         />
 
         <app-kpi-card
-          icon="pi pi-shopping-cart"
+          icon="shopping_cart"
           iconBgClass="kpi-icon--info"
           [value]="myOrderCount.toString()"
           [label]="t('dashboard.myOrders')"
         />
 
         <app-kpi-card
-          icon="pi pi-percentage"
+          icon="percent"
           iconBgClass="kpi-icon--primary"
           [value]="myAvgMargin.toFixed(1) + '%'"
           [label]="t('dashboard.myAvgMargin')"
         />
 
         <app-kpi-card
-          icon="pi pi-clock"
+          icon="schedule"
           iconBgClass="kpi-icon--warning"
           [value]="myPendingOrders.toString()"
           [label]="t('dashboard.pendingOrders')"

@@ -40,7 +40,7 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
       <!-- KPI Cards -->
       <div class="kpi-grid">
         <app-kpi-card
-          icon="pi pi-dollar"
+          icon="attach_money"
           iconBgClass="kpi-icon--success"
           [value]="formatCurrency(248500)"
           [label]="t('dashboard.totalSales')"
@@ -49,7 +49,7 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
         />
 
         <app-kpi-card
-          icon="pi pi-shopping-cart"
+          icon="shopping_cart"
           iconBgClass="kpi-icon--info"
           value="47"
           [label]="t('dashboard.totalOrders')"
@@ -58,7 +58,7 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
         />
 
         <app-kpi-card
-          icon="pi pi-percentage"
+          icon="percent"
           iconBgClass="kpi-icon--warning"
           value="32.4%"
           [label]="t('dashboard.totalMargin')"
@@ -67,7 +67,7 @@ import { formatLongDate } from '../../../shared/utils/date.utils';
         />
 
         <app-kpi-card
-          icon="pi pi-clock"
+          icon="schedule"
           iconBgClass="kpi-icon--warning"
           value="5"
           [label]="t('dashboard.pendingApprovals')"

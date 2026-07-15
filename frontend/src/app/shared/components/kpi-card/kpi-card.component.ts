@@ -127,7 +127,8 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
   `]
 })
 export class KpiCardComponent {
-  icon = input<string>('pi pi-chart-bar');
+  /** Material Symbol name (e.g. 'attach_money'); legacy 'pi pi-*' values fall back to 'bar_chart' */
+  icon = input<string>('bar_chart');
   iconBgClass = input<string>('kpi-icon--primary');
   value = input<string>('');
   label = input<string>('');
@@ -135,15 +136,9 @@ export class KpiCardComponent {
   trendDirection = input<KpiTrend>('neutral');
   variant = input<string>('');
 
-  private static readonly PI_TO_MATERIAL: Record<string, string> = {
-    'pi pi-chart-bar': 'bar_chart',
-    'pi pi-arrow-up': 'arrow_upward',
-    'pi pi-arrow-down': 'arrow_downward',
-    'pi pi-minus': 'remove',
-  };
-
   iconName = computed(() => {
-    return KpiCardComponent.PI_TO_MATERIAL[this.icon()] ?? 'bar_chart';
+    const name = this.icon();
+    return name.startsWith('pi ') ? 'bar_chart' : name;
   });
 
   trendIconName = computed(() => {

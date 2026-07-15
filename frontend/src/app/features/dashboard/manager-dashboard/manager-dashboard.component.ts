@@ -46,28 +46,28 @@ import {
       <div class="kpi-grid">
         <app-kpi-card
           variant="warning"
-          icon="pi pi-clock"
+          icon="schedule"
           iconBgClass="kpi-icon--warning"
           [value]="pendingApprovals.toString()"
           [label]="t('dashboard.pendingApprovals')"
         />
 
         <app-kpi-card
-          icon="pi pi-check-circle"
+          icon="check_circle"
           iconBgClass="kpi-icon--success"
           [value]="approvedToday.toString()"
           [label]="t('dashboard.approvedToday')"
         />
 
         <app-kpi-card
-          icon="pi pi-truck"
+          icon="local_shipping"
           iconBgClass="kpi-icon--info"
           [value]="activeFulfillments.toString()"
           [label]="t('dashboard.activeFulfillments')"
         />
 
         <app-kpi-card
-          icon="pi pi-percentage"
+          icon="percent"
           iconBgClass="kpi-icon--primary"
           [value]="averageMargin.toFixed(1) + '%'"
           [label]="t('dashboard.avgMargin')"
