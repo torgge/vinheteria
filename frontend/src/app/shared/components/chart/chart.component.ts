@@ -21,7 +21,7 @@ export class ChartComponent implements AfterViewInit, OnDestroy {
     effect(() => {
       const data = this.data();
       if (this.chart) {
-        this.chart.data = data;
+        this.chart.data = this.resolveDatasetColors(data);
         this.chart.update();
       }
     });
@@ -30,9 +30,43 @@ export class ChartComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.chart = new Chart(this.canvas().nativeElement, {
       type: this.type(),
-      data: this.data(),
+      data: this.resolveDatasetColors(this.data()),
       options: { responsive: true, maintainAspectRatio: false, ...this.options() },
     });
+  }
+
+  // Canvas 2D (and therefore Chart.js) cannot resolve CSS custom properties —
+  // `fillStyle = 'var(--x)'` silently falls back to black. Resolve any
+  // `var(--token)` dataset color against the live DOM before handing it to Chart.js.
+  private resolveCssVar(value: string): string {
+    const match = value.match(/^var\((--[\w-]+)(?:,\s*(.+))?\)$/);
+    if (!match) return value;
+    const [, varName, fallback] = match;
+    const resolved = getComputedStyle(this.canvas().nativeElement).getPropertyValue(varName).trim();
+    return resolved || fallback?.trim() || value;
+  }
+
+  private resolveDatasetColors(data: ChartConfiguration['data']): ChartConfiguration['data'] {
+    const colorKeys = [
+      'backgroundColor', 'borderColor',
+      'pointBackgroundColor', 'pointBorderColor',
+      'hoverBackgroundColor', 'hoverBorderColor',
+    ] as const;
+
+    const datasets = data.datasets.map((dataset) => {
+      const resolved: Record<string, unknown> = { ...dataset };
+      for (const key of colorKeys) {
+        const value = resolved[key];
+        if (typeof value === 'string') {
+          resolved[key] = this.resolveCssVar(value);
+        } else if (Array.isArray(value)) {
+          resolved[key] = value.map((v) => (typeof v === 'string' ? this.resolveCssVar(v) : v));
+        }
+      }
+      return resolved;
+    });
+
+    return { ...data, datasets } as unknown as ChartConfiguration['data'];
   }
 
   ngOnDestroy(): void {
