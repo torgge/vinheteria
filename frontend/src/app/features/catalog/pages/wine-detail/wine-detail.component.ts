@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { TableModule } from 'primeng/table';
-import { DividerModule } from 'primeng/divider';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
 import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
@@ -31,11 +31,11 @@ interface StockInfo extends StockPosition {
   imports: [
     CommonModule,
     TranslocoModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    TableModule,
-    DividerModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatDividerModule,
     PriceDisplayComponent,
     StockBadgeComponent
   ],
@@ -44,12 +44,10 @@ interface StockInfo extends StockPosition {
       @if (wine()) {
         <!-- Back Button -->
         <div class="back-nav">
-          <p-button
-            icon="pi pi-arrow-left"
-            [label]="t('common.backToCatalog')"
-            [text]="true"
-            (onClick)="goBack()"
-          />
+          <button mat-stroked-button (click)="goBack()">
+            <mat-icon fontIcon="arrow_back" />
+            {{ t('common.backToCatalog') }}
+          </button>
         </div>
 
         <div class="wine-detail-grid">
@@ -64,15 +62,15 @@ interface StockInfo extends StockPosition {
           <div class="wine-info-section">
             <div class="wine-header">
               <div class="wine-badges">
-                <p-tag [value]="wine()!.vintage.toString()" severity="contrast" />
-                <p-tag [value]="wine()!.grapeVariety" severity="secondary" />
-                <p-tag [value]="wine()!.country" severity="info" />
+                <span class="badge badge-contrast">{{ wine()!.vintage }}</span>
+                <span class="badge badge-secondary">{{ wine()!.grapeVariety }}</span>
+                <span class="badge badge-info">{{ wine()!.country }}</span>
               </div>
               <h1>{{ wine()!.name }}</h1>
               <p class="wine-producer">{{ wine()!.producer }}</p>
             </div>
 
-            <p-divider />
+            <mat-divider />
 
             <!-- Pricing -->
             <div class="wine-pricing">
@@ -96,47 +94,47 @@ interface StockInfo extends StockPosition {
               </div>
             </div>
 
-            <p-divider />
+            <mat-divider />
 
             <!-- Wine Details -->
             <div class="wine-details-grid">
               <div class="detail-item">
-                <i class="pi pi-map-marker"></i>
+                <mat-icon fontIcon="location_on" />
                 <div class="detail-content">
                   <span class="detail-label">{{ t('catalog.region') }}</span>
                   <span class="detail-value">{{ wine()!.region }}</span>
                 </div>
               </div>
               <div class="detail-item">
-                <i class="pi pi-globe"></i>
+                <mat-icon fontIcon="language" />
                 <div class="detail-content">
                   <span class="detail-label">{{ t('catalog.country') }}</span>
                   <span class="detail-value">{{ wine()!.country }}</span>
                 </div>
               </div>
               <div class="detail-item">
-                <i class="pi pi-tag"></i>
+                <mat-icon fontIcon="sell" />
                 <div class="detail-content">
                   <span class="detail-label">{{ t('catalog.grapeVariety') }}</span>
                   <span class="detail-value">{{ wine()!.grapeVariety }}</span>
                 </div>
               </div>
               <div class="detail-item">
-                <i class="pi pi-percentage"></i>
+                <mat-icon fontIcon="percent" />
                 <div class="detail-content">
                   <span class="detail-label">{{ t('catalog.alcohol') }}</span>
                   <span class="detail-value">{{ wine()!.alcoholContent }}%</span>
                 </div>
               </div>
               <div class="detail-item">
-                <i class="pi pi-box"></i>
+                <mat-icon fontIcon="inventory_2" />
                 <div class="detail-content">
                   <span class="detail-label">{{ t('catalog.bottleSize') }}</span>
                   <span class="detail-value">{{ wine()!.bottleSize }}ml</span>
                 </div>
               </div>
               <div class="detail-item">
-                <i class="pi pi-barcode"></i>
+                <mat-icon fontIcon="barcode_reader" />
                 <div class="detail-content">
                   <span class="detail-label">SKU</span>
                   <span class="detail-value sku">{{ wine()!.sku }}</span>
@@ -144,7 +142,7 @@ interface StockInfo extends StockPosition {
               </div>
             </div>
 
-            <p-divider />
+            <mat-divider />
 
             <!-- Description -->
             <div class="wine-description">
@@ -160,58 +158,75 @@ interface StockInfo extends StockPosition {
         </div>
 
         <!-- Stock by Warehouse -->
-        <p-card [header]="t('catalog.stockByWarehouse')" styleClass="stock-card">
-          <p-table [value]="stockInfo()" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>{{ t('warehouse.code') }}</th>
-                <th>{{ t('warehouse.name') }}</th>
-                <th>{{ t('warehouse.location') }}</th>
-                <th>{{ t('catalog.available') }}</th>
-                <th>{{ t('catalog.reserved') }}</th>
-                <th>{{ t('catalog.status') }}</th>
-                <th>{{ t('common.actions') }}</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-stock>
-              <tr>
-                <td><strong>{{ stock.warehouse.code }}</strong></td>
-                <td>{{ stock.warehouse.name }}</td>
-                <td>{{ stock.warehouse.city }}, {{ stock.warehouse.country }}</td>
-                <td>
+        <mat-card appearance="outlined" class="stock-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('catalog.stockByWarehouse') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="stockInfo()" style="min-width: 50rem">
+              <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>{{ t('warehouse.code') }}</th>
+                <td mat-cell *matCellDef="let stock"><strong>{{ stock.warehouse.code }}</strong></td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>{{ t('warehouse.name') }}</th>
+                <td mat-cell *matCellDef="let stock">{{ stock.warehouse.name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef>{{ t('warehouse.location') }}</th>
+                <td mat-cell *matCellDef="let stock">{{ stock.warehouse.city }}, {{ stock.warehouse.country }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="available">
+                <th mat-header-cell *matHeaderCellDef>{{ t('catalog.available') }}</th>
+                <td mat-cell *matCellDef="let stock">
                   <span class="quantity">{{ stock.availableQuantity }}</span>
                 </td>
-                <td>
+              </ng-container>
+
+              <ng-container matColumnDef="reserved">
+                <th mat-header-cell *matHeaderCellDef>{{ t('catalog.reserved') }}</th>
+                <td mat-cell *matCellDef="let stock">
                   <span class="quantity reserved">{{ stock.reservedQuantity }}</span>
                 </td>
-                <td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>{{ t('catalog.status') }}</th>
+                <td mat-cell *matCellDef="let stock">
                   <app-stock-badge [quantity]="stock.availableQuantity" />
                 </td>
-                <td>
-                  <p-button
-                    icon="pi pi-plus"
-                    [label]="t('common.addToOrder')"
-                    [disabled]="stock.availableQuantity === 0"
-                  />
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
+                <td mat-cell *matCellDef="let stock">
+                  <button mat-mini-fab color="primary" [disabled]="stock.availableQuantity === 0">
+                    <mat-icon fontIcon="add" />
+                  </button>
                 </td>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="7" class="text-center p-4">
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+              <tr mat-no-data-row>
+                <td [attr.colspan]="displayedColumns.length" class="text-center p-4">
                   {{ t('catalog.noStockAvailable') }}
                 </td>
               </tr>
-            </ng-template>
-          </p-table>
-        </p-card>
+            </table>
+          </mat-card-content>
+        </mat-card>
       } @else {
         <!-- Not Found -->
         <div class="not-found">
-          <i class="pi pi-search"></i>
+          <mat-icon fontIcon="search" />
           <h2>{{ t('catalog.wineNotFound') }}</h2>
           <p>{{ t('catalog.wineNotFoundDescription') }}</p>
-          <p-button [label]="t('common.backToCatalog')" (onClick)="goBack()" />
+          <button mat-stroked-button (click)="goBack()">{{ t('common.backToCatalog') }}</button>
         </div>
       }
     </div>
@@ -268,7 +283,6 @@ interface StockInfo extends StockPosition {
       background: var(--m3-surface);
       border-radius: var(--vinheria-radius-lg, 12px);
       padding: var(--vinheria-spacing-xl, 32px);
-      box-shadow: var(--p-card-shadow);
     }
 
     .wine-header {
@@ -280,6 +294,28 @@ interface StockInfo extends StockPosition {
       gap: var(--vinheria-spacing-sm, 8px);
       margin-bottom: var(--vinheria-spacing-md, 16px);
       flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      white-space: nowrap;
+      color: var(--color-on-primary);
+    }
+
+    .badge-contrast {
+      background: var(--color-ink);
+    }
+
+    .badge-secondary {
+      background: var(--color-ink-muted);
+    }
+
+    .badge-info {
+      background: var(--color-primary);
     }
 
     .wine-header h1 {
@@ -343,9 +379,11 @@ interface StockInfo extends StockPosition {
       align-items: flex-start;
       gap: var(--vinheria-spacing-sm, 8px);
 
-      i {
+      mat-icon {
         color: var(--m3-primary);
         font-size: 1rem;
+        width: 1rem;
+        height: 1rem;
         margin-top: 2px;
       }
     }
@@ -385,10 +423,8 @@ interface StockInfo extends StockPosition {
       margin-top: var(--vinheria-spacing-md, 16px);
     }
 
-    :host ::ng-deep .stock-card {
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg, 24px);
-      }
+    .stock-card {
+      margin-top: var(--vinheria-spacing-xl, 32px);
     }
 
     .quantity {
@@ -408,8 +444,10 @@ interface StockInfo extends StockPosition {
       padding: var(--vinheria-spacing-3xl, 64px);
       text-align: center;
 
-      i {
+      mat-icon {
         font-size: 5rem;
+        width: 5rem;
+        height: 5rem;
         color: var(--m3-on-surface-variant);
         opacity: 0.3;
         margin-bottom: var(--vinheria-spacing-lg, 24px);
@@ -424,8 +462,6 @@ interface StockInfo extends StockPosition {
         margin-bottom: var(--vinheria-spacing-lg, 24px);
       }
     }
-
-
   `]
 })
 export class WineDetailComponent implements OnInit {
@@ -434,6 +470,8 @@ export class WineDetailComponent implements OnInit {
   private currencyService = inject(CurrencyService);
 
   wine = signal<Wine | null>(null);
+
+  displayedColumns = ['code', 'name', 'location', 'available', 'reserved', 'status', 'actions'];
 
   stockInfo = computed<StockInfo[]>(() => {
     const wine = this.wine();

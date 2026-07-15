@@ -4,15 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { SliderModule } from 'primeng/slider';
-import { ButtonModule } from 'primeng/button';
-import { DataViewModule } from 'primeng/dataview';
-import { InputIconModule } from 'primeng/inputicon';
-import { IconFieldModule } from 'primeng/iconfield';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
 import { SupportedCurrency } from '../../../../core/currency/currency.model';
@@ -39,15 +37,13 @@ interface FilterOption {
     CommonModule,
     FormsModule,
     TranslocoModule,
-    CardModule,
-    InputTextModule,
-    DropdownModule,
-    MultiSelectModule,
-    SliderModule,
-    ButtonModule,
-    DataViewModule,
-    InputIconModule,
-    IconFieldModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSliderModule,
+    MatButtonModule,
+    MatIconModule,
     WineCardComponent
   ],
   template: `
@@ -61,100 +57,97 @@ interface FilterOption {
       </div>
 
       <!-- Filters -->
-      <p-card styleClass="filters-card">
-        <div class="filters-grid">
-          <!-- Search -->
-          <div class="filter-item search-filter">
-            <label>{{ t('catalog.search') }}</label>
-            <p-iconField iconPosition="left">
-              <p-inputIcon styleClass="pi pi-search" />
-              <input
-                type="text"
-                pInputText
-                [placeholder]="t('catalog.searchPlaceholder')"
-                [(ngModel)]="searchQuery"
-              />
-            </p-iconField>
-          </div>
-
-          <!-- Country -->
-          <div class="filter-item">
-            <label>{{ t('catalog.country') }}</label>
-            <p-dropdown
-              [options]="countryOptions()"
-              [(ngModel)]="selectedCountry"
-              [placeholder]="t('common.all')"
-              [showClear]="true"
-              styleClass="w-full"
-            />
-          </div>
-
-          <!-- Region -->
-          <div class="filter-item">
-            <label>{{ t('catalog.region') }}</label>
-            <p-multiSelect
-              [options]="regionOptions()"
-              [(ngModel)]="selectedRegions"
-              [placeholder]="t('common.selectRegions')"
-              [maxSelectedLabels]="2"
-              styleClass="w-full"
-            />
-          </div>
-
-          <!-- Grape Variety -->
-          <div class="filter-item">
-            <label>{{ t('catalog.grapeVariety') }}</label>
-            <p-multiSelect
-              [options]="grapeOptions()"
-              [(ngModel)]="selectedGrapes"
-              [placeholder]="t('common.selectGrapes')"
-              [maxSelectedLabels]="2"
-              styleClass="w-full"
-            />
-          </div>
-
-          <!-- Vintage -->
-          <div class="filter-item">
-            <label>{{ t('catalog.vintage') }}</label>
-            <p-dropdown
-              [options]="vintageOptions()"
-              [(ngModel)]="selectedVintage"
-              [placeholder]="t('common.all')"
-              [showClear]="true"
-              styleClass="w-full"
-            />
-          </div>
-
-          <!-- Price Range -->
-          <div class="filter-item price-filter">
-            <label>{{ t('catalog.priceRange') }} ({{ currencySymbol() }})</label>
-            <div class="price-range-display">
-              <span>{{ formatPrice(priceRange()[0]) }}</span>
-              <span>-</span>
-              <span>{{ formatPrice(priceRange()[1]) }}</span>
+      <mat-card appearance="outlined" class="filters-card">
+        <mat-card-content>
+          <div class="filters-grid">
+            <!-- Search -->
+            <div class="filter-item search-filter">
+              <label>{{ t('catalog.search') }}</label>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-icon matPrefix fontIcon="search" />
+                <input
+                  matInput
+                  type="text"
+                  [placeholder]="t('catalog.searchPlaceholder')"
+                  [(ngModel)]="searchQuery"
+                />
+              </mat-form-field>
             </div>
-            <p-slider
-              [(ngModel)]="priceRange"
-              [range]="true"
-              [min]="0"
-              [max]="maxPrice()"
-              [step]="10"
-              styleClass="w-full"
-            />
-          </div>
 
-          <!-- Clear Filters -->
-          <div class="filter-item filter-actions">
-            <p-button
-              [label]="t('common.clearFilters')"
-              icon="pi pi-filter-slash"
-              [text]="true"
-              severity="info"
-              (onClick)="clearFilters()"
-            />
+            <!-- Country -->
+            <div class="filter-item">
+              <label>{{ t('catalog.country') }}</label>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-select [(ngModel)]="selectedCountry">
+                  <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                  @for (opt of countryOptions(); track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Region -->
+            <div class="filter-item">
+              <label>{{ t('catalog.region') }}</label>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-select [(ngModel)]="selectedRegions" multiple>
+                  @for (opt of regionOptions(); track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Grape Variety -->
+            <div class="filter-item">
+              <label>{{ t('catalog.grapeVariety') }}</label>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-select [(ngModel)]="selectedGrapes" multiple>
+                  @for (opt of grapeOptions(); track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Vintage -->
+            <div class="filter-item">
+              <label>{{ t('catalog.vintage') }}</label>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-select [(ngModel)]="selectedVintage">
+                  <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                  @for (opt of vintageOptions(); track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Price Range -->
+            <div class="filter-item price-filter">
+              <label>{{ t('catalog.priceRange') }} ({{ currencySymbol() }})</label>
+              <div class="price-range-display">
+                <span>{{ formatPrice(priceRange()[0]) }}</span>
+                <span>-</span>
+                <span>{{ formatPrice(priceRange()[1]) }}</span>
+              </div>
+              <mat-slider [min]="0" [max]="maxPrice()" [step]="10">
+                <input matSliderStartThumb [ngModel]="priceRange()[0]" (ngModelChange)="onPriceStartChange($event)">
+                <input matSliderEndThumb [ngModel]="priceRange()[1]" (ngModelChange)="onPriceEndChange($event)">
+              </mat-slider>
+            </div>
+
+            <!-- Clear Filters -->
+            <div class="filter-item filter-actions">
+              <button mat-stroked-button (click)="clearFilters()">
+                <mat-icon fontIcon="filter_list" />
+                {{ t('common.clearFilters') }}
+              </button>
+            </div>
           </div>
-        </div>
-      </p-card>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Results -->
       <div class="results-section">
@@ -162,15 +155,17 @@ interface FilterOption {
           <span class="results-count">
             {{ t('catalog.showingWines', { count: filteredWines().length, total: wines.length }) }}
           </span>
-          <p-dropdown
-            [options]="sortOptions"
-            [(ngModel)]="selectedSort"
-            styleClass="sort-dropdown"
-          />
+          <mat-form-field appearance="outline" class="sort-dropdown">
+            <mat-select [(ngModel)]="selectedSort">
+              @for (opt of sortOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
         </div>
 
         @if (filteredWines().length > 0) {
-          <div class="wines-grid">
+          <div class="vinheria-card-grid">
             @for (wine of sortedWines(); track wine.id) {
               <app-wine-card
                 [wine]="toWineCardData(wine)"
@@ -182,10 +177,10 @@ interface FilterOption {
           </div>
         } @else {
           <div class="vinheria-empty-state">
-            <i class="pi pi-search"></i>
+            <mat-icon fontIcon="search" />
             <h3>{{ t('catalog.noResults') }}</h3>
             <p>{{ t('catalog.noResultsDescription') }}</p>
-            <p-button [label]="t('common.clearFilters')" (onClick)="clearFilters()" />
+            <button mat-stroked-button (click)="clearFilters()">{{ t('common.clearFilters') }}</button>
           </div>
         }
       </div>
@@ -204,12 +199,8 @@ interface FilterOption {
       }
     }
 
-    :host ::ng-deep .filters-card {
+    .filters-card {
       margin-bottom: var(--vinheria-spacing-lg, 24px);
-
-      .p-card-body {
-        padding: var(--vinheria-spacing-lg, 24px);
-      }
     }
 
     .filters-grid {
@@ -271,6 +262,10 @@ interface FilterOption {
       justify-content: flex-end;
     }
 
+    .w-full {
+      width: 100%;
+    }
+
     .results-section {
       margin-top: var(--vinheria-spacing-lg, 24px);
     }
@@ -289,11 +284,11 @@ interface FilterOption {
       color: var(--m3-on-surface-variant);
     }
 
-    :host ::ng-deep .sort-dropdown {
+    .sort-dropdown {
       min-width: 200px;
     }
 
-    .wines-grid {
+    .vinheria-card-grid {
       display: grid;
       gap: var(--vinheria-spacing-lg, 24px);
       grid-template-columns: 1fr;
@@ -311,7 +306,16 @@ interface FilterOption {
       }
     }
 
-
+    .vinheria-empty-state {
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        opacity: 0.3;
+        margin-bottom: var(--vinheria-spacing-md, 16px);
+        color: var(--m3-on-surface-variant);
+      }
+    }
   `]
 })
 export class WineListComponent {
@@ -461,6 +465,14 @@ export class WineListComponent {
     this.selectedGrapes.set([]);
     this.selectedVintage.set(null);
     this.priceRange.set([0, this.maxPrice()]);
+  }
+
+  onPriceStartChange(value: number): void {
+    this.priceRange.set([value, this.priceRange()[1]]);
+  }
+
+  onPriceEndChange(value: number): void {
+    this.priceRange.set([this.priceRange()[0], value]);
   }
 
   onViewDetail(wine: WineCardData): void {
