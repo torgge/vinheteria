@@ -26,7 +26,7 @@
 
 ### 11.2 Ao Gerar Código Frontend
 
-1. **SEMPRE** usar PrimeNG components como base — customizar via CSS variables (`--p-*`), nunca override bruto
+1. **SEMPRE** usar Angular Material components como base — customizar via DESIGN.md tokens (`--color-*`, `--space-*`, `--radius-*`, `--font-*`), nunca override bruto de classes internas do Material
 2. **SEMPRE** usar Angular Signals e Signal Store para state management
 3. **SEMPRE** implementar SSE para dados que mudam em tempo real (estoque, preços)
 4. **SEMPRE** usar lazy loading para feature modules
@@ -34,8 +34,8 @@
 6. **SEMPRE** seguir estrutura de Vertical Slices dentro de `features/`
 7. **SEMPRE** usar `inject()` function ao invés de constructor injection
 8. **SEMPRE** implementar `OnPush` change detection strategy
-9. **SEMPRE** usar `p-table` com `virtualScroll` para listagens com 5K+ itens
-10. **NUNCA** reinventar componente que já existe no PrimeNG
+9. **SEMPRE** usar `mat-table` + `matSort` para listagens, `mat-select` com objetos `FilterOption` para dropdowns
+10. **NUNCA** reinventar componente que já existe no Angular Material
 11. **SEMPRE** criar `*.spec.ts` com **Jest** para cada component, service e store
 12. **SEMPRE** usar `jest.fn()` para mocks e `jest-preset-angular` como preset
 13. **NUNCA** usar Karma/Jasmine — o projeto usa Jest exclusivamente

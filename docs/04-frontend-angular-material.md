@@ -1,4 +1,4 @@
-# 4. Convenções de Código — Frontend (Angular + PrimeNG)
+# 4. Convenções de Código — Frontend (Angular + Angular Material)
 
 
 ### 4.1 Estrutura do Projeto Angular
@@ -50,85 +50,105 @@ vinheria-web/
 │   │   └── app.routes.ts                # Lazy-loaded feature routes
 │   │
 │   ├── styles/
-│   │   ├── _primeng-theme.scss           # Tema customizado Vinheria
-│   │   ├── _variables.scss               # Design tokens customizados
-│   │   └── global.scss
+│   │   ├── _variables.scss               # Design tokens DESIGN.md (--color-*, --space-*, --radius-*, --font-*)
+│   │   ├── _material-theme.scss          # Tema Angular Material + overrides DESIGN.md
+│   │   ├── _typography.scss              # Estilos de texto (Inter)
+│   │   └── m3-theme.scss                 # Paleta M3 gerada (seed #0075de)
 │   │
 │   └── environments/
 ```
 
-### 4.2 PrimeNG Integration & Theme
+### 4.2 Angular Material Integration & Theme
 
-```typescript
-// angular.json — styles configuration
-"styles": [
-  "node_modules/primeng/resources/themes/lara-dark-purple/theme.css",
-  "node_modules/primeng/resources/primeng.min.css",
-  "node_modules/primeicons/primeicons.css",
-  "src/styles/global.scss"
-]
-```
+O tema é dirigido pelo **DESIGN.md** (raiz do frontend) — fonte de verdade para cores, tipografia, espaçamento e raio. Os tokens são CSS custom properties definidos em `styles/_variables.scss`:
 
 ```scss
-// styles/_primeng-theme.scss — Tema Vinheria (custom design tokens)
-// REGRA: Customizar via CSS variables do PrimeNG, nunca override bruto
+// styles/_variables.scss — DESIGN.md canonical tokens (Notion-inspired)
 :root {
-  // Core palette — Vinho
-  --p-primary-color: #722F37;              /* Bordeaux */
-  --p-primary-color-text: #FFFFFF;
-  --p-primary-50: #FDF2F3;
-  --p-primary-100: #F9D5D8;
-  --p-primary-200: #F0A8AE;
-  --p-primary-300: #E27A84;
-  --p-primary-400: #C74D5A;
-  --p-primary-500: #722F37;
-  --p-primary-600: #5E2630;
-  --p-primary-700: #4A1D28;
-  --p-primary-800: #361420;
-  --p-primary-900: #220B18;
+  // Colors
+  --color-primary:         #0075de;
+  --color-primary-active:  #005bab;
+  --color-secondary:       #213183;
+  --color-canvas:          #ffffff;
+  --color-canvas-soft:     #f6f5f4;
+  --color-surface:         #ffffff;
+  --color-ink:             #000000;
+  --color-ink-muted:       #615d59;
+  --color-hairline:        #e6e6e6;
 
-  // Surface — Dark mode elegante
-  --p-surface-0: #FFFFFF;
-  --p-surface-50: #F8F7F6;
-  --p-surface-900: #1A1A2E;
-  --p-surface-ground: #F5F3F0;            /* Parchment-like background */
+  // Typography — Inter
+  --font-family: 'Inter', -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
 
-  // Typography
-  --p-font-family: 'Source Sans 3', sans-serif;
-  --vinheria-font-display: 'Playfair Display', serif;
+  // Spacing
+  --space-xxs: 4px;  --space-xs: 8px;  --space-sm: 12px;
+  --space-md: 16px;  --space-lg: 24px; --space-xxl: 32px;
 
-  // Semantic
-  --p-highlight-background: rgba(114, 47, 55, 0.1);
-  --p-highlight-text-color: #722F37;
+  // Radius
+  --radius-xs: 4px; --radius-md: 8px; --radius-lg: 12px; --radius-full: 9999px;
 }
 ```
 
-### 4.3 Componentes PrimeNG Estratégicos
+Os overrides do Angular Material vivem em `styles/_material-theme.scss` — mapeiam os tokens `--mdc-*`/`--mat-*` da major 18 para os tokens do DESIGN.md:
+
+```scss
+// styles/_material-theme.scss — Angular Material M3, DESIGN.md como fonte de verdade
+@use '@angular/material' as mat;
+@use './m3-theme' as m3;
+
+@include mat.core();
+
+html {
+  @include mat.all-component-themes(m3.$light-theme);
+}
+
+:root {
+  // REGRA: overrides sempre referenciam tokens DESIGN.md — nunca hex hardcoded
+  --mdc-filled-button-container-color: var(--color-primary);
+  --mdc-filled-button-container-shape: var(--radius-full);
+  --mdc-outlined-card-outline-color: var(--color-hairline);
+  --mdc-outlined-card-container-shape: var(--radius-lg);
+  --mdc-outlined-text-field-container-shape: var(--radius-xs);
+  --mat-table-row-item-outline-color: var(--color-hairline);
+  --mdc-dialog-container-shape: var(--radius-xl);
+}
+```
+
+Ícones usam **Material Symbols Outlined** (Google Fonts, carregado no `index.html`), registrado como fontset default em `app.config.ts`. Uso: `<mat-icon fontIcon="add" />` — nunca ligatures inline nem PrimeIcons.
+
+### 4.3 Componentes Angular Material Estratégicos
 
 ```typescript
-// REGRA: Usar componentes PrimeNG como building blocks — nunca reinventar
-// Mapeamento de necessidades do projeto para componentes PrimeNG:
+// REGRA: Usar componentes Angular Material como building blocks — nunca reinventar
+// Mapeamento de necessidades do projeto para componentes Material:
 
-// Catálogo de vinhos (5K+ SKUs)
-// → p-table (DataTable) com virtualScroll, lazy loading, filtros server-side
-// → p-dataView para grid/list toggle
-// → p-paginator para navegação
+// Listagens (catálogo, clientes, pedidos, estoque)
+// → mat-table + matSort (sorting client-side via signal de Sort)
+// → colunas via matColumnDef; empty state custom dentro da tabela
 
 // Busca e filtros
-// → p-multiSelect para uvas/regiões
-// → p-slider para faixa de preço
-// → p-autoComplete para busca por nome
+// → mat-form-field appearance="outline" + matInput para busca
+// → mat-select com objetos FilterOption<T> ({ label, value }) para dropdowns
+// → botão mat-stroked-button para limpar filtros
 
-// Carrinho e checkout
-// → p-stepper para fluxo multi-step
-// → p-card para itens do carrinho
-// → p-messages para feedback de validação
+// Dialogs e confirmação
+// → MatDialog (inject(MatDialog)) — abre TemplateRef ou component
+// → shared/components/confirm-dialog (ConfirmDialogComponent + ConfirmDialogData)
+//   para confirmações — substitui o antigo ConfirmationService
 
-// Dashboard admin
-// → p-chart (Chart.js wrapper) para métricas de vendas
-// → p-table com edição inline para gestão de estoque
-// → p-toast para notificações em tempo real (SSE)
+// Notificações
+// → core/services/notification.service.ts (NotificationService) — wrapper de
+//   MatSnackBar com API { severity, summary, detail } — substitui o MessageService
+
+// Navegação e layout
+// → mat-menu para menus de usuário, mat-divider, mat-select no topbar
+//   (idioma/moeda), mat-icon-button para ações
+
+// Botões
+// → mat-flat-button (primário), mat-stroked-button (secundário),
+//   mat-icon-button + matTooltip para ações de tabela
 ```
+
+Exemplos reais no código: `features/customers/pages/customer-list/customer-list.component.ts` (mat-table + filtros + MatDialog) e `shared/components/layout/topbar/topbar.component.ts` (mat-select + mat-menu).
 
 ### 4.4 Comunicação Reativa (Frontend ↔ Backend)
 
@@ -443,37 +463,42 @@ src/assets/i18n/
 <ng-container *transloco="let t; scope: 'catalog'">
   <h1>{{ t('catalog.title') }}</h1>
 
-  <input
-    pInputText
-    [placeholder]="t('catalog.searchPlaceholder')"
-    (input)="onSearch($event)"
-  />
+  <mat-form-field appearance="outline">
+    <mat-icon matPrefix fontIcon="search" />
+    <input matInput [placeholder]="t('catalog.searchPlaceholder')" />
+  </mat-form-field>
 
   <!-- Filtros -->
-  <p-multiSelect
-    [options]="regions"
-    [placeholder]="t('catalog.filters.region')"
-  />
+  <mat-form-field appearance="outline">
+    <mat-label>{{ t('catalog.filters.region') }}</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let r of regions" [value]="r">{{ r }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <!-- Resultados -->
   <p>{{ t('catalog.results', { count: totalWines() }) }}</p>
 
   <!-- Wine Card -->
-  <p-card *ngFor="let wine of wines()">
-    <h3>{{ wine.name }}</h3>
-    <p>{{ t('catalog.wine.vintage', { year: wine.vintage }) }}</p>
-    <p>{{ t('catalog.wine.region', { region: wine.region }) }}</p>
+  @for (wine of wines(); track wine.sku) {
+    <mat-card appearance="outlined" class="card-outlined">
+      <mat-card-content>
+        <h3>{{ wine.name }}</h3>
+        <p>{{ t('catalog.wine.vintage', { year: wine.vintage }) }}</p>
+        <p>{{ t('catalog.wine.region', { region: wine.region }) }}</p>
 
-    <!-- Preço com formatação de moeda local -->
-    <span class="price">
-      {{ wine.price.amount | translocoCurrency: wine.price.currency }}
-    </span>
-
-    <p-button
-      [label]="t('common.addToCart')"
-      [disabled]="wine.stock === 0"
-    />
-  </p-card>
+        <!-- Preço com formatação de moeda local -->
+        <span class="price">
+          {{ wine.price.amount | translocoCurrency: wine.price.currency }}
+        </span>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button [disabled]="wine.stock === 0">
+          {{ t('common.addToCart') }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
 </ng-container>
 ```
 
@@ -484,24 +509,16 @@ src/assets/i18n/
 @Component({
   selector: 'app-language-switcher',
   standalone: true,
-  imports: [TranslocoModule, DropdownModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatSelectModule, FormsModule],
   template: `
-    <p-dropdown
-      [options]="languages"
+    <mat-select
       [ngModel]="currentLang()"
       (ngModelChange)="switchLang($event)"
-      optionLabel="label"
-      optionValue="id"
-      [style]="{ width: '180px' }"
     >
-      <ng-template let-item pTemplate="selectedItem">
-        <span>{{ item.flag }} {{ item.label }}</span>
-      </ng-template>
-      <ng-template let-item pTemplate="item">
-        <span>{{ item.flag }} {{ item.label }}</span>
-      </ng-template>
-    </p-dropdown>
+      @for (lang of languages; track lang.id) {
+        <mat-option [value]="lang.id">{{ lang.flag }} {{ lang.label }}</mat-option>
+      }
+    </mat-select>
   `,
 })
 export class LanguageSwitcherComponent {
@@ -908,16 +925,16 @@ export class WinePricePipe implements PipeTransform {
 @Component({
   selector: 'app-currency-switcher',
   standalone: true,
-  imports: [SelectButtonModule, FormsModule],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MatSelectModule, FormsModule],
   template: `
-    <p-selectButton
-      [options]="options"
+    <mat-select
       [ngModel]="currencyService.selectedCurrency()"
       (ngModelChange)="currencyService.setCurrency($event)"
-      optionLabel="label"
-      optionValue="value"
-    />
+    >
+      @for (opt of options; track opt.value) {
+        <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
   `,
 })
 export class CurrencySwitcherComponent {

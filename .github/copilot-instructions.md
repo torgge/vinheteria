@@ -7,7 +7,7 @@ multi-warehouse inventory, sales to registered B2B customers (restaurants, hotel
 
 | Path | Contents |
 |------|----------|
-| `frontend/` | Angular 18 + PrimeNG 17 SPA |
+| `frontend/` | Angular 18 + Angular Material 18 SPA |
 | `docs/` | 22-file system-design documentation |
 | `infra/` | Docker configs, Grafana, Prometheus, Tempo, OTEL |
 | `k6/` | Smoke and load test scripts |
@@ -141,8 +141,9 @@ class SalesOrderTest : BehaviorSpec({
 
 - **State**: Angular Signals + `@ngrx/signals` Signal Store. Do not use RxJS `Subject` /
   `BehaviorSubject` for component or feature state.
-- **UI**: PrimeNG components only. Customize via CSS custom properties (`--p-*`), not by overriding
-  PrimeNG internal classes.
+- **UI**: Angular Material 18 components. Themed via DESIGN.md tokens (`--color-*`, `--space-*`,
+  `--radius-*`, `--font-*`) defined in `frontend/src/styles/_variables.scss`; Material overrides in
+  `frontend/src/styles/_material-theme.scss`. Never hardcode values that contradict DESIGN.md.
 - **i18n**: Every user-visible string must go through `*transloco`. Zero hardcoded strings in
   templates or components. Translation files are at `frontend/src/assets/i18n/{locale}.json`
   for `pt-BR` (default), `es-PY`, and `en-US`.

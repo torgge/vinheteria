@@ -14,7 +14,7 @@ updates:
   #     kotlin:
   #       patterns: ["org.jetbrains.kotlin*"]
 
-  # npm (frontend — Angular/PrimeNG)
+  # npm (frontend — Angular/Material)
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
@@ -25,8 +25,6 @@ updates:
     groups:
       angular:
         patterns: ["@angular*"]
-      primeng:
-        patterns: ["primeng*", "primeicons*"]
 
   # Docker (base images)
   - package-ecosystem: "docker"

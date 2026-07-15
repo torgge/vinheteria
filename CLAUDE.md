@@ -64,7 +64,7 @@ cd services/vinheria-{service}
 ./gradlew koverVerify                   # Coverage ≥80%
 ```
 
-### Frontend (Angular 18 + PrimeNG 17)
+### Frontend (Angular 18 + Angular Material 18)
 ```bash
 cd frontend
 npm install && npm start                # Dev server (http://localhost:4200)
@@ -212,7 +212,7 @@ APPROVED  REJECTED
 - Always calculate and display margin on sales
 
 ### Frontend (Angular)
-- PrimeNG components, customize via `--p-*` CSS vars
+- Angular Material 18 components, themed via DESIGN.md tokens (`--color-*`, `--space-*`, `--radius-*`, `--font-*`) in `frontend/src/styles/_material-theme.scss` and `frontend/src/styles/_variables.scss`
 - Angular Signals + `@ngrx/signals` Signal Store (no RxJS Subjects for component state)
 - `*transloco` for all user-visible text (3 languages)
 - Standalone components only (no NgModules)
@@ -290,6 +290,6 @@ Configured in `.claude/settings.json` (scripts in `scripts/hooks/`):
 Detailed docs in `docs/`:
 - `docs/02-arquitetura.md` — Architecture
 - `docs/03-backend-quarkus-kotlin.md` — Backend conventions
-- `docs/04-frontend-angular-primeng.md` — Frontend conventions
+- `docs/04-frontend-angular-material.md` — Frontend conventions
 - `docs/09-test-pyramid.md` — Testing strategy
 - `docs/15-agent-instructions.md` — Agent rules
