@@ -31,7 +31,9 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: (registry: MatIconRegistry) => () => {
-        registry.setDefaultFontSetClass('material-symbols-outlined');
+        // 'mat-ligature-font' is required alongside the font class — Angular Material's
+        // own stylesheet only renders `[fontIcon]` via `.mat-ligature-font[fontIcon]::before`.
+        registry.setDefaultFontSetClass('material-symbols-outlined', 'mat-ligature-font');
       },
       deps: [MatIconRegistry],
       multi: true,
