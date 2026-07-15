@@ -127,7 +127,7 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
   `]
 })
 export class KpiCardComponent {
-  /** Material Symbol name (e.g. 'attach_money'); legacy 'pi pi-*' values fall back to 'bar_chart' */
+  /** Material Symbol name (e.g. 'attach_money') */
   icon = input<string>('bar_chart');
   iconBgClass = input<string>('kpi-icon--primary');
   value = input<string>('');

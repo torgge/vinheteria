@@ -65,20 +65,6 @@ export type StatusType = OrderStatus | FulfillmentStatus;
 export class StatusBadgeComponent {
   private transloco = inject(TranslocoService);
 
-  private static readonly PI_TO_MATERIAL: Record<string, string> = {
-    'pi pi-pencil': 'edit',
-    'pi pi-clock': 'schedule',
-    'pi pi-check': 'check',
-    'pi pi-times': 'close',
-    'pi pi-box': 'inventory_2',
-    'pi pi-list': 'list',
-    'pi pi-truck': 'local_shipping',
-    'pi pi-send': 'send',
-    'pi pi-check-circle': 'check_circle',
-    'pi pi-ban': 'block',
-    'pi pi-circle': 'circle',
-  };
-
   /** The status value */
   status = input.required<StatusType>();
 
@@ -105,28 +91,24 @@ export class StatusBadgeComponent {
     return severities[status] ?? 'secondary';
   });
 
-  icon = computed(() => {
+  iconName = computed(() => {
     const status = this.status();
     const icons: Record<StatusType, string> = {
-      'DRAFT': 'pi pi-pencil',
-      'PENDING_APPROVAL': 'pi pi-clock',
-      'PENDING': 'pi pi-clock',
-      'APPROVED': 'pi pi-check',
-      'REJECTED': 'pi pi-times',
-      'FULFILLED': 'pi pi-box',
-      'PICKING': 'pi pi-list',
-      'PACKED': 'pi pi-box',
-      'SHIPPED': 'pi pi-truck',
-      'ORDERED': 'pi pi-send',
-      'DELIVERED': 'pi pi-check-circle',
-      'RECEIVED': 'pi pi-check-circle',
-      'CANCELLED': 'pi pi-ban'
+      'DRAFT': 'edit',
+      'PENDING_APPROVAL': 'schedule',
+      'PENDING': 'schedule',
+      'APPROVED': 'check',
+      'REJECTED': 'close',
+      'FULFILLED': 'inventory_2',
+      'PICKING': 'list',
+      'PACKED': 'inventory_2',
+      'SHIPPED': 'local_shipping',
+      'ORDERED': 'send',
+      'DELIVERED': 'check_circle',
+      'RECEIVED': 'check_circle',
+      'CANCELLED': 'block'
     };
-    return icons[status] ?? 'pi pi-circle';
-  });
-
-  iconName = computed(() => {
-    return StatusBadgeComponent.PI_TO_MATERIAL[this.icon()] ?? null;
+    return icons[status] ?? 'circle';
   });
 
   displayText = computed(() => {

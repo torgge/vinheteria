@@ -253,13 +253,6 @@ export class LoginComponent {
   }
 
   getRoleIcon(role: UserRole): string {
-    const iconMap: Record<string, string> = {
-      'pi pi-shopping-cart': 'shopping_cart',
-      'pi pi-truck': 'local_shipping',
-      'pi pi-users': 'group',
-      'pi pi-shield': 'verified_user',
-    };
-    const pi = ROLE_INFO[role]?.icon;
-    return pi ? (iconMap[pi] ?? 'person') : 'person';
+    return ROLE_INFO[role]?.icon ?? 'person';
   }
 }

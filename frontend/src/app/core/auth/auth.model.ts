@@ -113,22 +113,22 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
 export const ROLE_INFO: Record<UserRole, { label: string; icon: string; color: string }> = {
   SELLER: {
     label: 'Seller',
-    icon: 'pi pi-shopping-cart',
+    icon: 'shopping_cart',
     color: 'var(--vinheria-success)'
   },
   PURCHASER: {
     label: 'Purchaser',
-    icon: 'pi pi-truck',
+    icon: 'local_shipping',
     color: 'var(--vinheria-info)'
   },
   MANAGER: {
     label: 'Manager',
-    icon: 'pi pi-users',
+    icon: 'group',
     color: 'var(--vinheria-warning)'
   },
   ADMIN: {
     label: 'Administrator',
-    icon: 'pi pi-shield',
+    icon: 'verified_user',
     color: 'var(--m3-primary)'
   }
 };

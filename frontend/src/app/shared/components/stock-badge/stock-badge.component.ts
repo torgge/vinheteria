@@ -57,13 +57,6 @@ import { TranslocoService } from '@jsverse/transloco';
 export class StockBadgeComponent {
   private transloco = inject(TranslocoService);
 
-  private static readonly PI_TO_MATERIAL: Record<string, string> = {
-    'pi pi-check-circle': 'check_circle',
-    'pi pi-exclamation-circle': 'error',
-    'pi pi-exclamation-triangle': 'warning',
-    'pi pi-times-circle': 'cancel',
-  };
-
   /** Available quantity */
   quantity = input.required<number>();
 
@@ -84,16 +77,12 @@ export class StockBadgeComponent {
     return 'success';
   });
 
-  icon = computed(() => {
-    const qty = this.quantity();
-    if (qty <= 0) return 'pi pi-times-circle';
-    if (qty <= this.criticalThreshold()) return 'pi pi-exclamation-circle';
-    if (qty <= this.lowThreshold()) return 'pi pi-exclamation-triangle';
-    return 'pi pi-check-circle';
-  });
-
   iconName = computed(() => {
-    return StockBadgeComponent.PI_TO_MATERIAL[this.icon()] ?? null;
+    const qty = this.quantity();
+    if (qty <= 0) return 'cancel';
+    if (qty <= this.criticalThreshold()) return 'error';
+    if (qty <= this.lowThreshold()) return 'warning';
+    return 'check_circle';
   });
 
   displayLabel = computed(() => {
