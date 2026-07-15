@@ -194,7 +194,7 @@ interface StockInfo extends StockPosition {
               </ng-container>
 
               <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>{{ t('catalog.status') }}</th>
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.status') }}</th>
                 <td mat-cell *matCellDef="let stock">
                   <app-stock-badge [quantity]="stock.availableQuantity" />
                 </td>
