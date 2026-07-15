@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { DemoUser, LanguageOption, ROLE_INFO, UserRole, AVAILABLE_LANGUAGES } from '../../../core/auth/auth.model';
@@ -16,40 +17,39 @@ import { CurrencyService } from '../../../core/currency/currency.service';
   imports: [
     CommonModule,
     TranslocoModule,
-    CardModule,
-    ButtonModule,
-    DropdownModule,
-    FormsModule
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatFormFieldModule,
   ],
   template: `
     <div class="login-container" *transloco="let t">
       <div class="login-header">
         <div class="logo">
-          <i class="pi pi-box" style="font-size: 3rem; color: var(--m3-primary)"></i>
+          <mat-icon fontIcon="inventory_2" style="font-size: 3rem; width: 3rem; height: 3rem; color: var(--m3-primary)" />
         </div>
         <h1 class="vinheria-display">{{ t('common.appName') }}</h1>
         <p class="text-secondary">B2B Wine Distribution Platform</p>
       </div>
 
       <div class="login-settings">
-        <p-dropdown
-          [options]="languages"
-          [(ngModel)]="selectedLanguage"
-          optionLabel="label"
-          (onChange)="onLanguageChange($event.value.id)"
-          styleClass="language-dropdown"
-        >
-          <ng-template pTemplate="selectedItem" let-selected>
-            <span>{{ selected.flag }} {{ selected.label }}</span>
-          </ng-template>
-          <ng-template pTemplate="item" let-item>
-            <span>{{ item.flag }} {{ item.label }}</span>
-          </ng-template>
-        </p-dropdown>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-select [(ngModel)]="selectedLanguage" (selectionChange)="onLanguageChange($event.value.id)">
+            <mat-select-trigger>
+              <span>{{ selectedLanguage.flag }} {{ selectedLanguage.label }}</span>
+            </mat-select-trigger>
+            @for (lang of languages; track lang.id) {
+              <mat-option [value]="lang">
+                <span>{{ lang.flag }} {{ lang.label }}</span>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="demo-badge">
-        <i class="pi pi-info-circle"></i>
+        <mat-icon fontIcon="info" />
         {{ t('auth.demoMode') }}
       </div>
 
@@ -64,18 +64,16 @@ import { CurrencyService } from '../../../core/currency/currency.service';
             <div class="user-info">
               <h3>{{ user.name }}</h3>
               <div class="user-role" [style.color]="getRoleColor(user.role)">
-                <i [class]="getRoleIcon(user.role)"></i>
+                <mat-icon [fontIcon]="getRoleIcon(user.role)" />
                 {{ t('auth.roles.' + user.role) }}
               </div>
               <p class="user-description">{{ t('auth.roleDescriptions.' + user.role) }}</p>
             </div>
             <div class="user-action">
-              <p-button
-                [label]="t('auth.login')"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                [outlined]="true"
-              />
+              <button mat-stroked-button>
+                {{ t('auth.login') }}
+                <mat-icon fontIcon="arrow_forward" />
+              </button>
             </div>
           </div>
         }
@@ -128,7 +126,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     }
 
     .select-user-title {
-      font-family: var(--p-font-family);
+      font-family: var(--font-family);
       font-size: var(--vinheria-font-size-xl);
       color: var(--m3-on-surface-variant);
       margin-bottom: var(--vinheria-spacing-lg);
@@ -202,10 +200,6 @@ import { CurrencyService } from '../../../core/currency/currency.service';
           font-weight: 600;
           font-size: var(--vinheria-font-size-sm);
           margin-bottom: var(--vinheria-spacing-sm);
-
-          i {
-            font-size: 1rem;
-          }
         }
 
         .user-description {
@@ -227,10 +221,6 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       color: var(--m3-outline);
       font-size: var(--vinheria-font-size-sm);
     }
-
-    :host ::ng-deep .language-dropdown {
-      min-width: 200px;
-    }
   `]
 })
 export class LoginComponent {
@@ -249,11 +239,8 @@ export class LoginComponent {
   selectedLanguage: LanguageOption = this.getCurrentLanguageOption();
 
   login(user: DemoUser): void {
-    // Set language and currency based on user preferences
     this.translocoService.setActiveLang(user.preferredLanguage);
     this.currencyService.setCurrency(user.preferredCurrency);
-
-    // Perform login
     this.authService.loginWithDemoUser(user);
   }
 
@@ -266,7 +253,13 @@ export class LoginComponent {
   }
 
   getRoleIcon(role: UserRole): string {
-    return ROLE_INFO[role]?.icon ?? 'pi pi-user';
+    const iconMap: Record<string, string> = {
+      'pi pi-shopping-cart': 'shopping_cart',
+      'pi pi-truck': 'local_shipping',
+      'pi pi-users': 'group',
+      'pi pi-shield': 'verified_user',
+    };
+    const pi = ROLE_INFO[role]?.icon;
+    return pi ? (iconMap[pi] ?? 'person') : 'person';
   }
-
 }
