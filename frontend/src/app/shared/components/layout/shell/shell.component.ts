@@ -2,8 +2,6 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
 
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -15,11 +13,9 @@ import { TopbarComponent } from '../topbar/topbar.component';
     CommonModule,
     RouterOutlet,
     TranslocoModule,
-    ToastModule,
     SidebarComponent,
     TopbarComponent
   ],
-  providers: [MessageService],
   template: `
     <div class="shell-container" [class.sidebar-collapsed]="sidebarCollapsed()">
       <app-sidebar
@@ -39,8 +35,6 @@ import { TopbarComponent } from '../topbar/topbar.component';
           </div>
         </main>
       </div>
-
-      <p-toast position="top-right" />
     </div>
   `,
   styles: [`

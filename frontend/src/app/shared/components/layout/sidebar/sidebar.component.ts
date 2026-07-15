@@ -2,7 +2,8 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
-import { TooltipModule } from 'primeng/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { UserRole } from '../../../../core/auth/auth.model';
@@ -22,13 +23,14 @@ interface MenuItem {
     CommonModule,
     RouterModule,
     TranslocoModule,
-    TooltipModule
+    MatTooltipModule,
+    MatIconModule
   ],
   template: `
     <aside class="sidebar" [class.collapsed]="collapsed()" *transloco="let t">
       <div class="sidebar-header">
         <div class="logo">
-          <i class="pi pi-box"></i>
+          <mat-icon fontIcon="inventory_2" />
           @if (!collapsed()) {
             <span class="logo-text">Vinheria</span>
           }
@@ -42,10 +44,11 @@ interface MenuItem {
             [routerLink]="item.route"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-            [pTooltip]="collapsed() ? t('nav.' + item.label) : null"
-            tooltipPosition="right"
+            [matTooltip]="t('nav.' + item.label)"
+            [matTooltipDisabled]="!collapsed()"
+            matTooltipPosition="right"
           >
-            <i [class]="item.icon"></i>
+            <mat-icon [fontIcon]="item.icon" />
             @if (!collapsed()) {
               <span>{{ t('nav.' + item.label) }}</span>
             }
@@ -62,10 +65,11 @@ interface MenuItem {
               class="nav-item"
               [routerLink]="item.route"
               routerLinkActive="active"
-              [pTooltip]="collapsed() ? t('nav.' + item.label) : null"
-              tooltipPosition="right"
+              [matTooltip]="t('nav.' + item.label)"
+              [matTooltipDisabled]="!collapsed()"
+              matTooltipPosition="right"
             >
-              <i [class]="item.icon"></i>
+              <mat-icon [fontIcon]="item.icon" />
               @if (!collapsed()) {
                 <span>{{ t('nav.' + item.label) }}</span>
               }
@@ -78,10 +82,10 @@ interface MenuItem {
         <button
           class="collapse-btn"
           (click)="collapsedChange.emit(!collapsed())"
-          [pTooltip]="collapsed() ? 'Expand' : 'Collapse'"
-          tooltipPosition="right"
+          [matTooltip]="collapsed() ? 'Expand' : 'Collapse'"
+          matTooltipPosition="right"
         >
-          <i [class]="collapsed() ? 'pi pi-angle-right' : 'pi pi-angle-left'"></i>
+          <mat-icon [fontIcon]="collapsed() ? 'chevron_right' : 'chevron_left'" />
         </button>
       </div>
     </aside>
@@ -123,8 +127,10 @@ interface MenuItem {
       align-items: center;
       gap: var(--vinheria-spacing-sm);
 
-      i {
+      mat-icon {
         font-size: 1.75rem;
+        width: 1.75rem;
+        height: 1.75rem;
         color: var(--m3-primary);
       }
 
@@ -154,9 +160,10 @@ interface MenuItem {
       margin-bottom: var(--vinheria-spacing-xs);
       position: relative;
 
-      i {
+      mat-icon {
         font-size: 1.25rem;
         width: 24px;
+        height: 1.25rem;
         text-align: center;
       }
 
@@ -185,7 +192,7 @@ interface MenuItem {
       &.active {
         color: var(--m3-primary);
 
-        i {
+        mat-icon {
           color: var(--m3-primary);
         }
 
@@ -234,8 +241,10 @@ interface MenuItem {
         color: var(--m3-primary);
       }
 
-      i {
+      mat-icon {
         font-size: 1rem;
+        width: 1rem;
+        height: 1rem;
       }
     }
 
@@ -257,20 +266,20 @@ export class SidebarComponent {
   collapsedChange = output<boolean>();
 
   private menuItems: MenuItem[] = [
-    { label: 'dashboard', icon: 'pi pi-home', route: '/dashboard' },
-    { label: 'catalog', icon: 'pi pi-book', route: '/catalog' },
-    { label: 'sales', icon: 'pi pi-shopping-cart', route: '/sales', roles: ['SELLER', 'ADMIN'] },
-    { label: 'purchases', icon: 'pi pi-truck', route: '/purchases', roles: ['PURCHASER', 'ADMIN'] },
-    { label: 'approvals', icon: 'pi pi-check-circle', route: '/approvals', roles: ['MANAGER', 'ADMIN'] },
-    { label: 'fulfillments', icon: 'pi pi-box', route: '/fulfillments' }
+    { label: 'dashboard', icon: 'home', route: '/dashboard' },
+    { label: 'catalog', icon: 'menu_book', route: '/catalog' },
+    { label: 'sales', icon: 'shopping_cart', route: '/sales', roles: ['SELLER', 'ADMIN'] },
+    { label: 'purchases', icon: 'local_shipping', route: '/purchases', roles: ['PURCHASER', 'ADMIN'] },
+    { label: 'approvals', icon: 'check_circle', route: '/approvals', roles: ['MANAGER', 'ADMIN'] },
+    { label: 'fulfillments', icon: 'inventory_2', route: '/fulfillments' }
   ];
 
   private adminItems: MenuItem[] = [
-    { label: 'customers', icon: 'pi pi-users', route: '/admin/customers' },
-    { label: 'suppliers', icon: 'pi pi-building', route: '/admin/suppliers' },
-    { label: 'warehouses', icon: 'pi pi-warehouse', route: '/admin/warehouses' },
-    { label: 'pricing', icon: 'pi pi-dollar', route: '/admin/pricing' },
-    { label: 'users', icon: 'pi pi-user-edit', route: '/admin/users' }
+    { label: 'customers', icon: 'group', route: '/admin/customers' },
+    { label: 'suppliers', icon: 'domain', route: '/admin/suppliers' },
+    { label: 'warehouses', icon: 'warehouse', route: '/admin/warehouses' },
+    { label: 'pricing', icon: 'attach_money', route: '/admin/pricing' },
+    { label: 'users', icon: 'manage_accounts', route: '/admin/users' }
   ];
 
   visibleMenuItems = computed(() => {
