@@ -87,7 +87,6 @@ interface FilterOption<T> {
               [options]="countryOptions"
               [(ngModel)]="selectedCountry"
               optionLabel="label"
-              optionValue="value"
               [placeholder]="t('catalog.country')"
               [showClear]="true"
               styleClass="country-dropdown"
@@ -100,7 +99,6 @@ interface FilterOption<T> {
               [options]="statusOptions"
               [(ngModel)]="selectedStatus"
               optionLabel="label"
-              optionValue="value"
               [placeholder]="t('common.status')"
               [showClear]="true"
               styleClass="status-dropdown"
@@ -500,8 +498,8 @@ export class SupplierListComponent {
 
   // State
   searchQuery = signal('');
-  selectedCountry = signal<string | null>(null);
-  selectedStatus = signal<SupplierStatus | null>(null);
+  selectedCountry = signal<FilterOption<string> | null>(null);
+  selectedStatus = signal<FilterOption<SupplierStatus> | null>(null);
   selectedSupplier = signal<Supplier | null>(null);
   showDetailDialog = false;
 
@@ -540,12 +538,12 @@ export class SupplierListComponent {
       }
 
       // Country filter
-      if (country && supplier.country !== country) {
+      if (country && supplier.country !== country.value) {
         return false;
       }
 
       // Status filter
-      if (status && supplier.status !== status) {
+      if (status && supplier.status !== status.value) {
         return false;
       }
 

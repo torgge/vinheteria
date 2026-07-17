@@ -224,6 +224,12 @@
     "reason": "Motivo",
     "rejectReason": "Motivo da Rejeição",
     "rejectReasonPlaceholder": "Digite o motivo da rejeição...",
+    "approveConfirmation": "Aprovar o pedido {{orderNumber}}?",
+    "rejectConfirmation": "Rejeitar o pedido {{orderNumber}}?",
+    "approvedSummary": "Pedido aprovado",
+    "approvedDetail": "O pedido {{orderNumber}} foi aprovado",
+    "rejectedSummary": "Pedido rejeitado",
+    "rejectedDetail": "O pedido {{orderNumber}} foi rejeitado",
     "noApprovals": "Nenhuma aprovação pendente",
     "orderType": "Tipo de Pedido",
     "requester": "Solicitante"

@@ -1,89 +1,96 @@
 # AGENTS.md — Vinheria Digital
 
-B2B wine distribution platform (closed system, internal users). Quarkus + Kotlin backend, Angular 18 + PrimeNG frontend.
+B2B wine distribution platform (closed system, internal users). Angular 18 + PrimeNG 17 frontend. Quarkus + Kotlin backend is **planned but not implemented**.
 
-## Repo State (Critical)
+## Repo State
 
-- **`services/` does NOT exist yet.** Backend microservices are documented but not implemented. Do NOT create backend code without explicit confirmation.
-- **Frontend exists** under `frontend/src/`. Real working dir: `frontend/`.
-- **Package manager**: use `npm` (only `package-lock.json` exists, no `pnpm-lock.yaml`), despite `angular.json` declaring `"packageManager": "pnpm"`.
+- **`services/` does NOT exist.** Backend is designed in `docs/` but has zero code. Do NOT create backend code without explicit confirmation.
+- **Frontend lives at `frontend/`.** `frontend/vinheria-web/` is a stale duplicate (missing PrimeNG, Transloco, @ngrx/signals) — do not use it.
+- **No test files exist.** `angular.json` sets `"skipTests": true` for all schematics — `ng generate` will not create spec files. You must create them manually.
+- **No ESLint or Prettier** is configured in this repo.
 
-## Quick Start
+## Commands
 
 ```bash
-docker compose up -d                          # Core infra (Postgres, Kafka, Valkey, OpenSearch, Conductor)
-docker compose --profile observability up -d  # + Grafana/Prometheus/Tempo/Loki
-docker compose --profile '*' down -v          # Full teardown, remove volumes
+# Infrastructure (Docker Compose profiles)
+docker compose --profile core up -d                                     # Postgres + Valkey
+docker compose --profile core --profile events up -d                     # + Kafka
+docker compose --profile core --profile events --profile connect --profile tools up -d  # + Debezium + Kafka UI
+docker compose --profile core --profile events --profile connect --profile search --profile saga --profile tools up -d  # all
+docker compose --profile '*' down -v                                    # Full teardown
 
+# Frontend (package manager is npm, not pnpm — README is stale)
 cd frontend
-npm install && npm start                      # Angular dev server
-npm test                                      # Frontend tests
+npm install && npm start          # Dev server (http://localhost:4200)
+npm test                          # Karma + Jasmine (ng test) — NOT Jest
+npm run build                     # Production build
 ```
 
+Kafka must be healthy before Kafka Connect starts (30s healthcheck). Conductor takes ~60s.
+
+`infra/` has Grafana/Prometheus/Tempo/OTEL configs but they are **NOT wired as compose services or profiles**. `frontend/Dockerfile` exists but is not in compose.
+
+## Docker Runtime Permissions (learned the hard way)
+
+- **`--tmpfs /app` kills the app.** tmpfs mounts as empty, wiping `COPY` artifacts — results in `ENOENT` on `package.json`.
+- **`--tmpfs /app/.angular/cache` blocks Vite.** tmpfs is root-owned by default, so UID 1000 gets `EACCES` creating subdirs.
+- **Solution:** `RUN mkdir -p /app/.angular/cache && chown -R 1000:1000 /app` in Dockerfile. At runtime, tmpfs only on `/tmp`. No tmpfs on any path that the build created and the process needs to write into.
+- **`ng serve` runs as UID 1000, needs write access to `/app/.angular/cache` and `/app/node_modules/.cache`.** The `chown` at build time ensures these are writable without tmpfs.
+
+## Frontend Conventions
+
+- **Standalone components only** (no NgModules). Every component uses `standalone: true`.
+- **State: Angular Signals** (`signal`, `computed`, `input`) + `@ngrx/signals` Signal Store. No RxJS Subjects for component state.
+- **i18n: `*transloco`** for every user-visible string. 3 languages: `pt-BR` (default), `es-PY`, `en-US`. Keys: `{scope}.{feature}.{element}`. Translations at `src/assets/i18n/{locale}.json`.
+- **UI: PrimeNG 17** (`^17.18.11`). Customize via `--p-*` CSS vars, not internal class overrides.
+- **Multi-currency:** prices as `{ BRL, PYG, USD }`. Accounting currency is BRL. `CurrencyService` handles display.
+- **Feature structure:** `features/{context}/pages/{page-name}/` (e.g. `features/catalog/pages/wine-list/`).
+- **Testing: Karma + Jasmine.** `angular.json` test builder is `karma`. Jest is in devDeps but NOT configured (no `jest.config.js`).
+- **Mock data:** `src/app/mock/data/` — typed fixtures for wines, orders, customers, suppliers, warehouses. Keep shapes in sync with planned backend DTOs.
+- **Styling:** SCSS. `src/styles.scss` + `src/styles/` directory.
+
 ## Commit Conventions (Enforced)
+
+Sources of truth: `commitlint.config.js` + `.github/workflows/pr-validation.yml`
 
 ```
 type(scope): lowercase description, max 72 chars
 
 Valid types: feat, fix, refactor, test, docs, style, perf, build, ci, chore
-Valid scopes (source of truth: commitlint.config.js):
-   catalog | sales | purchase | warehouse | pricing | customer | supplier | identity
-   frontend | shared | infra | docker | terraform | ci | k6
-Branch: {type}/VNH-{ticket}-{slug}  (max 48h)
+Valid scopes: catalog | sales | purchase | warehouse | pricing | customer | supplier | identity
+              frontend | shared | infra | docker | terraform | ci | k6
+Branch: {type}/VNH-{ticket}-{slug}  (max 48h, trunk-based)
 ```
 
-**⚠️ Scope mismatch:** `commitlint.config.js` uses B2B scopes above. `.github/workflows/pr-validation.yml` has older scopes (`order`, `inventory`, `payment`, `shipping`) that don't match the B2B model. Use the scopes from `commitlint.config.js`.
+PR validation enforces: PR title format, branch naming, PR size <=400 lines (warning). `claude/` and `dependabot/` branches are exempt from naming rules.
 
-## Architecture Rules (For When Backend Is Built)
+## CI (`.github/workflows/ci.yml`)
 
-### Kotlin — Domain Purity
+Smart backend detection — if no `gradlew` or `settings.gradle*` exists, all Gradle jobs are skipped. Currently all backend jobs are skipped since `services/` is empty.
 
-- `domain/` **must have zero framework imports** (enforced by ArchUnit + Claude hook)
-- All I/O returns `Uni<T>` / `Multi<T>` (Mutiny reactive) — never block
-- `Money(amount, currency)` for all monetary values — never raw `BigDecimal`
-- `data class` for VOs, `sealed class DomainError` for errors, no `var` in domain/application
-- Use cases: verb infinitive (`CreateSalesOrder`, not `SalesOrderCreator`)
-- Kafka topics: `vinheria.{context}.{event-kebab-case}` (e.g. `vinheria.sales.order-approved`)
+## Formatting (`.editorconfig`)
 
-### Kotlin — Testing Gotcha
+- Kotlin `.kt`/`.kts`: indent 4, ktlint_official style, trailing commas, no wildcard imports, max 120 chars
+- TS/JS/JSON/HTML/SCSS/CSS/YAML: indent 2
+- Markdown: preserve trailing whitespace
 
-- **Unit tests**: Kotest (`BehaviorSpec`/`FunSpec`) + MockK. No JUnit `@Test`.
-- **Integration tests**: `@QuarkusTest` requires **JUnit5 runner** (Kotest runner incompatible). Use Kotest *assertions* (`shouldBe`, `shouldContain`) inside JUnit5 `@Test` methods.
-- Coverage gate: `./gradlew koverVerify` (≥80%)
-- CI order: `lint → test(-Punit, -Pintegration, -Parchitecture) → koverVerify`
+## Claude Code Hooks
 
-### Angular — Frontend Rules
+`.claude/settings.json` wires hooks for Claude Code sessions (not OpenCode): TDD runner, detekt lint, domain-purity guard, commit validation. The TDD hook's frontend path references `vinheria-web/` but the actual frontend is at `frontend/` — known discrepancy.
 
-- Standalone components only (no NgModules)
-- State: Angular Signals + `@ngrx/signals` Signal Store. No RxJS Subjects for state.
-- **Every user-visible string → `*transloco`**. 3 languages: `pt-BR` (default), `es-PY`, `en-US`. Keys: `{scope}.{feature}.{element}`.
-- Tests: **Jest** + `jest-preset-angular` (not Karma, despite being in devDeps)
-- Multi-currency: prices stored as `{ BRL, PYG, USD }`, accounting currency is BRL
+## OpenCode Config
 
-### Business-Critical Constraints
-
-- `warehouseId` lives on **each `SalesOrderItem`**, never on the order
-- **Fulfillments generated on approval**, one per unique warehouse — not earlier
-- **ADMIN auto-approves**; SELLER/PURCHASER require MANAGER/ADMIN approval
-- Every sales item must carry `unitCost`, `marginPercentage`, `totalMargin`
+- Skill: `.opencode/skills/material-3/` (MD3 + PrimeNG token system)
+- Commands: `.opencode/commands/k6-smoke.md`, `k6-load.md`, `k6-e2e.md`
 
 ## Infra Services (Local Dev)
 
 | Service | Port | Notes |
 |---------|------|-------|
-| PostgreSQL 16 | 5432 | WAL logical enabled for CDC |
+| PostgreSQL 16 | 5432 | WAL logical, multi-db init |
 | Valkey 8 | 6379 | Redis-compatible cache |
-| Kafka KRaft | 9092 (internal), 9093 (controller) | No Zookeeper |
+| Kafka KRaft | 9092 / 9093 (ctrl) | No Zookeeper |
 | OpenSearch | 9200 | Security disabled in dev |
 | Conductor CE | 8080 (API), 5000 (UI) | Saga orchestration |
 | Kafka Connect | 8083 | Debezium connectors |
 | Kafka UI | 9090 | Dev tool |
-
-Kafka must be healthy before Kafka Connect starts — there's a 30s `start_period` on the healthcheck. Conductor takes ~60s to start.
-
-## Instruction Files
-
-- `CLAUDE.md` — detailed Claude Code agent instructions (long-form reference)
-- `.github/copilot-instructions.md` — summarized version for GitHub Copilot
-- `.claude/settings.json` — Claude Code hooks (TDD runner, detekt lint, domain purity guard, commit validation)
-- `docs/` — 17-file system design documentation

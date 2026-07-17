@@ -8,12 +8,15 @@ FROM node:20-alpine AS development
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies first (cached layer)
 COPY package*.json ./
 RUN npm ci
 
 # Copy source code
 COPY . .
+
+# Pre-create Vite cache dirs with correct ownership so UID 1000 can write at runtime
+RUN mkdir -p /app/.angular/cache && chown -R 1000:1000 /app
 
 # Expose port for dev server
 EXPOSE 4200
@@ -28,7 +31,7 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies first (cached layer)
 COPY package*.json ./
 RUN npm ci
 

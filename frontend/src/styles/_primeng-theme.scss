@@ -1,66 +1,62 @@
-// Vinheria Digital — PrimeNG Theme Overrides
+// Vinheria Digital — PrimeNG Theme Overrides (DESIGN.md / Notion-inspired)
+// All M3 tokens are now remapped to DESIGN.md values in _variables.scss.
+// This file adjusts structural patterns to match Notion's design philosophy.
 
-/* ============================================================
-   M3 Buttons — full-radius pill, state layers, 5 emphasis levels
-   ============================================================ */
+// ═══════════════════════════════════════════
+// BUTTONS — DESIGN.md button hierarchy
+// ═══════════════════════════════════════════
 
-/* Base button — shared by all variants */
 .p-button {
-  border-radius: var(--m3-radius-full, 9999px);
-  font-family: var(--m3-typescale-label-large-font, var(--p-font-family));
-  font-size: var(--m3-typescale-label-large-size, 0.875rem);
-  font-weight: var(--m3-typescale-label-large-weight, 500);
-  line-height: var(--m3-typescale-label-large-line-height, 1.25rem);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
   padding: 0.625rem 1.5rem;
   min-height: 40px;
-  transition: all var(--vinheria-transition-fast);
+  transition: all var(--motion-fast);
   position: relative;
   overflow: hidden;
 
-  .p-button-icon {
-    font-size: 1.125rem;
-  }
-
-  .p-button-label {
-    font-weight: var(--m3-typescale-label-large-weight, 500);
-  }
+  .p-button-icon { font-size: 1.125rem; }
+  .p-button-label { font-weight: 500; }
 
   &:focus-visible {
     outline: none;
-    box-shadow: var(--m3-state-focus-ring);
+    box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
   }
 }
 
-/* === Filled Button (default, highest emphasis) === */
+// Filled button (primary CTA — only blue action)
 .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-link) {
-  background: var(--m3-primary);
-  border-color: var(--m3-primary);
-  color: var(--m3-on-primary);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
 
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--m3-primary);
-    border-color: var(--m3-primary);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--color-primary);
+    border-color: var(--color-primary);
   }
 
   &:active {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-press-opacity)), rgba(255, 255, 255, var(--m3-state-press-opacity))), var(--m3-primary);
+    background: var(--color-primary-active);
+    border-color: var(--color-primary-active);
   }
 
   &:disabled {
-    background: rgba(var(--m3-primary-rgb), 0.12);
+    background: rgba(var(--color-primary-rgb), 0.12);
     border-color: transparent;
-    color: rgba(var(--m3-primary-rgb), 0.38);
+    color: rgba(var(--color-primary-rgb), 0.38);
   }
 }
 
-/* Severity variants for filled buttons */
+// Severity variants
 .p-button.p-button-secondary {
-  background: var(--m3-secondary);
-  border-color: var(--m3-secondary);
-  color: var(--m3-on-secondary);
-
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-on-primary);
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--m3-secondary);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--color-secondary);
   }
 }
 
@@ -68,9 +64,8 @@
   background: var(--vinheria-success);
   border-color: var(--vinheria-success);
   color: #fff;
-
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--vinheria-success);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--vinheria-success);
   }
 }
 
@@ -78,9 +73,8 @@
   background: var(--vinheria-info);
   border-color: var(--vinheria-info);
   color: #fff;
-
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--vinheria-info);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--vinheria-info);
   }
 }
 
@@ -88,9 +82,8 @@
   background: var(--vinheria-warning);
   border-color: var(--vinheria-warning);
   color: #fff;
-
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--vinheria-warning);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--vinheria-warning);
   }
 }
 
@@ -98,256 +91,256 @@
   background: var(--vinheria-error);
   border-color: var(--vinheria-error);
   color: #fff;
-
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--vinheria-error);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--vinheria-error);
   }
 }
 
 .p-button.p-button-help {
-  background: var(--m3-tertiary);
-  border-color: var(--m3-tertiary);
-  color: var(--m3-on-tertiary);
-
+  background: var(--color-accent-purple-deep);
+  border-color: var(--color-accent-purple-deep);
+  color: var(--color-on-primary);
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--m3-tertiary);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--color-accent-purple-deep);
   }
 }
 
 .p-button.p-button-contrast {
-  background: var(--m3-inverse-surface);
-  border-color: var(--m3-inverse-surface);
-  color: var(--m3-inverse-on-surface);
-
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-on-primary);
   &:hover {
-    background: linear-gradient(rgba(255, 255, 255, var(--m3-state-hover-opacity)), rgba(255, 255, 255, var(--m3-state-hover-opacity))), var(--m3-inverse-surface);
+    background: linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity))), var(--color-ink);
   }
 }
 
-/* === Outlined Button (medium emphasis) === */
+// Outlined button (medium emphasis)
 .p-button.p-button-outlined {
   background: transparent;
-  border-color: var(--m3-outline);
-  color: var(--m3-primary);
+  border-color: var(--color-hairline);
+  color: var(--color-primary);
 
   &:hover {
-    background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
-    border-color: var(--m3-primary);
+    background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+    border-color: var(--color-primary);
   }
 
   &:active {
-    background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-press-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-press-opacity)));
+    background: rgba(var(--color-primary-rgb), var(--state-press-opacity));
   }
 
   &:disabled {
-    border-color: rgba(var(--m3-primary-rgb), 0.12);
-    color: rgba(var(--m3-primary-rgb), 0.38);
+    border-color: rgba(var(--color-primary-rgb), 0.12);
+    color: rgba(var(--color-primary-rgb), 0.38);
   }
 }
 
-/* === Text Button (low emphasis) === */
+// Text button (low emphasis)
 .p-button.p-button-text {
   background: transparent;
   border-color: transparent;
-  color: var(--m3-primary);
+  color: var(--color-primary);
 
   &:hover {
-    background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+    background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
   }
 
   &:active {
-    background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-press-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-press-opacity)));
+    background: rgba(var(--color-primary-rgb), var(--state-press-opacity));
   }
 
   &:disabled {
-    color: rgba(var(--m3-primary-rgb), 0.38);
+    color: rgba(var(--color-primary-rgb), 0.38);
   }
 }
 
-/* === Link Button === */
+// Link button
 .p-button.p-button-link {
-  color: var(--m3-primary);
+  color: var(--color-primary);
   padding: 0.5rem;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  &:hover { text-decoration: underline; }
 }
 
-/* === Icon-Only Button (rounded, standard) === */
+// Icon-only button (circular)
 .p-button.p-button-icon-only {
   width: 40px;
   height: 40px;
   padding: 0;
-  border-radius: var(--m3-radius-full);
+  border-radius: var(--radius-full);
 
-  &.p-button-rounded {
-    border-radius: var(--m3-radius-full);
-  }
+  &.p-button-rounded { border-radius: var(--radius-full); }
 
   &.p-button-sm {
     width: 32px;
     height: 32px;
-
-    .p-button-icon {
-      font-size: 1rem;
-    }
+    .p-button-icon { font-size: 1rem; }
   }
 
   &.p-button-lg {
     width: 48px;
     height: 48px;
-
-    .p-button-icon {
-      font-size: 1.375rem;
-    }
+    .p-button-icon { font-size: 1.375rem; }
   }
 }
 
-/* === Tonal Button (M3 filled-tonal, medium emphasis) === */
-.p-button.p-button-outlined.p-button-secondary {
-  border-color: transparent;
-  background: var(--m3-secondary-container);
-  color: var(--m3-on-secondary-container);
 
-  &:hover {
-    background: linear-gradient(rgba(var(--m3-secondary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-secondary-rgb), var(--m3-state-hover-opacity))), var(--m3-secondary-container);
-  }
-}
+// ═══════════════════════════════════════════
+// CARD — DESIGN.md feature-card
+// ═══════════════════════════════════════════
 
-/* ============================================================
-   M3 Card — refined
-   ============================================================ */
 .p-card {
-  background: var(--m3-surface);
-  border-radius: var(--m3-radius-md, 12px);
-  box-shadow: var(--m3-elevation-1);
-  border: 1px solid var(--m3-outline-variant);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-level-0);
+  border: 1px solid var(--color-hairline);
 
   .p-card-header {
-    border-bottom: 1px solid var(--m3-outline-variant);
-    padding: var(--vinheria-spacing-md, 16px) var(--vinheria-spacing-md, 16px) 0;
+    border-bottom: 1px solid var(--color-hairline);
+    padding: var(--space-md) var(--space-md) 0;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.4;
+    color: var(--color-ink);
 
     &:first-child {
-      border-radius: var(--m3-radius-md, 12px) var(--m3-radius-md, 12px) 0 0;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     }
   }
 
   .p-card-body {
-    padding: var(--vinheria-spacing-md, 16px);
+    padding: var(--space-md);
   }
 
   .p-card-footer {
-    padding: 0 var(--vinheria-spacing-md, 16px) var(--vinheria-spacing-md, 16px);
-    border-top: 1px solid var(--m3-outline-variant);
+    padding: 0 var(--space-md) var(--space-md);
+    border-top: 1px solid var(--color-hairline);
   }
 }
 
-/* ============================================================
-   M3 DataTable — dense rows, header, hover, paginator
-   ============================================================ */
+// ═══════════════════════════════════════════
+// DATA TABLE
+// ═══════════════════════════════════════════
+
 .p-datatable {
   .p-datatable-header {
-    background: var(--m3-surface);
+    background: var(--color-surface);
     border: none;
-    padding: var(--vinheria-spacing-md, 16px) var(--vinheria-spacing-md, 16px);
-    border-radius: var(--m3-radius-md, 12px) var(--m3-radius-md, 12px) 0 0;
-    border-bottom: 1px solid var(--m3-outline-variant);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: 1px solid var(--color-hairline);
   }
 
   .p-datatable-thead > tr > th {
-    background: var(--m3-surface-container-lowest);
-    color: var(--m3-on-surface-variant);
-    font-family: var(--m3-typescale-label-small-font, var(--p-font-family));
-    font-size: var(--m3-typescale-label-small-size, 0.6875rem);
-    font-weight: var(--m3-typescale-label-small-weight, 500);
+    background: var(--color-canvas-soft);
+    color: var(--color-ink-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.125px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 12px var(--vinheria-spacing-md, 16px);
-    border-bottom: 1px solid var(--m3-outline-variant);
+    padding: 10px var(--space-md);
+    border-bottom: 1px solid var(--color-hairline);
     border-top: none;
     white-space: nowrap;
-    transition: background var(--vinheria-transition-fast);
+    transition: background var(--motion-fast);
 
     &.p-sortable-column:hover {
-      background: var(--m3-surface-container-low);
-      color: var(--m3-on-surface);
+      background: var(--color-canvas);
+      color: var(--color-ink);
     }
 
     &.p-sortable-column.p-highlight {
-      background: var(--m3-surface-container-low);
-      color: var(--m3-primary);
-
-      .p-sortable-column-icon {
-        color: var(--m3-primary);
-      }
+      background: var(--color-canvas);
+      color: var(--color-primary);
+      .p-sortable-column-icon { color: var(--color-primary); }
     }
   }
 
   .p-datatable-tbody > tr {
-    background: var(--m3-surface);
-    color: var(--m3-on-surface);
-    transition: background var(--vinheria-transition-fast);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    transition: background var(--motion-fast);
 
     > td {
-      padding: 10px var(--vinheria-spacing-md, 16px);
-      border-bottom: 1px solid var(--m3-outline-variant);
-      font-size: var(--m3-typescale-body-medium-size, 0.875rem);
+      padding: 10px var(--space-md);
+      border-bottom: 1px solid var(--color-hairline);
+      font-size: 15px;
     }
 
     &:hover {
-      background: linear-gradient(rgba(var(--m3-primary-rgb), 0.04), rgba(var(--m3-primary-rgb), 0.04)), var(--m3-surface);
+      background: linear-gradient(rgba(var(--color-primary-rgb), 0.04), rgba(var(--color-primary-rgb), 0.04)), var(--color-surface);
     }
 
     &.p-highlight {
-      background: var(--m3-secondary-container);
-      color: var(--m3-on-secondary-container);
+      background: var(--color-canvas-soft);
+      color: var(--color-ink);
     }
   }
 
   .p-datatable-tfoot > tr > td {
-    background: var(--m3-surface-container-lowest);
-    border-top: 1px solid var(--m3-outline-variant);
+    background: var(--color-canvas-soft);
+    border-top: 1px solid var(--color-hairline);
     font-weight: 600;
   }
 }
 
-// Input customizations
+// ═══════════════════════════════════════════
+// INPUTS — DESIGN.md text-input (tight corners)
+// ═══════════════════════════════════════════
+
 .p-inputtext,
 .p-dropdown,
 .p-multiselect,
 .p-inputnumber-input {
-  border-radius: var(--vinheria-radius-md);
-  border-color: var(--p-surface-border);
-  transition: all var(--vinheria-transition-fast);
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 15px;
+  padding: 6px 8px;
+  transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+
+  &::placeholder {
+    color: var(--color-ink-faint);
+    opacity: 1;
+  }
 
   &:focus,
   &.p-focus {
-    border-color: var(--p-primary-color);
-    box-shadow: 0 0 0 2px var(--p-primary-50);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-level-1);
   }
 }
 
-// M3 Search Bar — filled pill with icon (Material Design 3)
+.p-dropdown,
+.p-multiselect {
+  padding: 0;
+
+  .p-dropdown-label,
+  .p-multiselect-label {
+    padding: 6px 8px;
+  }
+}
+
+// Search bar (pill — DESIGN.md style)
 .p-icon-field {
   display: flex !important;
   align-items: center;
-  background: var(--m3-surface-container-highest);
-  border-radius: var(--m3-radius-xl, 28px);
-  border: 2px solid transparent;
-  min-height: 48px;
+  background: var(--color-canvas-soft);
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  min-height: 40px;
   padding: 0 4px;
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--motion-fast);
 
   .p-input-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
-    color: var(--m3-on-surface-variant);
-    font-size: 1.25rem;
+    color: var(--color-ink-muted);
+    font-size: 1.125rem;
   }
 
   .p-inputtext {
@@ -358,13 +351,12 @@
     box-shadow: none !important;
     border-radius: 0 !important;
     padding: 0 8px 0 0;
-    font-family: var(--m3-typescale-body-large-font, var(--p-font-family));
-    font-size: var(--m3-typescale-body-large-size, 1rem);
-    color: var(--m3-on-surface);
+    font-size: 16px;
+    color: var(--color-ink);
     outline: none;
 
     &::placeholder {
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-muted);
       opacity: 0.6;
     }
 
@@ -376,344 +368,328 @@
   }
 
   &:focus-within {
-    background: var(--m3-surface-container-high);
-    border-color: var(--m3-primary);
-    box-shadow: var(--m3-elevation-3);
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-level-1);
   }
 
   &:hover:not(:focus-within) {
-    background: var(--m3-surface-container-high);
+    background: var(--color-surface);
   }
 }
 
-/* ============================================================
-   M3 Dropdown & Multiselect Panel
-   ============================================================ */
+// ═══════════════════════════════════════════
+// DROPDOWN & MULTISELECT PANEL
+// ═══════════════════════════════════════════
+
 .p-dropdown-panel,
 .p-multiselect-panel {
-  background: var(--m3-surface-container);
-  border: none;
-  border-radius: var(--m3-radius-sm, 8px);
-  box-shadow: var(--m3-elevation-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-level-1);
   margin-top: 4px;
 
   .p-dropdown-items,
   .p-multiselect-items {
-    padding: var(--vinheria-spacing-xs, 4px);
+    padding: var(--space-xs);
 
     .p-dropdown-item,
     .p-multiselect-item {
-      border-radius: var(--m3-radius-xs, 4px);
+      border-radius: var(--radius-sm);
       margin: 1px 0;
-      padding: 10px var(--vinheria-spacing-md, 16px);
-      color: var(--m3-on-surface);
-      transition: background var(--vinheria-transition-fast);
+      padding: 8px var(--space-md);
+      color: var(--color-ink);
+      transition: background var(--motion-fast);
 
       &:hover {
-        background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+        background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
       }
 
       &.p-highlight {
-        background: var(--m3-secondary-container);
-        color: var(--m3-on-secondary-container);
+        background: var(--color-canvas-soft);
+        color: var(--color-ink);
         font-weight: 600;
       }
     }
   }
 
   .p-dropdown-filter-container {
-    padding: var(--vinheria-spacing-xs, 4px);
-    border-bottom: 1px solid var(--m3-outline-variant);
-    margin-bottom: var(--vinheria-spacing-xs, 4px);
+    padding: var(--space-xs);
+    border-bottom: 1px solid var(--color-hairline);
+    margin-bottom: var(--space-xs);
   }
 }
 
-/* Dropdown trigger icon */
+// Trigger icons
 .p-dropdown .p-dropdown-trigger-icon,
 .p-multiselect .p-multiselect-trigger-icon {
-  color: var(--m3-on-surface-variant);
+  color: var(--color-ink-muted);
 }
 
-/* Multiselect chips */
+// Multiselect chips
 .p-multiselect {
   .p-multiselect-token {
-    background: var(--m3-secondary-container);
-    color: var(--m3-on-secondary-container);
-    border-radius: var(--m3-radius-xs, 4px);
+    background: var(--color-canvas-soft);
+    color: var(--color-ink);
+    border-radius: var(--radius-xs);
     padding: 2px 8px;
-    font-size: var(--m3-typescale-label-small-size, 0.6875rem);
+    font-size: 12px;
   }
 }
 
-/* ============================================================
-   M3 Toast / Snackbar
-   ============================================================ */
+// ═══════════════════════════════════════════
+// TOAST / SNACKBAR
+// ═══════════════════════════════════════════
+
 .p-toast {
   .p-toast-message {
-    border-radius: var(--m3-radius-sm, 8px);
-    box-shadow: var(--m3-elevation-3);
-    margin-bottom: var(--vinheria-spacing-sm, 8px);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-level-1);
+    margin-bottom: var(--space-sm);
+    border: 1px solid var(--color-hairline);
 
     &.p-toast-message-success {
-      background: var(--m3-surface-container-high);
+      background: var(--color-surface);
       border-left: 4px solid var(--vinheria-success);
-      color: var(--m3-on-surface);
-
+      color: var(--color-ink);
       .p-toast-message-icon,
-      .p-toast-icon-close {
-        color: var(--vinheria-success);
-      }
+      .p-toast-icon-close { color: var(--vinheria-success); }
     }
 
     &.p-toast-message-info {
-      background: var(--m3-surface-container-high);
+      background: var(--color-surface);
       border-left: 4px solid var(--vinheria-info);
-      color: var(--m3-on-surface);
-
+      color: var(--color-ink);
       .p-toast-message-icon,
-      .p-toast-icon-close {
-        color: var(--vinheria-info);
-      }
+      .p-toast-icon-close { color: var(--vinheria-info); }
     }
 
     &.p-toast-message-warn {
-      background: var(--m3-surface-container-high);
+      background: var(--color-surface);
       border-left: 4px solid var(--vinheria-warning);
-      color: var(--m3-on-surface);
-
+      color: var(--color-ink);
       .p-toast-message-icon,
-      .p-toast-icon-close {
-        color: var(--vinheria-warning);
-      }
+      .p-toast-icon-close { color: var(--vinheria-warning); }
     }
 
     &.p-toast-message-error {
-      background: var(--m3-surface-container-high);
+      background: var(--color-surface);
       border-left: 4px solid var(--vinheria-error);
-      color: var(--m3-on-surface);
-
+      color: var(--color-ink);
       .p-toast-message-icon,
-      .p-toast-icon-close {
-        color: var(--vinheria-error);
-      }
+      .p-toast-icon-close { color: var(--vinheria-error); }
     }
   }
 
   .p-toast-message-icon {
     font-size: 1.25rem;
-    margin-right: var(--vinheria-spacing-sm, 8px);
+    margin-right: var(--space-sm);
   }
 }
 
-/* ============================================================
-   M3 Dialog — 28px radius, headline/body/actions layout
-   ============================================================ */
+// ═══════════════════════════════════════════
+// DIALOG
+// ═══════════════════════════════════════════
+
 .p-dialog {
-  border-radius: var(--m3-radius-xl, 28px);
-  box-shadow: var(--m3-elevation-4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-level-2);
   overflow: hidden;
 
   .p-dialog-header {
-    background: var(--m3-surface);
-    color: var(--m3-on-surface);
-    padding: var(--vinheria-spacing-lg, 24px) var(--vinheria-spacing-lg, 24px) var(--vinheria-spacing-md, 16px);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding: var(--space-lg) var(--space-lg) var(--space-md);
     border-bottom: none;
 
     .p-dialog-title {
-      font-family: var(--m3-typescale-headline-small-font, var(--p-font-family));
-      font-size: var(--m3-typescale-headline-small-size, 1.5rem);
-      font-weight: var(--m3-typescale-headline-small-weight, 400);
-      line-height: var(--m3-typescale-headline-small-line-height, 2rem);
+      font-weight: 700;
+      font-size: 22px;
+      line-height: 1.27;
     }
 
     .p-dialog-header-icon {
-      border-radius: var(--m3-radius-full);
-      color: var(--m3-on-surface-variant);
+      border-radius: var(--radius-full);
+      color: var(--color-ink-muted);
       width: 40px;
       height: 40px;
-      transition: background var(--vinheria-transition-fast);
+      transition: background var(--motion-fast);
 
       &:hover {
-        background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
-        color: var(--m3-on-surface);
+        background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+        color: var(--color-ink);
       }
     }
   }
 
   .p-dialog-content {
-    background: var(--m3-surface);
-    color: var(--m3-on-surface);
-    padding: 0 var(--vinheria-spacing-lg, 24px) var(--vinheria-spacing-lg, 24px);
-    font-family: var(--m3-typescale-body-medium-font, var(--p-font-family));
-    font-size: var(--m3-typescale-body-medium-size, 0.875rem);
-    line-height: var(--m3-typescale-body-medium-line-height, 1.25rem);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    padding: 0 var(--space-lg) var(--space-lg);
+    font-size: 15px;
+    line-height: 1.33;
 
     &:last-of-type {
-      border-radius: 0 0 var(--m3-radius-xl, 28px) var(--m3-radius-xl, 28px);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
   }
 
   .p-dialog-footer {
-    background: var(--m3-surface);
-    padding: var(--vinheria-spacing-md, 16px) var(--vinheria-spacing-lg, 24px) var(--vinheria-spacing-lg, 24px);
+    background: var(--color-surface);
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
     border-top: none;
     display: flex;
     justify-content: flex-end;
-    gap: var(--vinheria-spacing-sm, 8px);
+    gap: var(--space-sm);
   }
 }
 
-// Badge customizations
+// ═══════════════════════════════════════════
+// BADGE / TAG — DESIGN.md badge-pill
+// ═══════════════════════════════════════════
+
 .p-badge {
-  border-radius: var(--vinheria-radius-full);
+  border-radius: var(--radius-full);
   font-weight: 600;
-  font-size: var(--vinheria-font-size-xs);
+  font-size: 12px;
 }
 
-// Tag customizations (for status badges)
 .p-tag {
-  border-radius: var(--vinheria-radius-full);
+  border-radius: var(--radius-full);
   font-weight: 600;
-  font-size: var(--vinheria-font-size-xs);
-  padding: 0.25rem 0.75rem;
+  font-size: 12px;
+  padding: 4px 8px;
+  letter-spacing: 0.125px;
 
-  &.status-draft {
-    background: var(--vinheria-status-draft);
-  }
-
-  &.status-pending {
-    background: var(--vinheria-status-pending);
-    color: #000;
-  }
-
-  &.status-approved {
-    background: var(--vinheria-status-approved);
-  }
-
-  &.status-rejected {
-    background: var(--vinheria-status-rejected);
-  }
-
-  &.status-fulfilled {
-    background: var(--vinheria-status-fulfilled);
-  }
-
-  &.status-delivered {
-    background: var(--vinheria-status-delivered);
-  }
+  // Status variants
+  &.status-draft { background: var(--vinheria-status-draft); color: var(--color-on-primary); }
+  &.status-pending { background: var(--vinheria-status-pending); color: #fff; }
+  &.status-approved { background: var(--vinheria-status-approved); color: #fff; }
+  &.status-rejected { background: var(--vinheria-status-rejected); color: #fff; }
+  &.status-fulfilled { background: var(--vinheria-status-fulfilled); color: #fff; }
+  &.status-delivered { background: var(--vinheria-status-delivered); color: #fff; }
 }
 
-/* ============================================================
-   M3 Menu — proper item heights, dividers, selection
-   ============================================================ */
+// ═══════════════════════════════════════════
+// MENU
+// ═══════════════════════════════════════════
+
 .p-menu {
-  background: var(--m3-surface-container);
-  border: none;
-  border-radius: var(--m3-radius-sm, 8px);
-  box-shadow: var(--m3-elevation-3);
-  padding: var(--vinheria-spacing-xs, 4px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-level-1);
+  padding: var(--space-xs);
   min-width: 180px;
 
-  .p-menuitem {
-    border-radius: var(--m3-radius-xs, 4px);
-    margin: 1px 0;
-  }
+  .p-menuitem { border-radius: var(--radius-sm); margin: 1px 0; }
 
   .p-menuitem-link {
-    padding: 10px var(--vinheria-spacing-md, 16px);
-    border-radius: var(--m3-radius-xs, 4px);
-    color: var(--m3-on-surface);
-    font-family: var(--m3-typescale-label-large-font, var(--p-font-family));
-    font-size: var(--m3-typescale-label-large-size, 0.875rem);
-    transition: background var(--vinheria-transition-fast);
+    padding: 8px var(--space-md);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    font-size: 15px;
+    transition: background var(--motion-fast);
 
     &:hover {
-      background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+      background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
     }
 
     &.p-menuitem-link-active,
     .p-highlight > & {
-      background: var(--m3-secondary-container);
-      color: var(--m3-on-secondary-container);
+      background: var(--color-canvas-soft);
+      color: var(--color-ink);
     }
   }
 
   .p-menuitem-separator {
-    border-color: var(--m3-outline-variant);
-    margin: var(--vinheria-spacing-xs, 4px) 0;
+    border-color: var(--color-hairline);
+    margin: var(--space-xs) 0;
   }
 }
 
 .p-tieredmenu {
-  background: var(--m3-surface-container);
-  border: none;
-  border-radius: var(--m3-radius-sm, 8px);
-  box-shadow: var(--m3-elevation-3);
-  padding: var(--vinheria-spacing-xs, 4px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-level-1);
+  padding: var(--space-xs);
 }
 
-// Stepper customizations
+.p-tieredmenu .p-menuitem-link:hover,
+.p-contextmenu .p-menuitem-link:hover,
+.p-autocomplete-panel .p-autocomplete-item:hover {
+  background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+}
+
+// ═══════════════════════════════════════════
+// STEPPER
+// ═══════════════════════════════════════════
+
 .p-stepper {
   .p-stepper-header {
     .p-stepper-number {
-      background: var(--p-primary-color);
-      color: var(--p-primary-color-text);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
     }
 
-    &.p-highlight {
-      .p-stepper-number {
-        background: var(--p-primary-color);
-      }
+    &.p-highlight .p-stepper-number {
+      background: var(--color-primary);
     }
   }
 }
 
-// Chart customizations
-.p-chart {
-  canvas {
-    border-radius: var(--vinheria-radius-md);
-  }
+// ═══════════════════════════════════════════
+// CHART
+// ═══════════════════════════════════════════
+
+.p-chart canvas {
+  border-radius: var(--radius-md);
 }
 
-// Slider customizations
+// ═══════════════════════════════════════════
+// SLIDER
+// ═══════════════════════════════════════════
+
 .p-slider {
-  .p-slider-range {
-    background: var(--p-primary-color);
-  }
+  .p-slider-range { background: var(--color-primary); }
 
   .p-slider-handle {
-    border-color: var(--p-primary-color);
-
+    border-color: var(--color-primary);
     &:focus {
-      box-shadow: 0 0 0 2px var(--p-surface-ground), 0 0 0 4px var(--p-primary-200);
+      box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
     }
   }
 }
 
-/* M3 Paginator */
+// ═══════════════════════════════════════════
+// PAGINATOR
+// ═══════════════════════════════════════════
+
 .p-paginator {
-  background: var(--m3-surface);
+  background: var(--color-surface);
   border: none;
-  padding: var(--vinheria-spacing-sm, 8px) var(--vinheria-spacing-md, 16px);
-  border-radius: 0 0 var(--m3-radius-md, 12px) var(--m3-radius-md, 12px);
-  border-top: 1px solid var(--m3-outline-variant);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-top: 1px solid var(--color-hairline);
 
   .p-paginator-page {
-    border-radius: var(--m3-radius-full);
+    border-radius: var(--radius-full);
     min-width: 36px;
     height: 36px;
     font-weight: 500;
-    color: var(--m3-on-surface-variant);
-    transition: background var(--vinheria-transition-fast);
+    color: var(--color-ink-secondary);
+    transition: background var(--motion-fast);
 
     &:hover {
-      background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
-      color: var(--m3-on-surface);
+      background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+      color: var(--color-ink);
     }
 
     &.p-highlight {
-      background: var(--m3-primary);
-      color: var(--m3-on-primary);
+      background: var(--color-primary);
+      color: var(--color-on-primary);
     }
   }
 
@@ -721,50 +697,48 @@
   .p-paginator-next,
   .p-paginator-first,
   .p-paginator-last {
-    border-radius: var(--m3-radius-full);
+    border-radius: var(--radius-full);
     width: 36px;
     height: 36px;
-    color: var(--m3-on-surface-variant);
+    color: var(--color-ink-secondary);
 
     &:hover {
-      background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
-      color: var(--m3-on-surface);
+      background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+      color: var(--color-ink);
     }
   }
 }
 
-/* ============================================================
-   M3 Card Variants
-   ============================================================ */
-.card-elevated {
-  box-shadow: var(--m3-elevation-1);
-  background: var(--m3-surface-container-low);
-  border: none !important;
+// ═══════════════════════════════════════════
+// CARD VARIANTS — DESIGN.md
+// ═══════════════════════════════════════════
 
-  &:hover {
-    box-shadow: var(--m3-elevation-2);
-  }
+.card-elevated {
+  box-shadow: var(--shadow-level-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline) !important;
 }
 
 .card-filled {
   box-shadow: none;
-  background: var(--m3-surface-container-highest);
+  background: var(--color-canvas-soft);
   border: none !important;
 }
 
 .card-outlined {
   box-shadow: none;
-  background: var(--m3-surface);
-  border: 1px solid var(--m3-outline-variant) !important;
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline) !important;
 
   &:hover {
-    border-color: var(--m3-outline) !important;
+    border-color: var(--color-ink-muted) !important;
   }
 }
 
-/* ============================================================
-   M3 State Layer Utilities
-   ============================================================ */
+// ═══════════════════════════════════════════
+// STATE LAYER UTILITY
+// ═══════════════════════════════════════════
+
 .state-layer-hover {
   position: relative;
 
@@ -773,196 +747,220 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: linear-gradient(rgba(var(--m3-primary-rgb), 0), rgba(var(--m3-primary-rgb), 0));
-    transition: background 150ms ease;
+    background: transparent;
+    transition: background var(--motion-fast);
     pointer-events: none;
   }
 
   &:hover::after {
-    background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+    background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
   }
 }
 
-/* ============================================================
-   M3 Tooltip — Material Design 3 rich tooltip style
-   ============================================================ */
+// ═══════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════
+
 .p-tooltip {
   max-width: 280px;
 
   .p-tooltip-text {
-    background: var(--m3-inverse-surface);
-    color: var(--m3-inverse-on-surface);
-    border-radius: var(--m3-radius-xs, 4px);
+    background: var(--color-ink);
+    color: var(--color-on-primary);
+    border-radius: var(--radius-xs);
     padding: 6px 12px;
-    font-family: var(--m3-typescale-body-small-font, var(--p-font-family));
-    font-size: var(--m3-typescale-body-small-size, 0.75rem);
-    font-weight: var(--m3-typescale-body-small-weight, 400);
-    line-height: var(--m3-typescale-body-small-line-height, 1.4);
-    box-shadow: var(--m3-elevation-2);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.43;
+    box-shadow: var(--shadow-level-1);
     word-wrap: break-word;
     white-space: nowrap;
   }
 
-  &.p-tooltip-top .p-tooltip-arrow {
-    border-top-color: var(--m3-inverse-surface);
-  }
-
-  &.p-tooltip-bottom .p-tooltip-arrow {
-    border-bottom-color: var(--m3-inverse-surface);
-  }
-
-  &.p-tooltip-left .p-tooltip-arrow {
-    border-left-color: var(--m3-inverse-surface);
-  }
-
-  &.p-tooltip-right .p-tooltip-arrow {
-    border-right-color: var(--m3-inverse-surface);
-  }
+  &.p-tooltip-top .p-tooltip-arrow { border-top-color: var(--color-ink); }
+  &.p-tooltip-bottom .p-tooltip-arrow { border-bottom-color: var(--color-ink); }
+  &.p-tooltip-left .p-tooltip-arrow { border-left-color: var(--color-ink); }
+  &.p-tooltip-right .p-tooltip-arrow { border-right-color: var(--color-ink); }
 }
 
-/* ============================================================
-   M3 TabView
-   ============================================================ */
+// ═══════════════════════════════════════════
+// TAB VIEW
+// ═══════════════════════════════════════════
+
 .p-tabview {
   .p-tabview-nav {
-    border-color: var(--m3-outline-variant);
+    border-color: var(--color-hairline);
     background: transparent;
 
-    li {
-      .p-tabview-nav-link {
-        background: transparent;
-        border-color: transparent;
-        color: var(--m3-on-surface-variant);
-        border-radius: var(--m3-radius-sm) var(--m3-radius-sm) 0 0;
-        padding: 0.75rem 1.25rem;
-        font-weight: 500;
-        transition: all var(--vinheria-transition-fast);
+    li .p-tabview-nav-link {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-ink-secondary);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      padding: 0.75rem 1.25rem;
+      font-weight: 500;
+      transition: all var(--motion-fast);
 
-        &:not(.p-highlight):hover {
-          background: var(--m3-surface-container-highest);
-          border-color: var(--m3-outline-variant);
-        }
+      &:not(.p-highlight):hover {
+        background: var(--color-canvas-soft);
+        border-color: var(--color-hairline);
+      }
 
-        &.p-highlight {
-          color: var(--m3-primary);
-          border-color: var(--m3-primary);
-          font-weight: 600;
-        }
+      &.p-highlight {
+        color: var(--color-primary);
+        border-color: var(--color-primary);
+        font-weight: 600;
       }
     }
   }
 
   .p-tabview-panels {
-    background: var(--m3-surface);
-    border-radius: 0 0 var(--m3-radius-md) var(--m3-radius-md);
-    padding: var(--vinheria-spacing-md);
+    background: var(--color-surface);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: var(--space-md);
   }
 }
 
-/* ============================================================
-   M3 Chip
-   ============================================================ */
+// ═══════════════════════════════════════════
+// CHIP
+// ═══════════════════════════════════════════
+
 .p-chip {
-  background: var(--m3-secondary-container);
-  color: var(--m3-on-secondary-container);
-  border-radius: var(--m3-radius-sm);
+  background: var(--color-canvas-soft);
+  color: var(--color-ink);
+  border-radius: var(--radius-sm);
   padding: 0.25rem 0.75rem;
-  font-size: var(--m3-typescale-label-large-size);
+  font-size: 14px;
   font-weight: 500;
 
   .p-chip-remove-icon {
-    color: var(--m3-on-secondary-container);
-    opacity: 0.6;
-
-    &:hover {
-      opacity: 1;
-    }
+    color: var(--color-ink-muted);
+    &:hover { opacity: 1; }
   }
 }
 
-/* ============================================================
-   M3 Divider
-   ============================================================ */
+// ═══════════════════════════════════════════
+// DIVIDER
+// ═══════════════════════════════════════════
+
 .p-divider {
-  border-color: var(--m3-outline-variant);
+  border-color: var(--color-hairline);
 
   .p-divider-content {
-    background: var(--m3-surface);
-    color: var(--m3-on-surface-variant);
-    font-size: var(--m3-typescale-label-large-size);
+    background: var(--color-surface);
+    color: var(--color-ink-secondary);
+    font-size: 14px;
     font-weight: 600;
-    padding: 0 var(--vinheria-spacing-md);
+    padding: 0 var(--space-md);
   }
 }
 
-/* ============================================================
-   M3 Skeleton
-   ============================================================ */
+// ═══════════════════════════════════════════
+// SKELETON
+// ═══════════════════════════════════════════
+
 .p-skeleton {
-  background: var(--m3-surface-container-high);
-  border-radius: var(--m3-radius-sm);
+  background: var(--color-canvas-soft);
+  border-radius: var(--radius-sm);
 
   &::after {
-    background: linear-gradient(90deg, transparent, var(--m3-surface-container-highest), transparent);
+    background: linear-gradient(90deg, transparent, var(--color-surface), transparent);
   }
 }
 
-/* ============================================================
-   M3 Timeline
-   ============================================================ */
+// ═══════════════════════════════════════════
+// TIMELINE
+// ═══════════════════════════════════════════
+
 .p-timeline {
   .p-timeline-event-opposite {
-    color: var(--m3-on-surface-variant);
-    font-size: var(--m3-typescale-body-medium-size);
+    color: var(--color-ink-secondary);
+    font-size: 15px;
   }
 
   .p-timeline-event-separator {
     .p-timeline-event-marker {
-      border-color: var(--m3-primary);
-      background: var(--m3-surface);
+      border-color: var(--color-primary);
+      background: var(--color-surface);
     }
-
     .p-timeline-event-connector {
-      background: var(--m3-outline-variant);
+      background: var(--color-hairline);
     }
   }
 
   .p-timeline-event-content {
-    color: var(--m3-on-surface);
+    color: var(--color-ink);
   }
 }
 
-/* ============================================================
-   M3 Textarea
-   ============================================================ */
+// ═══════════════════════════════════════════
+// TEXTAREA
+// ═══════════════════════════════════════════
+
 .p-inputtextarea {
-  border-radius: var(--vinheria-radius-md);
-  border-color: var(--m3-outline-variant);
-  background: var(--m3-surface);
-  color: var(--m3-on-surface);
-  padding: var(--vinheria-spacing-sm) var(--vinheria-spacing-md);
-  transition: all var(--vinheria-transition-fast);
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-hairline);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  padding: var(--space-sm) var(--space-md);
+  transition: all var(--motion-fast);
   resize: vertical;
   min-height: 80px;
-  font-family: var(--p-font-family);
 
   &:focus,
   &.p-focus {
-    border-color: var(--m3-primary);
-    box-shadow: 0 0 0 2px var(--m3-primary-container);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-level-1);
   }
 
   &::placeholder {
-    color: var(--m3-on-surface-variant);
-    opacity: 0.6;
+    color: var(--color-ink-faint);
+    opacity: 1;
   }
 }
 
-/* ============================================================
-   M3 State Layer — apply to all interactive surfaces
-   ============================================================ */
-.p-tieredmenu .p-menuitem-link:hover,
-.p-contextmenu .p-menuitem-link:hover,
-.p-autocomplete-panel .p-autocomplete-item:hover {
-  background: linear-gradient(rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)), rgba(var(--m3-primary-rgb), var(--m3-state-hover-opacity)));
+// ═══════════════════════════════════════════
+// INLINE MESSAGE
+// ═══════════════════════════════════════════
+
+.p-inline-message {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-hairline);
+  padding: var(--space-sm) var(--space-md);
+}
+
+// ═══════════════════════════════════════════
+// AUTOCOMPLETE PANEL
+// ═══════════════════════════════════════════
+
+.p-autocomplete-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-level-1);
+  padding: var(--space-xs);
+
+  .p-autocomplete-item {
+    border-radius: var(--radius-sm);
+    padding: 8px var(--space-md);
+    color: var(--color-ink);
+    transition: background var(--motion-fast);
+
+    &:hover {
+      background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
+    }
+
+    &.p-highlight {
+      background: var(--color-canvas-soft);
+      color: var(--color-ink);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════
+// RIPPLE (PrimeNG)
+// ═══════════════════════════════════════════
+
+.p-ripple .p-ink {
+  background: rgba(var(--color-primary-rgb), 0.16);
 }

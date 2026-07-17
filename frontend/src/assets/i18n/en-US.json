@@ -224,6 +224,12 @@
     "reason": "Reason",
     "rejectReason": "Rejection Reason",
     "rejectReasonPlaceholder": "Enter reason for rejection...",
+    "approveConfirmation": "Approve order {{orderNumber}}?",
+    "rejectConfirmation": "Reject order {{orderNumber}}?",
+    "approvedSummary": "Order approved",
+    "approvedDetail": "Order {{orderNumber}} has been approved",
+    "rejectedSummary": "Order rejected",
+    "rejectedDetail": "Order {{orderNumber}} has been rejected",
     "noApprovals": "No pending approvals",
     "orderType": "Order Type",
     "requester": "Requester"

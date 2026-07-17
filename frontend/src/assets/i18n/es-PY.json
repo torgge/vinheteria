@@ -224,6 +224,12 @@
     "reason": "Motivo",
     "rejectReason": "Motivo del Rechazo",
     "rejectReasonPlaceholder": "Ingrese el motivo del rechazo...",
+    "approveConfirmation": "¿Aprobar la orden {{orderNumber}}?",
+    "rejectConfirmation": "¿Rechazar la orden {{orderNumber}}?",
+    "approvedSummary": "Orden aprobada",
+    "approvedDetail": "La orden {{orderNumber}} fue aprobada",
+    "rejectedSummary": "Orden rechazada",
+    "rejectedDetail": "La orden {{orderNumber}} fue rechazada",
     "noApprovals": "No hay aprobaciones pendientes",
     "orderType": "Tipo de Orden",
     "requester": "Solicitante"

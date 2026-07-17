@@ -100,7 +100,6 @@ interface StatusOption {
               [options]="statusOptions"
               [(ngModel)]="selectedStatus"
               optionLabel="label"
-              optionValue="value"
               [placeholder]="t('common.status')"
               styleClass="status-dropdown"
             />
@@ -430,7 +429,6 @@ export class PurchaseOrderListComponent {
 
   // State
   searchQuery = signal('');
-  selectedStatus = signal<PurchaseOrderStatus | 'ALL'>('ALL');
   selectedOrder = signal<PurchaseOrder | null>(null);
   showApproveDialog = false;
   showRejectDialog = false;
@@ -451,10 +449,11 @@ export class PurchaseOrderListComponent {
     { label: 'Cancelled', value: 'CANCELLED' }
   ];
 
+  selectedStatus = signal<StatusOption>(this.statusOptions[0]);
+
   // Filtered orders
   filteredOrders = computed(() => {
     const search = this.searchQuery().toLowerCase();
-    const status = this.selectedStatus();
     const updates = this.orderUpdates();
 
     return PURCHASE_ORDERS
@@ -464,7 +463,8 @@ export class PurchaseOrderListComponent {
       })
       .filter(order => {
         // Status filter
-        if (status !== 'ALL' && order.status !== status) {
+        const statusValue = this.selectedStatus().value;
+        if (statusValue !== 'ALL' && order.status !== statusValue) {
           return false;
         }
 
@@ -501,7 +501,7 @@ export class PurchaseOrderListComponent {
 
   clearFilters(): void {
     this.searchQuery.set('');
-    this.selectedStatus.set('ALL');
+    this.selectedStatus.set(this.statusOptions[0]);
   }
 
   createNewOrder(): void {

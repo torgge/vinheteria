@@ -42,13 +42,12 @@ SUPPLIERS ──(Purchase Order)──▶ WAREHOUSES ──(Sales Order)──�
 
 ### Infrastructure
 ```bash
-docker compose up -d                                    # Core infra
-docker compose --profile observability up -d            # + Grafana stack
-docker compose --profile loadtest up -d                 # + K6
-docker compose --profile '*' down -v                    # Reset all
+docker compose up -d                                    # Core infra (Postgres, Valkey, Kafka, Debezium, Conductor, OpenSearch)
+docker compose down -v                                  # Full teardown
 ```
 
-### Backend (Quarkus + Kotlin)
+### Backend (Quarkus + Kotlin) — PLANNED, NOT YET IMPLEMENTED
+The `services/` directory does not exist yet. When implemented, each service will follow this pattern:
 ```bash
 cd services/vinheria-{service}
 ./gradlew quarkusDev                    # Dev mode
@@ -65,14 +64,14 @@ cd services/vinheria-{service}
 ./gradlew koverVerify                   # Coverage ≥80%
 ```
 
-### Frontend (Angular + PrimeNG)
+### Frontend (Angular 18 + PrimeNG 17)
 ```bash
 cd frontend
-pnpm install && pnpm start              # Dev server
-pnpm test                               # Jest tests
-pnpm test -- --testPathPattern="Wine"   # Single test file
-pnpm build                              # Production build
+npm install && npm start                # Dev server (http://localhost:4200)
+npm test                                # Unit tests (Karma + Jasmine)
+npm run build                           # Production build
 ```
+The frontend currently runs against mock data (`frontend/src/app/mock/`) — no backend required for UI development.
 
 ### Load Testing (K6)
 ```bash
@@ -82,7 +81,9 @@ k6 run k6/scripts/load/catalog-search-load.js --env BASE_URL=http://localhost:80
 
 ## Architecture
 
-### Hexagonal + Vertical Slices
+> **Current state**: Only the frontend (Angular 18 SPA) is implemented. The backend microservices, Gradle/Kotlin code, and inter-service communication are **planned** — see `docs/` for the full system design. The frontend uses mock data at `frontend/src/app/mock/` for development.
+
+### Hexagonal + Vertical Slices (planned)
 ```
 services/vinheria-{service}/src/main/kotlin/com/vinheria/{service}/
 ├── _config/                    # Quarkus config
@@ -212,9 +213,11 @@ APPROVED  REJECTED
 
 ### Frontend (Angular)
 - PrimeNG components, customize via `--p-*` CSS vars
-- Angular Signals + Signal Store
+- Angular Signals + `@ngrx/signals` Signal Store (no RxJS Subjects for component state)
 - `*transloco` for all user-visible text (3 languages)
-- Jest for testing
+- Standalone components only (no NgModules)
+- Tests run via Karma + Jasmine (`ng test`)
+- Multi-currency: prices stored as `{ BRL, PYG, USD }` objects; accounting currency is BRL
 
 ### Git
 - Trunk-based: `main` always deployable
@@ -270,11 +273,17 @@ Fulfillment  Fulfillment  Fulfillment
 
 ## Claude Code Hooks
 
-Automated hooks in `.claude/settings.json`:
-- **PostToolUse**: TDD test runner + Detekt lint on `.kt` edits
-- **PreToolUse**: Domain purity guard (blocks framework imports in domain/)
-- **PreToolUse**: Validates Conventional Commit messages
-- **Stop**: Full validation (all tests + coverage)
+Configured in `.claude/settings.json` (scripts in `scripts/hooks/`):
+
+| Hook | Trigger | What it does |
+|------|---------|--------------|
+| **SessionStart** | Session start | Prints git status, test results, infra check |
+| **PostToolUse** | Edit/Write | TDD test runner (backend: Gradle per-slice; frontend: `ng test`) + Detekt lint (`.kt` files only) |
+| **PreToolUse** | Edit/Write | Blocks framework imports in `domain/` (`.kt` files only) |
+| **PreToolUse** | Bash | Blocks dangerous commands + validates commit messages |
+| **Stop** | Session end | Full quality gate (`ktlintCheck`, `detekt`, unit/integration/architecture tests, coverage) |
+
+> **Note**: Backend hooks (Gradle, Detekt, domain purity) are no-ops while `services/` is empty. The TDD hook's frontend path references `vinheria-web/` but the actual frontend is at `frontend/` — this is a known discrepancy.
 
 ## Documentation
 
