@@ -25,7 +25,7 @@ jobs:
           python-version: "3.12"
 
       - name: Restore state cache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: /tmp/daily-status-state
           key: daily-status-state-${{ github.run_id }}
@@ -44,7 +44,7 @@ jobs:
 
       - name: Save state cache
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: /tmp/daily-status-state
           key: daily-status-state-${{ github.run_id }}
