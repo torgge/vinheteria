@@ -111,6 +111,12 @@ interface OrderItem {
                 [(ngModel)]="selectedCustomer"
                 [compareWith]="compareCustomers"
               >
+                @if (selectedCustomer(); as customer) {
+                  <mat-select-trigger class="customer-selected">
+                    <span class="customer-name">{{ customer.tradeName }}</span>
+                    <span class="customer-type">{{ customer.type }}</span>
+                  </mat-select-trigger>
+                }
                 <mat-option [value]="null">{{ t('sales.selectCustomer') }}</mat-option>
                 @for (customer of customerOptions; track customer.id) {
                   <mat-option [value]="customer">
@@ -228,6 +234,9 @@ interface OrderItem {
                     [disabled]="!selectedWine()"
                     [compareWith]="compareWarehouses"
                   >
+                    @if (selectedWarehouse(); as warehouse) {
+                      <mat-select-trigger>{{ warehouse.code }} - {{ warehouse.name }}</mat-select-trigger>
+                    }
                     <mat-option [value]="null">{{ t('sales.selectWarehouse') }}</mat-option>
                     @for (wh of availableWarehouses(); track wh.id) {
                       <mat-option [value]="wh">
