@@ -2,12 +2,11 @@ import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
-import { MenuModule } from 'primeng/menu';
-import { AvatarModule } from 'primeng/avatar';
-import { BadgeModule } from 'primeng/badge';
-import { MenuItem } from 'primeng/api';
+import { MatSelectModule } from '@angular/material/select';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CurrencyService } from '../../../../core/currency/currency.service';
@@ -21,76 +20,82 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     CommonModule,
     FormsModule,
     TranslocoModule,
-    ButtonModule,
-    DropdownModule,
-    MenuModule,
-    AvatarModule,
-    BadgeModule
+    MatSelectModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule
   ],
   template: `
     <header class="topbar" *transloco="let t">
       <div class="topbar-start">
         <button
           class="menu-toggle"
+          mat-icon-button
           (click)="toggleSidebar.emit()"
-          pButton
-          icon="pi pi-bars"
-          text
-        ></button>
+        >
+          <mat-icon fontIcon="menu" />
+        </button>
       </div>
 
       <div class="topbar-end">
         <!-- Currency Switcher -->
-        <p-dropdown
-          [options]="currencies"
+        <mat-select
+          class="topbar-select currency-select"
           [(ngModel)]="selectedCurrency"
-          optionLabel="label"
-          (onChange)="onCurrencyChange($event.value.code)"
-          styleClass="currency-dropdown"
+          (selectionChange)="onCurrencyChange($event.value.code)"
         >
-          <ng-template pTemplate="selectedItem" let-selected>
-            <span class="currency-selected">{{ selected.flag }} {{ selected.label }}</span>
-          </ng-template>
-          <ng-template pTemplate="item" let-item>
-            <span>{{ item.flag }} {{ item.label }}</span>
-          </ng-template>
-        </p-dropdown>
+          <mat-select-trigger>
+            <span class="currency-selected">{{ selectedCurrency.flag }} {{ selectedCurrency.label }}</span>
+          </mat-select-trigger>
+          @for (item of currencies; track item.code) {
+            <mat-option [value]="item">{{ item.flag }} {{ item.label }}</mat-option>
+          }
+        </mat-select>
 
         <!-- Language Switcher -->
-        <p-dropdown
-          [options]="languages"
+        <mat-select
+          class="topbar-select language-select"
           [(ngModel)]="selectedLanguage"
-          optionLabel="label"
-          (onChange)="onLanguageChange($event.value.id)"
-          styleClass="language-dropdown"
+          (selectionChange)="onLanguageChange($event.value.id)"
         >
-          <ng-template pTemplate="selectedItem" let-selected>
-            <span>{{ selected.flag }} {{ selected.label }}</span>
-          </ng-template>
-          <ng-template pTemplate="item" let-item>
-            <span>{{ item.flag }} {{ item.label }}</span>
-          </ng-template>
-        </p-dropdown>
+          <mat-select-trigger>
+            <span>{{ selectedLanguage.flag }} {{ selectedLanguage.label }}</span>
+          </mat-select-trigger>
+          @for (item of languages; track item.id) {
+            <mat-option [value]="item">{{ item.flag }} {{ item.label }}</mat-option>
+          }
+        </mat-select>
 
         <!-- User Menu -->
-        <div class="user-menu" (click)="userMenu.toggle($event)">
-          <p-avatar
-            [image]="authService.userAvatar()"
-            [label]="authService.userAvatar() ? undefined : getInitials()"
-            shape="circle"
-            size="normal"
-            styleClass="user-avatar"
-          />
+        <div class="user-menu" [matMenuTriggerFor]="userMenu">
+          <span class="avatar">
+            @if (authService.userAvatar()) {
+              <img [src]="authService.userAvatar()" alt="" />
+            } @else {
+              {{ getInitials() }}
+            }
+          </span>
           <div class="user-info">
             <span class="user-name">{{ authService.userName() }}</span>
             <span class="user-role" [style.color]="getRoleColor()">
               {{ t('auth.roles.' + authService.userRole()) }}
             </span>
           </div>
-          <i class="pi pi-chevron-down"></i>
+          <mat-icon fontIcon="expand_more" />
         </div>
 
-        <p-menu #userMenu [model]="userMenuItems" [popup]="true" />
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="authService.logout()">
+            <mat-icon fontIcon="group" />
+            <span>Switch User</span>
+          </button>
+          <mat-divider />
+          <button mat-menu-item (click)="authService.logout()">
+            <mat-icon fontIcon="logout" />
+            <span>Sign Out</span>
+          </button>
+        </mat-menu>
       </div>
     </header>
   `,
@@ -99,26 +104,26 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
       position: fixed;
       top: 0;
       right: 0;
-      left: var(--vinheria-sidebar-width);
-      height: var(--vinheria-topbar-height);
-      background: var(--m3-surface);
-      box-shadow: var(--m3-elevation-2);
+      left: var(--layout-sidebar-width);
+      height: var(--layout-topbar-height);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-level-1);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 var(--vinheria-spacing-lg);
+      padding: 0 var(--space-lg);
       z-index: 999;
-      transition: left var(--vinheria-transition-normal);
+      transition: left var(--motion-normal);
     }
 
     :host-context(.sidebar-collapsed) .topbar {
-      left: var(--vinheria-sidebar-collapsed-width);
+      left: var(--layout-sidebar-collapsed-width);
     }
 
     .topbar-start {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
+      gap: var(--space-md);
     }
 
     .menu-toggle {
@@ -132,20 +137,50 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     .topbar-end {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
+      gap: var(--space-md);
+    }
+
+    .topbar-select {
+      width: auto;
+      min-width: 140px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--color-hairline);
+      border-radius: var(--radius-xs);
+      background: var(--color-surface);
+      font: var(--font-body-sm);
     }
 
     .user-menu {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm);
-      padding: var(--vinheria-spacing-xs) var(--vinheria-spacing-sm);
-      border-radius: var(--vinheria-radius-md);
+      gap: var(--space-xs);
+      padding: var(--space-xxs) var(--space-xs);
+      border-radius: var(--radius-md);
       cursor: pointer;
-      transition: background var(--vinheria-transition-fast);
+      transition: background var(--motion-fast);
 
       &:hover {
-        background: var(--m3-surface-container-high);
+        background: var(--color-canvas-soft);
+      }
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--color-secondary);
+      color: var(--color-on-primary);
+      font: var(--font-eyebrow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
 
@@ -161,33 +196,17 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
 
     .user-name {
       font-weight: 600;
-      font-size: var(--vinheria-font-size-sm);
-      color: var(--m3-on-surface);
+      font-size: var(--font-size-sm);
+      color: var(--color-ink);
     }
 
     .user-role {
-      font-size: var(--vinheria-font-size-xs);
+      font-size: var(--font-size-xs);
       font-weight: 500;
     }
 
     .currency-selected {
       font-weight: 600;
-    }
-
-    :host ::ng-deep {
-      .currency-dropdown,
-      .language-dropdown {
-        min-width: auto;
-
-        .p-dropdown-label {
-          padding: 0.5rem 0.75rem;
-        }
-      }
-
-      .user-avatar {
-        background: var(--m3-primary);
-        color: var(--m3-on-primary);
-      }
     }
 
     /* Compact: full-width topbar */
@@ -200,7 +219,7 @@ import { SupportedCurrency, CurrencyOption } from '../../../../core/currency/cur
     /* Medium: collapsed sidebar offset */
     @media (min-width: 600px) and (max-width: 839px) {
       .topbar {
-        left: var(--vinheria-sidebar-collapsed-width, 80px);
+        left: var(--layout-sidebar-collapsed-width, 80px);
       }
     }
   `]
@@ -233,20 +252,6 @@ export class TopbarComponent {
   }
   selectedCurrency: CurrencyOption = this.getCurrentCurrencyOption();
 
-  userMenuItems: MenuItem[] = [
-    {
-      label: 'Switch User',
-      icon: 'pi pi-users',
-      command: () => this.authService.logout()
-    },
-    { separator: true },
-    {
-      label: 'Sign Out',
-      icon: 'pi pi-sign-out',
-      command: () => this.authService.logout()
-    }
-  ];
-
   onLanguageChange(langId: string): void {
     this.translocoService.setActiveLang(langId);
   }
@@ -258,7 +263,7 @@ export class TopbarComponent {
 
   getRoleColor(): string {
     const role = this.authService.userRole();
-    return role ? ROLE_INFO[role]?.color : 'var(--m3-on-surface-variant)';
+    return role ? ROLE_INFO[role]?.color : 'var(--color-ink-secondary)';
   }
 
   getInitials(): string {

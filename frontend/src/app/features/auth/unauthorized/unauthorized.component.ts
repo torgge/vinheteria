@@ -2,19 +2,23 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
-import { ButtonModule } from 'primeng/button';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-unauthorized',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslocoModule, ButtonModule],
+  imports: [CommonModule, RouterModule, TranslocoModule, MatButtonModule, MatIconModule],
   template: `
     <div class="unauthorized-container" *transloco="let t">
       <div class="unauthorized-content">
-        <i class="pi pi-lock"></i>
+        <mat-icon fontIcon="lock" />
         <h1>{{ t('errors.unauthorized') }}</h1>
         <p>You don't have permission to access this page.</p>
-        <p-button label="Go to Dashboard" routerLink="/dashboard" icon="pi pi-home" />
+        <button mat-flat-button color="primary" routerLink="/dashboard">
+          <mat-icon fontIcon="home" />
+          Go to Dashboard
+        </button>
       </div>
     </div>
   `,
@@ -24,13 +28,13 @@ import { ButtonModule } from 'primeng/button';
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--m3-surface-container-lowest);
+      background: var(--color-canvas-soft);
     }
     .unauthorized-content {
       text-align: center;
-      i { font-size: 4rem; color: var(--vinheria-error); margin-bottom: 1rem; }
-      h1 { color: var(--m3-on-surface); margin-bottom: 0.5rem; }
-      p { color: var(--m3-on-surface-variant); margin-bottom: 1.5rem; }
+      mat-icon { font-size: 4rem; width: 4rem; height: 4rem; color: var(--color-error); margin-bottom: 1rem; }
+      h1 { color: var(--color-ink); margin-bottom: 0.5rem; }
+      p { color: var(--color-ink-secondary); margin-bottom: 1.5rem; }
     }
   `]
 })

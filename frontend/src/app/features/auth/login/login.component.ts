@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { DemoUser, LanguageOption, ROLE_INFO, UserRole, AVAILABLE_LANGUAGES } from '../../../core/auth/auth.model';
@@ -16,40 +17,39 @@ import { CurrencyService } from '../../../core/currency/currency.service';
   imports: [
     CommonModule,
     TranslocoModule,
-    CardModule,
-    ButtonModule,
-    DropdownModule,
-    FormsModule
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatFormFieldModule,
   ],
   template: `
     <div class="login-container" *transloco="let t">
       <div class="login-header">
         <div class="logo">
-          <i class="pi pi-box" style="font-size: 3rem; color: var(--m3-primary)"></i>
+          <mat-icon fontIcon="inventory_2" style="font-size: 3rem; width: 3rem; height: 3rem; color: var(--color-primary)" />
         </div>
         <h1 class="vinheria-display">{{ t('common.appName') }}</h1>
         <p class="text-secondary">B2B Wine Distribution Platform</p>
       </div>
 
       <div class="login-settings">
-        <p-dropdown
-          [options]="languages"
-          [(ngModel)]="selectedLanguage"
-          optionLabel="label"
-          (onChange)="onLanguageChange($event.value.id)"
-          styleClass="language-dropdown"
-        >
-          <ng-template pTemplate="selectedItem" let-selected>
-            <span>{{ selected.flag }} {{ selected.label }}</span>
-          </ng-template>
-          <ng-template pTemplate="item" let-item>
-            <span>{{ item.flag }} {{ item.label }}</span>
-          </ng-template>
-        </p-dropdown>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-select [(ngModel)]="selectedLanguage" (selectionChange)="onLanguageChange($event.value.id)">
+            <mat-select-trigger>
+              <span>{{ selectedLanguage.flag }} {{ selectedLanguage.label }}</span>
+            </mat-select-trigger>
+            @for (lang of languages; track lang.id) {
+              <mat-option [value]="lang">
+                <span>{{ lang.flag }} {{ lang.label }}</span>
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="demo-badge">
-        <i class="pi pi-info-circle"></i>
+        <mat-icon fontIcon="info" />
         {{ t('auth.demoMode') }}
       </div>
 
@@ -64,18 +64,16 @@ import { CurrencyService } from '../../../core/currency/currency.service';
             <div class="user-info">
               <h3>{{ user.name }}</h3>
               <div class="user-role" [style.color]="getRoleColor(user.role)">
-                <i [class]="getRoleIcon(user.role)"></i>
+                <mat-icon [fontIcon]="getRoleIcon(user.role)" />
                 {{ t('auth.roles.' + user.role) }}
               </div>
               <p class="user-description">{{ t('auth.roleDescriptions.' + user.role) }}</p>
             </div>
             <div class="user-action">
-              <p-button
-                [label]="t('auth.login')"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                [outlined]="true"
-              />
+              <button mat-stroked-button>
+                {{ t('auth.login') }}
+                <mat-icon fontIcon="arrow_forward" />
+              </button>
             </div>
           </div>
         }
@@ -92,51 +90,51 @@ import { CurrencyService } from '../../../core/currency/currency.service';
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-xl);
-      background: linear-gradient(135deg, var(--m3-surface-container-lowest) 0%, var(--m3-primary-container) 100%);
+      padding: var(--space-xl);
+      background: linear-gradient(135deg, var(--color-canvas-soft) 0%, var(--color-canvas-soft) 100%);
     }
 
     .login-header {
       text-align: center;
-      margin-bottom: var(--vinheria-spacing-lg);
+      margin-bottom: var(--space-lg);
 
       .logo {
-        margin-bottom: var(--vinheria-spacing-md);
+        margin-bottom: var(--space-md);
       }
 
       h1 {
-        color: var(--m3-primary);
-        margin-bottom: var(--vinheria-spacing-xs);
+        color: var(--color-primary);
+        margin-bottom: var(--space-xxs);
       }
     }
 
     .login-settings {
-      margin-bottom: var(--vinheria-spacing-lg);
+      margin-bottom: var(--space-lg);
     }
 
     .demo-badge {
       display: inline-flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm);
-      padding: var(--vinheria-spacing-sm) var(--vinheria-spacing-md);
-      background: var(--vinheria-info-bg);
-      color: var(--vinheria-info);
-      border-radius: var(--vinheria-radius-full);
-      font-size: var(--vinheria-font-size-sm);
+      gap: var(--space-xs);
+      padding: var(--space-xs) var(--space-md);
+      background: var(--color-info-bg);
+      color: var(--color-accent-sky);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
       font-weight: 600;
-      margin-bottom: var(--vinheria-spacing-lg);
+      margin-bottom: var(--space-lg);
     }
 
     .select-user-title {
-      font-family: var(--p-font-family);
-      font-size: var(--vinheria-font-size-xl);
-      color: var(--m3-on-surface-variant);
-      margin-bottom: var(--vinheria-spacing-lg);
+      font-family: var(--font-family);
+      font-size: var(--font-size-xl);
+      color: var(--color-ink-secondary);
+      margin-bottom: var(--space-lg);
     }
 
     .user-cards {
       display: grid;
-      gap: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
       max-width: 1400px;
       width: 100%;
       grid-template-columns: 1fr;
@@ -155,20 +153,20 @@ import { CurrencyService } from '../../../core/currency/currency.service';
     }
 
     .user-card {
-      background: var(--m3-surface-container-low);
+      background: var(--color-canvas-soft);
       border: none;
-      border-radius: var(--m3-radius-md);
-      box-shadow: var(--m3-elevation-1);
-      padding: var(--vinheria-spacing-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-level-1);
+      padding: var(--space-lg);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--vinheria-spacing-md);
+      gap: var(--space-md);
       cursor: pointer;
-      transition: all var(--vinheria-transition-normal);
+      transition: all var(--motion-normal);
 
       &:hover {
-        box-shadow: var(--m3-elevation-3);
+        box-shadow: var(--shadow-level-2);
         transform: translateY(-4px);
       }
 
@@ -177,7 +175,7 @@ import { CurrencyService } from '../../../core/currency/currency.service';
         height: 80px;
         border-radius: 50%;
         overflow: hidden;
-        border: 3px solid var(--m3-primary-container);
+        border: 3px solid var(--color-canvas-soft);
 
         img {
           width: 100%;
@@ -190,27 +188,23 @@ import { CurrencyService } from '../../../core/currency/currency.service';
         text-align: center;
 
         h3 {
-          font-family: var(--vinheria-font-display);
-          font-size: var(--vinheria-font-size-xl);
-          margin-bottom: var(--vinheria-spacing-xs);
+          font-family: var(--font-family);
+          font-size: var(--font-size-xl);
+          margin-bottom: var(--space-xxs);
         }
 
         .user-role {
           display: inline-flex;
           align-items: center;
-          gap: var(--vinheria-spacing-xs);
+          gap: var(--space-xxs);
           font-weight: 600;
-          font-size: var(--vinheria-font-size-sm);
-          margin-bottom: var(--vinheria-spacing-sm);
-
-          i {
-            font-size: 1rem;
-          }
+          font-size: var(--font-size-sm);
+          margin-bottom: var(--space-xs);
         }
 
         .user-description {
-          color: var(--m3-on-surface-variant);
-          font-size: var(--vinheria-font-size-sm);
+          color: var(--color-ink-secondary);
+          font-size: var(--font-size-sm);
           line-height: 1.5;
           max-width: 280px;
         }
@@ -223,13 +217,9 @@ import { CurrencyService } from '../../../core/currency/currency.service';
 
     .login-footer {
       margin-top: auto;
-      padding-top: var(--vinheria-spacing-xl);
-      color: var(--m3-outline);
-      font-size: var(--vinheria-font-size-sm);
-    }
-
-    :host ::ng-deep .language-dropdown {
-      min-width: 200px;
+      padding-top: var(--space-xl);
+      color: var(--color-ink-muted);
+      font-size: var(--font-size-sm);
     }
   `]
 })
@@ -249,11 +239,8 @@ export class LoginComponent {
   selectedLanguage: LanguageOption = this.getCurrentLanguageOption();
 
   login(user: DemoUser): void {
-    // Set language and currency based on user preferences
     this.translocoService.setActiveLang(user.preferredLanguage);
     this.currencyService.setCurrency(user.preferredCurrency);
-
-    // Perform login
     this.authService.loginWithDemoUser(user);
   }
 
@@ -262,11 +249,10 @@ export class LoginComponent {
   }
 
   getRoleColor(role: UserRole): string {
-    return ROLE_INFO[role]?.color ?? 'var(--m3-on-surface-variant)';
+    return ROLE_INFO[role]?.color ?? 'var(--color-ink-secondary)';
   }
 
   getRoleIcon(role: UserRole): string {
-    return ROLE_INFO[role]?.icon ?? 'pi pi-user';
+    return ROLE_INFO[role]?.icon ?? 'person';
   }
-
 }

@@ -1,10 +1,9 @@
+@use 'styles/material-theme';
+
 // Vinheria Digital — Global Styles (DESIGN.md / Notion-inspired)
 
 @import 'styles/variables';
 @import 'styles/typography';
-@import 'primeng/resources/primeng.min.css';
-@import 'primeicons/primeicons.css';
-@import 'styles/primeng-theme';
 
 // ═══════════════════════════════════════════
 // RESET & BASE
@@ -56,7 +55,7 @@ img {
 // ═══════════════════════════════════════════
 
 .container {
-  max-width: var(--vinheria-content-max-width);
+  max-width: var(--layout-content-max-width);
   margin: 0 auto;
   padding: 0 var(--space-md);
 }
@@ -247,9 +246,9 @@ img {
 // MARGIN INDICATOR STYLES
 // ═══════════════════════════════════════════
 
-.margin-high { color: var(--vinheria-margin-high); }
-.margin-medium { color: var(--vinheria-margin-medium); }
-.margin-low { color: var(--vinheria-margin-low); }
+.margin-high { color: var(--color-accent-green); }
+.margin-medium { color: var(--color-accent-orange); }
+.margin-low { color: var(--color-accent-pink); }
 
 // ═══════════════════════════════════════════
 // WINE-SPECIFIC STYLES
@@ -363,7 +362,7 @@ img {
 
 .m3-container {
   width: 100%;
-  max-width: var(--vinheria-content-max-width);
+  max-width: var(--layout-content-max-width);
   margin: 0 auto;
   padding: var(--space-xl);
 

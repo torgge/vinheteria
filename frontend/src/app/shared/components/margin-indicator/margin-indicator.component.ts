@@ -1,13 +1,14 @@
 import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-margin-indicator',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   template: `
     <span class="margin-indicator" [class]="marginClass()">
-      <i [class]="iconClass()"></i>
+      <mat-icon [fontIcon]="iconName()" />
       {{ marginPercentage() | number:'1.1-1' }}%
     </span>
   `,
@@ -19,31 +20,33 @@ import { CommonModule } from '@angular/common';
       font-weight: 600;
       font-size: 0.875rem;
       padding: 0.25rem 0.5rem;
-      border-radius: var(--vinheria-radius-sm, 4px);
+      border-radius: var(--radius-sm, 4px);
 
-      i {
+      mat-icon {
         font-size: 0.75rem;
+        width: 0.75rem;
+        height: 0.75rem;
       }
     }
 
     .margin-high {
-      color: var(--vinheria-margin-high);
-      background: rgba(var(--vinheria-margin-high-rgb), 0.1);
+      color: var(--color-accent-green);
+      background: rgba(var(--color-margin-high-rgb), 0.1);
     }
 
     .margin-medium {
-      color: var(--vinheria-margin-medium);
-      background: rgba(var(--vinheria-margin-medium-rgb), 0.1);
+      color: var(--color-accent-orange);
+      background: rgba(var(--color-margin-medium-rgb), 0.1);
     }
 
     .margin-low {
-      color: var(--vinheria-margin-low);
-      background: rgba(var(--vinheria-margin-low-rgb), 0.1);
+      color: var(--color-accent-pink);
+      background: rgba(var(--color-margin-low-rgb), 0.1);
     }
 
     .margin-negative {
-      color: var(--vinheria-margin-negative);
-      background: rgba(var(--vinheria-margin-negative-rgb), 0.1);
+      color: var(--color-accent-purple-deep);
+      background: rgba(var(--color-margin-negative-rgb), 0.1);
     }
   `]
 })
@@ -65,11 +68,11 @@ export class MarginIndicatorComponent {
     return 'margin-low';
   });
 
-  iconClass = computed(() => {
+  iconName = computed(() => {
     const margin = this.marginPercentage();
-    if (margin < 0) return 'pi pi-arrow-down';
-    if (margin >= this.highThreshold()) return 'pi pi-arrow-up';
-    if (margin >= this.mediumThreshold()) return 'pi pi-minus';
-    return 'pi pi-arrow-down';
+    if (margin < 0) return 'arrow_downward';
+    if (margin >= this.highThreshold()) return 'arrow_upward';
+    if (margin >= this.mediumThreshold()) return 'remove';
+    return 'arrow_downward';
   });
 }

@@ -85,10 +85,10 @@ h6, .h6 {
 .text-muted { color: var(--color-ink-muted); }
 .text-secondary { color: var(--color-ink-secondary); }
 .text-primary { color: var(--color-primary); }
-.text-success { color: var(--vinheria-success); }
-.text-warning { color: var(--vinheria-warning); }
-.text-error { color: var(--vinheria-error); }
-.text-gold { color: var(--vinheria-accent-gold); }
+.text-success { color: var(--color-accent-green); }
+.text-warning { color: var(--color-accent-orange); }
+.text-error { color: var(--color-error); }
+.text-gold { color: var(--color-accent-orange); }
 
 // Font weights
 .font-light { font-weight: 300; }

@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslocoModule } from '@jsverse/transloco';
 
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { ChartModule } from 'primeng/chart';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { CurrencyService } from '../../../core/currency/currency.service';
@@ -24,11 +23,10 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
     CommonModule,
     RouterLink,
     TranslocoModule,
-    CardModule,
-    TableModule,
-    TagModule,
-    ButtonModule,
-    ChartModule,
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
     PriceDisplayComponent,
     StatusBadgeComponent,
     MarginIndicatorComponent,
@@ -44,7 +42,7 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
       <!-- KPI Cards -->
       <div class="kpi-grid">
         <app-kpi-card
-          icon="pi pi-dollar"
+          icon="attach_money"
           iconBgClass="kpi-icon--success"
           [value]="formatCurrency(myTotalSales.BRL)"
           [label]="t('dashboard.mySales')"
@@ -53,21 +51,21 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
         />
 
         <app-kpi-card
-          icon="pi pi-shopping-cart"
+          icon="shopping_cart"
           iconBgClass="kpi-icon--info"
           [value]="myOrderCount.toString()"
           [label]="t('dashboard.myOrders')"
         />
 
         <app-kpi-card
-          icon="pi pi-percentage"
+          icon="percent"
           iconBgClass="kpi-icon--primary"
           [value]="myAvgMargin.toFixed(1) + '%'"
           [label]="t('dashboard.myAvgMargin')"
         />
 
         <app-kpi-card
-          icon="pi pi-clock"
+          icon="schedule"
           iconBgClass="kpi-icon--warning"
           [value]="myPendingOrders.toString()"
           [label]="t('dashboard.pendingOrders')"
@@ -76,128 +74,142 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
       <!-- Quick Actions -->
       <div class="quick-actions">
-        <p-button
-          [label]="t('sales.createOrder')"
-          icon="pi pi-plus"
-          routerLink="/sales/create"
-        />
-        <p-button
-          [label]="t('dashboard.viewCatalog')"
-          icon="pi pi-list"
-          [outlined]="true"
-          routerLink="/catalog"
-        />
-        <p-button
-          [label]="t('dashboard.viewCustomers')"
-          icon="pi pi-users"
-          [outlined]="true"
-          routerLink="/customers"
-        />
+        <button mat-flat-button routerLink="/sales/create">
+          <mat-icon fontIcon="add" />
+          {{ t('sales.createOrder') }}
+        </button>
+        <button mat-stroked-button routerLink="/catalog">
+          <mat-icon fontIcon="list" />
+          {{ t('dashboard.viewCatalog') }}
+        </button>
+        <button mat-stroked-button routerLink="/customers">
+          <mat-icon fontIcon="group" />
+          {{ t('dashboard.viewCustomers') }}
+        </button>
       </div>
 
       <!-- Tables Row -->
       <div class="tables-row">
         <!-- Recent Orders -->
-        <p-card [header]="t('dashboard.myRecentOrders')" styleClass="table-card">
-          <p-table [value]="myRecentOrders" [rows]="5" styleClass="p-datatable-sm">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>{{ t('common.orderNumber') }}</th>
-                <th>{{ t('dashboard.customer') }}</th>
-                <th>{{ t('common.total') }}</th>
-                <th>{{ t('common.margin') }}</th>
-                <th>{{ t('common.status') }}</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-order>
-              <tr>
-                <td><strong>{{ order.orderNumber }}</strong></td>
-                <td>{{ order.customerName }}</td>
-                <td><app-price-display [price]="order.totalAmount" /></td>
-                <td><app-margin-indicator [marginPercentage]="order.marginPercentage" /></td>
-                <td><app-status-badge [status]="order.status" context="sales" /></td>
-              </tr>
-            </ng-template>
-          </p-table>
+        <mat-card appearance="outlined" class="table-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('dashboard.myRecentOrders') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="myRecentOrders">
+              <ng-container matColumnDef="orderNumber">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.orderNumber') }}</th>
+                <td mat-cell *matCellDef="let order"><strong>{{ order.orderNumber }}</strong></td>
+              </ng-container>
+
+              <ng-container matColumnDef="customerName">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.customer') }}</th>
+                <td mat-cell *matCellDef="let order">{{ order.customerName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.total') }}</th>
+                <td mat-cell *matCellDef="let order"><app-price-display [price]="order.totalAmount" /></td>
+              </ng-container>
+
+              <ng-container matColumnDef="margin">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.margin') }}</th>
+                <td mat-cell *matCellDef="let order"><app-margin-indicator [marginPercentage]="order.marginPercentage" /></td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>{{ t('common.status') }}</th>
+                <td mat-cell *matCellDef="let order"><app-status-badge [status]="order.status" context="sales" /></td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsOrders"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsOrders;"></tr>
+            </table>
+          </mat-card-content>
           <div class="card-footer">
-            <p-button
-              [label]="t('dashboard.viewAllOrders')"
-              [link]="true"
-              routerLink="/sales"
-            />
+            <button mat-button routerLink="/sales">{{ t('dashboard.viewAllOrders') }}</button>
           </div>
-        </p-card>
+        </mat-card>
 
         <!-- Top Customers -->
-        <p-card [header]="t('dashboard.topCustomers')" styleClass="table-card">
-          <p-table [value]="topCustomers" styleClass="p-datatable-sm">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>{{ t('dashboard.customer') }}</th>
-                <th>{{ t('dashboard.orders') }}</th>
-                <th>{{ t('dashboard.totalPurchases') }}</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-customer>
-              <tr>
-                <td>
+        <mat-card appearance="outlined" class="table-card">
+          <mat-card-header>
+            <mat-card-title>{{ t('dashboard.topCustomers') }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="topCustomers">
+              <ng-container matColumnDef="customer">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.customer') }}</th>
+                <td mat-cell *matCellDef="let customer">
                   <div class="customer-cell">
                     <strong>{{ customer.name }}</strong>
                     <span class="customer-type">{{ customer.type }}</span>
                   </div>
                 </td>
-                <td>{{ customer.orderCount }}</td>
-                <td><app-price-display [price]="customer.totalPurchases" /></td>
-              </tr>
-            </ng-template>
-          </p-table>
+              </ng-container>
+
+              <ng-container matColumnDef="orders">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.orders') }}</th>
+                <td mat-cell *matCellDef="let customer">{{ customer.orderCount }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="totalPurchases">
+                <th mat-header-cell *matHeaderCellDef>{{ t('dashboard.totalPurchases') }}</th>
+                <td mat-cell *matCellDef="let customer"><app-price-display [price]="customer.totalPurchases" /></td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsCustomers"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsCustomers;"></tr>
+            </table>
+          </mat-card-content>
           <div class="card-footer">
-            <p-button
-              [label]="t('dashboard.viewAllCustomers')"
-              [link]="true"
-              routerLink="/customers"
-            />
+            <button mat-button routerLink="/customers">{{ t('dashboard.viewAllCustomers') }}</button>
           </div>
-        </p-card>
+        </mat-card>
       </div>
 
       <!-- Sales Target Progress -->
-      <p-card [header]="t('dashboard.monthlyTarget')" styleClass="target-card">
-        <div class="target-content">
-          <div class="target-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" [style.width.%]="targetProgress"></div>
+      <mat-card appearance="outlined" class="target-card">
+        <mat-card-header>
+          <mat-card-title>{{ t('dashboard.monthlyTarget') }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="target-content">
+            <div class="target-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="targetProgress"></div>
+              </div>
+              <div class="progress-labels">
+                <span>{{ t('dashboard.current') }}: <app-price-display [price]="myTotalSales" /></span>
+                <span>{{ t('dashboard.target') }}: <app-price-display [price]="monthlyTarget" /></span>
+              </div>
             </div>
-            <div class="progress-labels">
-              <span>{{ t('dashboard.current') }}: <app-price-display [price]="myTotalSales" /></span>
-              <span>{{ t('dashboard.target') }}: <app-price-display [price]="monthlyTarget" /></span>
+            <div class="target-percentage">
+              <span class="percentage-value">{{ targetProgress.toFixed(0) }}%</span>
+              <span class="percentage-label">{{ t('dashboard.achieved') }}</span>
             </div>
           </div>
-          <div class="target-percentage">
-            <span class="percentage-value">{{ targetProgress.toFixed(0) }}%</span>
-            <span class="percentage-label">{{ t('dashboard.achieved') }}</span>
-          </div>
-        </div>
-      </p-card>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
     .dashboard {
-      animation: fadeIn var(--vinheria-transition-normal) ease-out;
+      animation: fadeIn var(--motion-normal) ease-out;
     }
 
     .dashboard-header {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs, 4px);
+        margin-bottom: var(--space-xxs, 4px);
       }
     }
 
     .kpi-grid {
       display: grid;
-      gap: var(--vinheria-spacing-md, 16px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-md, 16px);
+      margin-bottom: var(--space-lg, 24px);
       grid-template-columns: 1fr;
 
       @media (min-width: 600px) {
@@ -211,32 +223,30 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
     .quick-actions {
       display: flex;
-      gap: var(--vinheria-spacing-md, 16px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-md, 16px);
+      margin-bottom: var(--space-lg, 24px);
       flex-wrap: wrap;
     }
 
     .tables-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: var(--vinheria-spacing-lg, 24px);
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      gap: var(--space-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
     }
 
-    :host ::ng-deep .table-card {
-      .p-card-body {
-        padding: 0;
-      }
+    .table-card mat-card-content {
+      padding: 0;
+    }
 
-      .p-card-header {
-        padding: var(--vinheria-spacing-md, 16px);
-        border-bottom: 1px solid var(--m3-outline-variant);
-      }
+    .table-card mat-card-header {
+      padding: var(--space-md, 16px);
+      border-bottom: 1px solid var(--color-hairline);
     }
 
     .card-footer {
-      padding: var(--vinheria-spacing-sm, 8px) var(--vinheria-spacing-md, 16px);
-      border-top: 1px solid var(--m3-outline-variant);
+      padding: var(--space-xs, 8px) var(--space-md, 16px);
+      border-top: 1px solid var(--color-hairline);
       text-align: center;
     }
 
@@ -246,18 +256,18 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
       .customer-type {
         font-size: 0.75rem;
-        color: var(--m3-on-surface-variant);
+        color: var(--color-ink-secondary);
       }
     }
 
-    :host ::ng-deep .target-card .p-card-body {
-      padding: var(--vinheria-spacing-lg, 24px);
+    .target-card mat-card-content {
+      padding: var(--space-lg, 24px);
     }
 
     .target-content {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-xl, 32px);
+      gap: var(--space-xl, 32px);
     }
 
     .target-progress {
@@ -266,16 +276,16 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
 
     .progress-bar {
       height: 16px;
-      background: var(--p-surface-200);
-      border-radius: var(--vinheria-radius-md);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-md);
       overflow: hidden;
-      margin-bottom: var(--vinheria-spacing-sm, 8px);
+      margin-bottom: var(--space-xs, 8px);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--m3-primary) 0%, var(--vinheria-success) 100%);
-      border-radius: var(--vinheria-radius-md);
+      background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent-green) 100%);
+      border-radius: var(--radius-md);
       transition: width 0.5s ease-out;
     }
 
@@ -283,35 +293,36 @@ import { SALES_ORDERS, CUSTOMERS } from '../../../mock/data';
       display: flex;
       justify-content: space-between;
       font-size: 0.875rem;
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
 
     .target-percentage {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-md, 16px);
-      background: var(--p-surface-50);
-      border-radius: var(--vinheria-radius-lg, 12px);
+      padding: var(--space-md, 16px);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-lg, 12px);
     }
 
     .percentage-value {
-      font-size: var(--vinheria-font-size-3xl);
+      font-size: var(--font-size-3xl);
       font-weight: 700;
-      color: var(--m3-primary);
+      color: var(--color-primary);
     }
 
     .percentage-label {
       font-size: 0.875rem;
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
-
-
   `]
 })
 export class SellerDashboardComponent {
   authService = inject(AuthService);
   currencyService = inject(CurrencyService);
+
+  displayedColumnsOrders = ['orderNumber', 'customerName', 'total', 'margin', 'status'];
+  displayedColumnsCustomers = ['customer', 'orders', 'totalPurchases'];
 
   formatCurrency(amount: number): string {
     return this.currencyService.formatPrice(amount);

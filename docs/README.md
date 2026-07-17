@@ -22,7 +22,7 @@
 | # | Documento | Descrição |
 |---|---|---|
 | 03 | [Backend — Quarkus + Kotlin](./03-backend-quarkus-kotlin.md) | Gradle, Ktlint, Detekt, naming conventions, patterns |
-| 04 | [Frontend — Angular + PrimeNG](./04-frontend-angular-primeng.md) | Estrutura, tema Bordeaux, i18n (Transloco), multi-currency |
+| 04 | [Frontend — Angular + Angular Material](./04-frontend-angular-material.md) | Estrutura, tema DESIGN.md (Notion-inspired), i18n (Transloco), multi-currency |
 | 05 | [Comunicação Reativa](./05-comunicacao-reativa.md) | REST, SSE, gRPC, performance targets (SLOs) |
 | 09 | [Test Pyramid](./09-test-pyramid.md) | Kotest, Jest, K6, ArchUnit, coverage rules |
 | 12 | [Git Strategy](./12-git-strategy.md) | Trunk-Based Development, Conventional Commits |

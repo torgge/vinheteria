@@ -1,23 +1,22 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@jsverse/transloco';
 
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { DropdownModule } from 'primeng/dropdown';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
-import { TimelineModule } from 'primeng/timeline';
-import { TooltipModule } from 'primeng/tooltip';
-import { MessageService } from 'primeng/api';
+import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { formatDateTime } from '../../../../shared/utils/date.utils';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
+import { TimelineComponent, TimelineEvent } from '../../../../shared/components/timeline/timeline.component';
 import {
   FULFILLMENTS,
   Fulfillment,
@@ -30,13 +29,6 @@ interface StatusOption {
   value: FulfillmentStatus | null;
 }
 
-interface TimelineEvent {
-  status: string;
-  date: string | null;
-  icon: string;
-  color: string;
-}
-
 @Component({
   selector: 'app-fulfillment-list',
   standalone: true,
@@ -44,23 +36,19 @@ interface TimelineEvent {
     CommonModule,
     FormsModule,
     TranslocoModule,
-    CardModule,
-    TableModule,
-    ButtonModule,
-    TagModule,
-    DropdownModule,
-    DialogModule,
-    InputTextModule,
-    ToastModule,
-    TimelineModule,
-    TooltipModule,
-    StatusBadgeComponent
+    MatTableModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatDialogModule,
+    StatusBadgeComponent,
+    TimelineComponent
   ],
-  providers: [MessageService],
   template: `
     <div class="fulfillment-page" *transloco="let t">
-      <p-toast />
-
       <!-- Header -->
       <div class="page-header">
         <div class="header-content">
@@ -78,193 +66,216 @@ interface TimelineEvent {
       </div>
 
       <!-- Filters -->
-      <p-card styleClass="filters-card">
-        <div class="filters-row">
-          <p-dropdown
-            [options]="warehouseOptions"
-            [(ngModel)]="selectedWarehouse"
-            [placeholder]="t('fulfillments.warehouse')"
-            [showClear]="true"
-            styleClass="warehouse-dropdown"
-          />
+      <mat-card appearance="outlined" class="filters-card">
+        <mat-card-content>
+          <div class="filters-row">
+            <mat-form-field appearance="outline" class="warehouse-filter">
+              <mat-label>{{ t('fulfillments.warehouse') }}</mat-label>
+              <mat-select [(ngModel)]="selectedWarehouse">
+                <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                @for (opt of warehouseOptions; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          <p-dropdown
-            [options]="statusOptions"
-            [(ngModel)]="selectedStatus"
-            [placeholder]="t('common.status')"
-            [showClear]="true"
-            styleClass="status-dropdown"
-          />
-        </div>
-      </p-card>
+            <mat-form-field appearance="outline" class="status-filter">
+              <mat-label>{{ t('common.status') }}</mat-label>
+              <mat-select [(ngModel)]="selectedStatus">
+                <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                @for (opt of statusOptions; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Fulfillments Table -->
-      <p-card styleClass="table-card">
-        <p-table
-          [value]="filteredFulfillments()"
-          [paginator]="true"
-          [rows]="10"
-          [tableStyle]="{ 'min-width': '60rem' }"
-          styleClass="p-datatable-striped"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Fulfillment ID</th>
-              <th>Order #</th>
-              <th>{{ t('fulfillments.warehouse') }}</th>
-              <th>Customer</th>
-              <th>{{ t('fulfillments.items') }}</th>
-              <th>{{ t('common.status') }}</th>
-              <th>{{ t('fulfillments.trackingCode') }}</th>
-              <th>{{ t('common.actions') }}</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-fulfillment>
-            <tr>
-              <td><span class="fulfillment-id">{{ fulfillment.id }}</span></td>
-              <td><strong class="order-number">{{ fulfillment.salesOrderNumber }}</strong></td>
-              <td>
+      <mat-card appearance="outlined" class="table-card">
+        <mat-card-content>
+          <table
+            mat-table
+            [dataSource]="filteredFulfillments()"
+            style="min-width: 60rem"
+          >
+            <!-- fulfillmentId Column -->
+            <ng-container matColumnDef="fulfillmentId">
+              <th mat-header-cell *matHeaderCellDef>Fulfillment ID</th>
+              <td mat-cell *matCellDef="let fulfillment">
+                <span class="fulfillment-id">{{ fulfillment.id }}</span>
+              </td>
+            </ng-container>
+
+            <!-- orderNumber Column -->
+            <ng-container matColumnDef="orderNumber">
+              <th mat-header-cell *matHeaderCellDef>Order #</th>
+              <td mat-cell *matCellDef="let fulfillment">
+                <strong class="order-number">{{ fulfillment.salesOrderNumber }}</strong>
+              </td>
+            </ng-container>
+
+            <!-- warehouse Column -->
+            <ng-container matColumnDef="warehouse">
+              <th mat-header-cell *matHeaderCellDef>{{ t('fulfillments.warehouse') }}</th>
+              <td mat-cell *matCellDef="let fulfillment">
                 <span class="warehouse-code">{{ fulfillment.warehouseCode }}</span>
               </td>
-              <td>{{ fulfillment.customerName }}</td>
-              <td>{{ fulfillment.items.length }} item(s)</td>
-              <td>
+            </ng-container>
+
+            <!-- customer Column -->
+            <ng-container matColumnDef="customer">
+              <th mat-header-cell *matHeaderCellDef>Customer</th>
+              <td mat-cell *matCellDef="let fulfillment">{{ fulfillment.customerName }}</td>
+            </ng-container>
+
+            <!-- items Column -->
+            <ng-container matColumnDef="items">
+              <th mat-header-cell *matHeaderCellDef>{{ t('fulfillments.items') }}</th>
+              <td mat-cell *matCellDef="let fulfillment">{{ fulfillment.items.length }} item(s)</td>
+            </ng-container>
+
+            <!-- status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.status') }}</th>
+              <td mat-cell *matCellDef="let fulfillment">
                 <app-status-badge [status]="fulfillment.status" context="fulfillment" />
               </td>
-              <td>
+            </ng-container>
+
+            <!-- trackingCode Column -->
+            <ng-container matColumnDef="trackingCode">
+              <th mat-header-cell *matHeaderCellDef>{{ t('fulfillments.trackingCode') }}</th>
+              <td mat-cell *matCellDef="let fulfillment">
                 @if (fulfillment.trackingCode) {
                   <span class="tracking-code">{{ fulfillment.trackingCode }}</span>
                 } @else {
                   <span class="na">-</span>
                 }
               </td>
-              <td>
+            </ng-container>
+
+            <!-- actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
+              <td mat-cell *matCellDef="let fulfillment">
                 <div class="actions">
-                  <p-button
-                    icon="pi pi-eye"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="info"
-                    [pTooltip]="t('common.view')"
-                    (onClick)="viewFulfillment(fulfillment)"
-                  />
+                  <button
+                    mat-icon-button
+                    matTooltip="{{ t('common.view') }}"
+                    (click)="viewFulfillment(fulfillment)"
+                  >
+                    <mat-icon fontIcon="visibility" />
+                  </button>
                   @if (canProgress(fulfillment)) {
-                    <p-button
-                      icon="pi pi-arrow-right"
-                      [rounded]="true"
-                      [text]="true"
-                      severity="info"
-                      [pTooltip]="getNextStatusLabel(fulfillment.status)"
-                      (onClick)="progressStatus(fulfillment)"
-                    />
+                    <button
+                      mat-icon-button
+                      matTooltip="{{ getNextStatusLabel(fulfillment.status) }}"
+                      (click)="progressStatus(fulfillment)"
+                    >
+                      <mat-icon fontIcon="arrow_forward" />
+                    </button>
                   }
                 </div>
               </td>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="8">
-                <div class="vinheria-empty-state">
-                  <i class="pi pi-box"></i>
-                  <p>No fulfillments found</p>
-                </div>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            @if (filteredFulfillments().length === 0) {
+              <tr class="mat-row">
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                  <div class="vinheria-empty-state">
+                    <mat-icon fontIcon="inventory_2" />
+                    <p>No fulfillments found</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </table>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Detail Dialog -->
-      <p-dialog
-        [(visible)]="showDetailDialog"
-        [header]="'Fulfillment Details'"
-        [modal]="true"
-        [style]="{ width: '600px' }"
-      >
-        @if (selectedFulfillment()) {
-          <div class="detail-content">
-            <div class="detail-header">
-              <div class="detail-info">
-                <h3>{{ selectedFulfillment()!.salesOrderNumber }}</h3>
-                <p>{{ selectedFulfillment()!.customerName }}</p>
+      <ng-template #detailDialog>
+        <h2 mat-dialog-title>Fulfillment Details</h2>
+        <mat-dialog-content>
+          @if (selectedFulfillment()) {
+            <div class="detail-content">
+              <div class="detail-header">
+                <div class="detail-info">
+                  <h3>{{ selectedFulfillment()!.salesOrderNumber }}</h3>
+                  <p>{{ selectedFulfillment()!.customerName }}</p>
+                </div>
+                <app-status-badge [status]="selectedFulfillment()!.status" context="fulfillment" />
               </div>
-              <app-status-badge [status]="selectedFulfillment()!.status" context="fulfillment" />
-            </div>
 
-            <div class="detail-section">
-              <h4>Timeline</h4>
-              <p-timeline [value]="getTimeline(selectedFulfillment()!)" align="left">
-                <ng-template pTemplate="marker" let-event>
-                  <span class="timeline-marker" [style.background]="event.color">
-                    <i [class]="event.icon"></i>
-                  </span>
-                </ng-template>
-                <ng-template pTemplate="content" let-event>
-                  <div class="timeline-content">
-                    <span class="timeline-status">{{ event.status }}</span>
-                    <span class="timeline-date">{{ event.date || 'Pending' }}</span>
-                  </div>
-                </ng-template>
-              </p-timeline>
-            </div>
-
-            <div class="detail-section">
-              <h4>Items</h4>
-              <div class="items-list">
-                @for (item of selectedFulfillment()!.items; track item.sku) {
-                  <div class="item-row">
-                    <span class="item-sku">{{ item.sku }}</span>
-                    <span class="item-name">{{ item.wineName }}</span>
-                    <span class="item-qty">x{{ item.quantity }}</span>
-                  </div>
-                }
-              </div>
-            </div>
-
-            @if (selectedFulfillment()!.trackingCode) {
               <div class="detail-section">
-                <h4>Tracking</h4>
-                <div class="tracking-info">
-                  <span class="tracking-label">Code:</span>
-                  <span class="tracking-value">{{ selectedFulfillment()!.trackingCode }}</span>
+                <h4>Timeline</h4>
+                <app-timeline [events]="getTimeline(selectedFulfillment()!)" />
+              </div>
+
+              <div class="detail-section">
+                <h4>Items</h4>
+                <div class="items-list">
+                  @for (item of selectedFulfillment()!.items; track item.sku) {
+                    <div class="item-row">
+                      <span class="item-sku">{{ item.sku }}</span>
+                      <span class="item-name">{{ item.wineName }}</span>
+                      <span class="item-qty">x{{ item.quantity }}</span>
+                    </div>
+                  }
                 </div>
               </div>
-            }
-          </div>
-        }
-        <ng-template pTemplate="footer">
-          <p-button [label]="t('common.close')" [text]="true" (onClick)="closeDialog()" />
-          @if (selectedFulfillment() && canProgress(selectedFulfillment()!)) {
-            <p-button
-              [label]="'Progress to ' + getNextStatusLabel(selectedFulfillment()!.status)"
-              icon="pi pi-arrow-right"
-              (onClick)="progressStatus(selectedFulfillment()!); closeDialog()"
-            />
+
+              @if (selectedFulfillment()!.trackingCode) {
+                <div class="detail-section">
+                  <h4>Tracking</h4>
+                  <div class="tracking-info">
+                    <span class="tracking-label">Code:</span>
+                    <span class="tracking-value">{{ selectedFulfillment()!.trackingCode }}</span>
+                  </div>
+                </div>
+              }
+            </div>
           }
-        </ng-template>
-      </p-dialog>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-stroked-button (click)="dialog.closeAll()">{{ t('common.close') }}</button>
+          @if (selectedFulfillment() && canProgress(selectedFulfillment()!)) {
+            <button
+              mat-flat-button
+              (click)="progressStatus(selectedFulfillment()!); dialog.closeAll()"
+            >
+              <mat-icon fontIcon="arrow_forward" />
+              {{ 'Progress to ' + getNextStatusLabel(selectedFulfillment()!.status) }}
+            </button>
+          }
+        </mat-dialog-actions>
+      </ng-template>
     </div>
   `,
   styles: [`
     .fulfillment-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal, 0.3s);
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg, 24px);
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
 
-      h1 { margin-bottom: var(--vinheria-spacing-xs, 4px); }
+      h1 { margin-bottom: var(--space-xxs, 4px); }
     }
 
     .stats-row {
       display: flex;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
       flex-wrap: wrap;
     }
 
@@ -272,80 +283,81 @@ interface TimelineEvent {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: var(--vinheria-spacing-sm, 8px) var(--vinheria-spacing-md, 16px);
-      background: var(--m3-surface);
-      border-radius: var(--vinheria-radius-md, 8px);
-      box-shadow: var(--p-card-shadow);
+      padding: var(--space-xs, 8px) var(--space-md, 16px);
+      background: var(--color-surface);
+      border-radius: var(--radius-md, 8px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       min-width: 80px;
 
       .stat-value {
-        font-size: var(--vinheria-font-size-xl, 1.25rem);
+        font-size: var(--font-size-xl, 1.25rem);
         font-weight: 700;
       }
 
       .stat-label {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
 
-      &.status-pending .stat-value { color: var(--vinheria-warning, #ed6c02); }
-      &.status-picking .stat-value { color: var(--vinheria-info, #0288d1); }
-      &.status-packed .stat-value { color: var(--vinheria-info, #0288d1); }
-      &.status-shipped .stat-value { color: var(--m3-primary); }
-      &.status-delivered .stat-value { color: var(--vinheria-success, #2e7d32); }
+      &.status-pending .stat-value { color: var(--color-accent-orange, #ed6c02); }
+      &.status-picking .stat-value { color: var(--color-accent-sky, #0288d1); }
+      &.status-packed .stat-value { color: var(--color-accent-sky, #0288d1); }
+      &.status-shipped .stat-value { color: var(--color-primary); }
+      &.status-delivered .stat-value { color: var(--color-accent-green, #2e7d32); }
     }
 
-    :host ::ng-deep .filters-card {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
-      .p-card-body { padding: var(--vinheria-spacing-md, 16px); }
+    .filters-card {
+      margin-bottom: var(--space-lg, 24px);
     }
 
     .filters-row {
       display: flex;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
       flex-wrap: wrap;
     }
 
-    :host ::ng-deep .warehouse-dropdown,
-    :host ::ng-deep .status-dropdown {
+    .warehouse-filter,
+    .status-filter {
       min-width: 200px;
     }
 
-    :host ::ng-deep .table-card {
-      .p-card-body { padding: var(--vinheria-spacing-lg, 24px); }
+    .table-card {
+      mat-card-content {
+        padding: var(--space-lg, 24px);
+      }
     }
 
     .fulfillment-id {
-      font-family: var(--vinheria-font-mono, monospace);
-      font-size: var(--vinheria-font-size-xs, 0.75rem);
-      color: var(--m3-on-surface-variant);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-ink-secondary);
     }
 
     .order-number {
-      font-family: var(--vinheria-font-mono, monospace);
-      color: var(--m3-primary);
+      font-family: var(--font-mono, monospace);
+      color: var(--color-primary);
     }
 
     .warehouse-code {
       font-weight: 600;
       padding: 2px 8px;
-      background: var(--p-surface-100);
-      border-radius: var(--vinheria-radius-sm, 4px);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-sm, 4px);
     }
 
     .tracking-code {
-      font-family: var(--vinheria-font-mono, monospace);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--font-size-sm, 0.875rem);
     }
 
     .na {
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
 
     .actions {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
     }
 
     .detail-content {
@@ -353,67 +365,43 @@ interface TimelineEvent {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        margin-bottom: var(--space-lg, 24px);
 
-        h3 { margin: 0 0 var(--vinheria-spacing-xs, 4px) 0; }
-        p { margin: 0; color: var(--m3-on-surface-variant); }
+        h3 { margin: 0 0 var(--space-xxs, 4px) 0; }
+        p { margin: 0; color: var(--color-ink-secondary); }
       }
 
       .detail-section {
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        margin-bottom: var(--space-lg, 24px);
 
         h4 {
-          margin: 0 0 var(--vinheria-spacing-sm, 8px) 0;
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
-          color: var(--m3-on-surface-variant);
+          margin: 0 0 var(--space-xs, 8px) 0;
+          font-size: var(--font-size-sm, 0.875rem);
+          color: var(--color-ink-secondary);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
       }
     }
 
-    .timeline-marker {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      color: white;
-
-      i { font-size: 0.875rem; }
-    }
-
-    .timeline-content {
-      display: flex;
-      flex-direction: column;
-      padding-left: var(--vinheria-spacing-sm, 8px);
-
-      .timeline-status { font-weight: 600; }
-      .timeline-date {
-        font-size: var(--vinheria-font-size-sm, 0.875rem);
-        color: var(--m3-on-surface-variant);
-      }
-    }
-
     .items-list {
       display: flex;
       flex-direction: column;
-      gap: var(--vinheria-spacing-xs, 4px);
+      gap: var(--space-xxs, 4px);
     }
 
     .item-row {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
-      padding: var(--vinheria-spacing-sm, 8px);
-      background: var(--p-surface-50);
-      border-radius: var(--vinheria-radius-sm, 4px);
+      gap: var(--space-md, 16px);
+      padding: var(--space-xs, 8px);
+      background: var(--color-canvas-soft);
+      border-radius: var(--radius-sm, 4px);
 
       .item-sku {
-        font-family: var(--vinheria-font-mono, monospace);
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-family: var(--font-mono, monospace);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
         width: 120px;
       }
 
@@ -421,38 +409,39 @@ interface TimelineEvent {
 
       .item-qty {
         font-weight: 600;
-        color: var(--m3-primary);
+        color: var(--color-primary);
       }
     }
 
     .tracking-info {
       display: flex;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-xs, 8px);
 
-      .tracking-label { color: var(--m3-on-surface-variant); }
+      .tracking-label { color: var(--color-ink-secondary); }
       .tracking-value {
-        font-family: var(--vinheria-font-mono, monospace);
+        font-family: var(--font-mono, monospace);
         font-weight: 600;
       }
     }
-
-
   `]
 })
 export class FulfillmentListComponent {
   private currencyService = inject(CurrencyService);
-  private messageService = inject(MessageService);
+  private notificationService = inject(NotificationService);
+  readonly dialog = inject(MatDialog);
+  @ViewChild('detailDialog', { read: TemplateRef }) detailDialog!: TemplateRef<unknown>;
 
   // Filters
   selectedWarehouse = signal<string | null>(null);
   selectedStatus = signal<FulfillmentStatus | null>(null);
 
   // Dialog
-  showDetailDialog = false;
   selectedFulfillment = signal<Fulfillment | null>(null);
 
   // Local state for status updates
   private fulfillmentStatuses = signal<Map<string, FulfillmentStatus>>(new Map());
+
+  readonly displayedColumns = ['fulfillmentId', 'orderNumber', 'warehouse', 'customer', 'items', 'status', 'trackingCode', 'actions'];
 
   warehouseOptions = WAREHOUSES.map(w => ({ label: `${w.code} - ${w.name}`, value: w.id }));
 
@@ -535,41 +524,41 @@ export class FulfillmentListComponent {
   getTimeline(fulfillment: Fulfillment): TimelineEvent[] {
     return [
       {
-        status: 'Created',
-        date: fulfillment.createdAt ? formatDateTime(fulfillment.createdAt) : null,
-        icon: 'pi pi-plus',
-        color: 'var(--m3-on-surface-variant)'
+        icon: 'add',
+        color: 'var(--color-ink-secondary)',
+        title: 'Created',
+        subtitle: fulfillment.createdAt ? formatDateTime(fulfillment.createdAt) : 'Pending'
       },
       {
-        status: 'Picking',
-        date: fulfillment.pickedAt ? formatDateTime(fulfillment.pickedAt) : null,
-        icon: 'pi pi-list',
-        color: fulfillment.pickedAt ? 'var(--vinheria-info)' : 'var(--m3-outline-variant)'
+        icon: 'list',
+        color: fulfillment.pickedAt ? 'var(--color-accent-sky)' : 'var(--color-hairline)',
+        title: 'Picking',
+        subtitle: fulfillment.pickedAt ? formatDateTime(fulfillment.pickedAt) : undefined
       },
       {
-        status: 'Packed',
-        date: fulfillment.packedAt ? formatDateTime(fulfillment.packedAt) : null,
-        icon: 'pi pi-box',
-        color: fulfillment.packedAt ? 'var(--vinheria-info)' : 'var(--m3-outline-variant)'
+        icon: 'inventory_2',
+        color: fulfillment.packedAt ? 'var(--color-accent-sky)' : 'var(--color-hairline)',
+        title: 'Packed',
+        subtitle: fulfillment.packedAt ? formatDateTime(fulfillment.packedAt) : undefined
       },
       {
-        status: 'Shipped',
-        date: fulfillment.shippedAt ? formatDateTime(fulfillment.shippedAt) : null,
-        icon: 'pi pi-truck',
-        color: fulfillment.shippedAt ? 'var(--m3-primary)' : 'var(--m3-outline-variant)'
+        icon: 'local_shipping',
+        color: fulfillment.shippedAt ? 'var(--color-primary)' : 'var(--color-hairline)',
+        title: 'Shipped',
+        subtitle: fulfillment.shippedAt ? formatDateTime(fulfillment.shippedAt) : undefined
       },
       {
-        status: 'Delivered',
-        date: fulfillment.deliveredAt ? formatDateTime(fulfillment.deliveredAt) : null,
-        icon: 'pi pi-check-circle',
-        color: fulfillment.deliveredAt ? 'var(--vinheria-success)' : 'var(--m3-outline-variant)'
+        icon: 'check_circle',
+        color: fulfillment.deliveredAt ? 'var(--color-accent-green)' : 'var(--color-hairline)',
+        title: 'Delivered',
+        subtitle: fulfillment.deliveredAt ? formatDateTime(fulfillment.deliveredAt) : undefined
       }
     ];
   }
 
   viewFulfillment(fulfillment: Fulfillment): void {
     this.selectedFulfillment.set(this.getFulfillmentWithStatus(fulfillment));
-    this.showDetailDialog = true;
+    this.dialog.open(this.detailDialog, { width: '600px' });
   }
 
   progressStatus(fulfillment: Fulfillment): void {
@@ -582,15 +571,10 @@ export class FulfillmentListComponent {
       return newStatuses;
     });
 
-    this.messageService.add({
+    this.notificationService.add({
       severity: 'success',
       summary: 'Status Updated',
       detail: `Fulfillment updated to ${this.getNextStatusLabel(currentFulfillment.status)}`
     });
-  }
-
-  closeDialog(): void {
-    this.showDetailDialog = false;
-    this.selectedFulfillment.set(null);
   }
 }

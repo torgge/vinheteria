@@ -51,7 +51,7 @@
 | Camada        | Tecnologia                                  |
 |---------------|---------------------------------------------|
 | Backend       | Quarkus 3.x + Kotlin + Gradle Kotlin DSL   |
-| Frontend      | Angular 18+ + PrimeNG 19                    |
+| Frontend      | Angular 18+ + Angular Material 18           |
 | i18n          | Transloco (pt-BR, es-PY, en-US)             |
 | Multi-Currency| BRL (Real), PYG (Guaraní), USD (Dólar)      |
 | Comunicação   | Reactive REST (Mutiny) + SSE + gRPC         |
@@ -76,7 +76,7 @@
 - **Margem de Lucro**: Sistema calcula e exibe margem bruta (preço de venda - custo médio do estoque) em cada pedido de venda.
 - **Condições Comerciais**: Cada cliente tem condições customizáveis (tabela de preço, prazo de pagamento, desconto, limite de crédito). Modelo padrão aplicado no cadastro.
 - **Valkey sobre Redis**: Licença BSD 3-Clause (100% open-source), throughput ~37% maior em writes via I/O threading multi-core, compatibilidade total com protocolo Redis.
-- **PrimeNG sobre PatternFly**: PatternFly 6 é React-first. PrimeNG oferece 80+ componentes Angular nativos, DataTable com virtualização, tema customizável via design tokens.
+- **Angular Material sobre PrimeNG/PatternFly**: PatternFly 6 é React-first. Angular Material 18 é a implementação oficial do Material Design 3 para Angular, com theming via design tokens CSS — o tema é dirigido pelo DESIGN.md (`--color-*`, `--space-*`, `--radius-*`, `--font-*`).
 - **Orkes Conductor CE (Híbrido)**: Saga orquestrado para fluxos complexos (sales_order_saga, purchase_order_saga). Domain events via Debezium CDC/Outbox.
 - **Debezium CDC + Outbox Pattern**: Elimina dual-write. Domain events persistidos na tabela outbox na mesma transação ACID, Debezium captura via WAL e publica no Kafka.
 - **Kafka KRaft (sem Zookeeper)**: KRaft simplifica operação, reduz footprint.

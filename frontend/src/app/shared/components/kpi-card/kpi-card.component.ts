@@ -1,24 +1,25 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 export type KpiTrend = 'up' | 'down' | 'neutral';
 
 @Component({
   selector: 'app-kpi-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   template: `
     <div class="kpi-card vinheria-card-elevated" [class]="variant() ? 'kpi-card--' + variant() : ''">
       <div class="kpi-content">
         <div class="kpi-icon" [class]="iconBgClass()">
-          <i [class]="icon()"></i>
+          <mat-icon [fontIcon]="iconName()" />
         </div>
         <div class="kpi-data">
           <div class="kpi-value">{{ value() }}</div>
           <div class="kpi-label">{{ label() }}</div>
           @if (trend(); as t) {
             <div class="kpi-trend" [class]="'trend-' + trendDirection()">
-              <i [class]="trendDirection() === 'up' ? 'pi pi-arrow-up' : trendDirection() === 'down' ? 'pi pi-arrow-down' : 'pi pi-minus'"></i>
+              <mat-icon [fontIcon]="trendIconName()" />
               <span>{{ t }}</span>
             </div>
           }
@@ -28,20 +29,20 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
   `,
   styles: [`
     .kpi-card {
-      padding: var(--vinheria-spacing-lg, 24px);
-      border-radius: var(--vinheria-radius-lg);
-      background: var(--m3-surface-container-low);
+      padding: var(--space-lg, 24px);
+      border-radius: var(--radius-lg);
+      background: var(--color-canvas-soft);
       border: none;
     }
 
     .kpi-card--warning {
-      border-left: 4px solid var(--vinheria-warning);
+      border-left: 4px solid var(--color-accent-orange);
     }
 
     .kpi-content {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md, 16px);
     }
 
     .kpi-icon {
@@ -50,32 +51,34 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: var(--vinheria-radius-md);
+      border-radius: var(--radius-md);
       flex-shrink: 0;
 
-      i {
+      mat-icon {
         font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
       }
     }
 
     .kpi-icon--success {
-      background: var(--vinheria-success-bg);
-      color: var(--vinheria-success);
+      background: var(--color-success-bg);
+      color: var(--color-accent-green);
     }
 
     .kpi-icon--warning {
-      background: var(--vinheria-warning-bg);
-      color: var(--vinheria-warning);
+      background: var(--color-warning-bg);
+      color: var(--color-accent-orange);
     }
 
     .kpi-icon--info {
-      background: var(--vinheria-info-bg);
-      color: var(--vinheria-info);
+      background: var(--color-info-bg);
+      color: var(--color-accent-sky);
     }
 
     .kpi-icon--primary {
-      background: var(--m3-primary-container);
-      color: var(--m3-on-primary-container);
+      background: var(--color-canvas-soft);
+      color: var(--color-ink);
     }
 
     .kpi-data {
@@ -83,15 +86,15 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
     }
 
     .kpi-value {
-      font-size: var(--vinheria-font-size-2xl);
+      font-size: var(--font-size-2xl);
       font-weight: 700;
-      color: var(--m3-on-surface);
+      color: var(--color-ink);
       line-height: 1.2;
     }
 
     .kpi-label {
-      font-size: var(--vinheria-font-size-sm);
-      color: var(--m3-on-surface-variant);
+      font-size: var(--font-size-sm);
+      color: var(--color-ink-secondary);
       margin-top: 2px;
     }
 
@@ -99,34 +102,49 @@ export type KpiTrend = 'up' | 'down' | 'neutral';
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: var(--vinheria-font-size-sm);
+      font-size: var(--font-size-sm);
       font-weight: 600;
       margin-top: 4px;
 
-      i {
-        font-size: 0.75rem;
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
       }
     }
 
     .trend-up {
-      color: var(--vinheria-success);
+      color: var(--color-accent-green);
     }
 
     .trend-down {
-      color: var(--vinheria-error);
+      color: var(--color-error);
     }
 
     .trend-neutral {
-      color: var(--m3-on-surface-variant);
+      color: var(--color-ink-secondary);
     }
   `]
 })
 export class KpiCardComponent {
-  icon = input<string>('pi pi-chart-bar');
+  /** Material Symbol name (e.g. 'attach_money') */
+  icon = input<string>('bar_chart');
   iconBgClass = input<string>('kpi-icon--primary');
   value = input<string>('');
   label = input<string>('');
   trend = input<string | null>(null);
   trendDirection = input<KpiTrend>('neutral');
   variant = input<string>('');
+
+  iconName = computed(() => {
+    const name = this.icon();
+    return name.startsWith('pi ') ? 'bar_chart' : name;
+  });
+
+  trendIconName = computed(() => {
+    const direction = this.trendDirection();
+    if (direction === 'up') return 'arrow_upward';
+    if (direction === 'down') return 'arrow_downward';
+    return 'remove';
+  });
 }

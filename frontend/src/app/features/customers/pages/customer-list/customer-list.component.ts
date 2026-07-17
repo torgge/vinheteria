@@ -1,18 +1,18 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslocoModule } from '@jsverse/transloco';
-
-import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { DropdownModule } from 'primeng/dropdown';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputIconModule } from 'primeng/inputicon';
-import { IconFieldModule } from 'primeng/iconfield';
-import { DialogModule } from 'primeng/dialog';
-import { TooltipModule } from 'primeng/tooltip';
+import { Sort } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { CurrencyService } from '../../../../core/currency/currency.service';
 import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
@@ -35,16 +35,16 @@ interface FilterOption<T> {
     CommonModule,
     FormsModule,
     TranslocoModule,
-    CardModule,
-    TableModule,
-    ButtonModule,
-    TagModule,
-    DropdownModule,
-    InputTextModule,
-    InputIconModule,
-    IconFieldModule,
-    DialogModule,
-    TooltipModule,
+    MatTableModule,
+    MatSortModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatDialogModule,
     PriceDisplayComponent
   ],
   template: `
@@ -56,145 +56,154 @@ interface FilterOption<T> {
           <p class="text-secondary">{{ t('customers.subtitle') }}</p>
         </div>
         <div class="header-actions">
-          <p-button
-            [label]="t('customers.addCustomer')"
-            icon="pi pi-plus"
-            (onClick)="addCustomer()"
-          />
+          <button mat-flat-button (click)="addCustomer()">
+            <mat-icon fontIcon="add" />
+            {{ t('customers.addCustomer') }}
+          </button>
         </div>
       </div>
 
       <!-- Filters -->
-      <p-card styleClass="filters-card">
-        <div class="filters-row">
-          <!-- Search -->
-          <div class="filter-item search-filter">
-            <p-iconField iconPosition="left">
-              <p-inputIcon styleClass="pi pi-search" />
+      <mat-card appearance="outlined" class="filters-card">
+        <mat-card-content>
+          <div class="filters-row">
+            <!-- Search -->
+            <mat-form-field appearance="outline" class="search-filter">
+              <mat-icon matPrefix fontIcon="search" />
               <input
-                type="text"
-                pInputText
+                matInput
                 [placeholder]="t('common.search')"
                 [(ngModel)]="searchQuery"
               />
-            </p-iconField>
-          </div>
+            </mat-form-field>
 
-          <!-- Type Filter -->
-          <div class="filter-item">
-            <p-dropdown
-              [options]="typeOptions"
-              [(ngModel)]="selectedType"
-              optionLabel="label"
-              [placeholder]="t('customers.type')"
-              [showClear]="true"
-              styleClass="type-dropdown"
-            />
-          </div>
+            <!-- Type Filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>{{ t('customers.type') }}</mat-label>
+              <mat-select [(ngModel)]="selectedType">
+                <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                @for (opt of typeOptions; track opt.value) {
+                  <mat-option [value]="opt">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          <!-- Status Filter -->
-          <div class="filter-item">
-            <p-dropdown
-              [options]="statusOptions"
-              [(ngModel)]="selectedStatus"
-              optionLabel="label"
-              [placeholder]="t('common.status')"
-              [showClear]="true"
-              styleClass="status-dropdown"
-            />
-          </div>
+            <!-- Status Filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>{{ t('common.status') }}</mat-label>
+              <mat-select [(ngModel)]="selectedStatus">
+                <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                @for (opt of statusOptions; track opt.value) {
+                  <mat-option [value]="opt">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          <!-- Country Filter -->
-          <div class="filter-item">
-            <p-dropdown
-              [options]="countryOptions"
-              [(ngModel)]="selectedCountry"
-              optionLabel="label"
-              [placeholder]="t('catalog.country')"
-              [showClear]="true"
-              styleClass="country-dropdown"
-            />
-          </div>
+            <!-- Country Filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>{{ t('catalog.country') }}</mat-label>
+              <mat-select [(ngModel)]="selectedCountry">
+                <mat-option [value]="null">{{ t('common.all') }}</mat-option>
+                @for (opt of countryOptions; track opt.value) {
+                  <mat-option [value]="opt">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          <!-- Clear Filters -->
-          <div class="filter-item">
-            <p-button
-              icon="pi pi-filter-slash"
-              [text]="true"
-              severity="info"
-              [pTooltip]="t('common.clearFilters')"
-              (onClick)="clearFilters()"
-            />
+            <!-- Clear Filters -->
+            <button
+              mat-stroked-button
+              matTooltip="{{ t('common.clearFilters') }}"
+              (click)="clearFilters()"
+            >
+              <mat-icon fontIcon="filter_list" />
+            </button>
           </div>
-        </div>
-      </p-card>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Customers Table -->
-      <p-card>
-        <p-table
-          [value]="filteredCustomers()"
-          [paginator]="true"
-          [rows]="10"
-          [rowsPerPageOptions]="[10, 25, 50]"
-          [tableStyle]="{ 'min-width': '80rem' }"
-          styleClass="p-datatable-striped"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="tradeName">
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <table
+            mat-table
+            [dataSource]="filteredCustomers()"
+            matSort
+            (matSortChange)="onSortChange($event)"
+            style="min-width: 80rem"
+          >
+            <!-- tradeName Column -->
+            <ng-container matColumnDef="tradeName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="tradeName">
                 {{ t('customers.companyName') }}
-                <p-sortIcon field="tradeName" />
               </th>
-              <th>{{ t('customers.taxId') }}</th>
-              <th pSortableColumn="type">
-                {{ t('customers.type') }}
-                <p-sortIcon field="type" />
-              </th>
-              <th>{{ t('customers.location') }}</th>
-              <th>{{ t('customers.priceTable') }}</th>
-              <th pSortableColumn="salesCondition.creditLimit.BRL">
-                {{ t('customers.creditLimit') }}
-                <p-sortIcon field="salesCondition.creditLimit.BRL" />
-              </th>
-              <th>{{ t('customers.paymentTerms') }}</th>
-              <th pSortableColumn="status">
-                {{ t('common.status') }}
-                <p-sortIcon field="status" />
-              </th>
-              <th>{{ t('common.actions') }}</th>
-            </tr>
-          </ng-template>
-
-          <ng-template pTemplate="body" let-customer>
-            <tr>
-              <td>
+              <td mat-cell *matCellDef="let customer">
                 <div class="customer-name">
                   <strong>{{ customer.tradeName }}</strong>
                   <span class="company-name">{{ customer.companyName }}</span>
                 </div>
               </td>
-              <td>
+            </ng-container>
+
+            <!-- taxId Column -->
+            <ng-container matColumnDef="taxId">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('customers.taxId') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
                 <code class="tax-id">{{ customer.taxId }}</code>
               </td>
-              <td>
-                <p-tag
-                  [value]="getTypeLabel(customer.type)"
-                  [severity]="getTypeSeverity(customer.type)"
-                />
+            </ng-container>
+
+            <!-- type Column -->
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="type">
+                {{ t('customers.type') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
+                <span class="badge badge-{{ getTypeSeverity(customer.type) }}">{{ getTypeLabel(customer.type) }}</span>
               </td>
-              <td>
+            </ng-container>
+
+            <!-- location Column -->
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('customers.location') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
                 <div class="location">
                   <span>{{ customer.city }}, {{ customer.state }}</span>
                   <span class="country">{{ customer.country }}</span>
                 </div>
               </td>
-              <td>
-                <p-tag [value]="customer.salesCondition.priceTableName" severity="secondary" />
+            </ng-container>
+
+            <!-- priceTable Column -->
+            <ng-container matColumnDef="priceTable">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('customers.priceTable') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
+                <span class="badge badge-secondary">{{ customer.salesCondition.priceTableName }}</span>
               </td>
-              <td>
+            </ng-container>
+
+            <!-- creditLimit Column -->
+            <ng-container matColumnDef="creditLimit">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="creditLimit">
+                {{ t('customers.creditLimit') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
                 <app-price-display [price]="customer.salesCondition.creditLimit" />
               </td>
-              <td>
+            </ng-container>
+
+            <!-- paymentTerms Column -->
+            <ng-container matColumnDef="paymentTerms">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('customers.paymentTerms') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
                 <span class="payment-terms">
                   {{ customer.salesCondition.paymentTermDays }} {{ t('customers.days') }}
                   @if (customer.salesCondition.discountPercentage > 0) {
@@ -202,195 +211,199 @@ interface FilterOption<T> {
                   }
                 </span>
               </td>
-              <td>
-                <p-tag
-                  [value]="t('customers.status.' + customer.status)"
-                  [severity]="getStatusSeverity(customer.status)"
-                />
+            </ng-container>
+
+            <!-- status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="status">
+                {{ t('common.status') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
+                <span class="badge badge-{{ getStatusSeverity(customer.status) }}">{{ t('customers.status.' + customer.status) }}</span>
               </td>
-              <td>
+            </ng-container>
+
+            <!-- actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ t('common.actions') }}
+              </th>
+              <td mat-cell *matCellDef="let customer">
                 <div class="actions">
-                  <p-button
-                    icon="pi pi-eye"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="info"
-                    [pTooltip]="t('common.view')"
-                    (onClick)="viewCustomer(customer)"
-                  />
-                  <p-button
-                    icon="pi pi-pencil"
-                    [rounded]="true"
-                    [text]="true"
-                    severity="warning"
-                    [pTooltip]="t('common.edit')"
-                    (onClick)="editCustomer(customer)"
-                  />
-                  <p-button
-                    icon="pi pi-shopping-cart"
-                    [rounded]="true"
-                    [text]="true"
-                    [pTooltip]="t('customers.createOrder')"
-                    (onClick)="createOrderForCustomer(customer)"
-                  />
+                  <button
+                    mat-icon-button
+                    matTooltip="{{ t('common.view') }}"
+                    (click)="viewCustomer(customer)"
+                  >
+                    <mat-icon fontIcon="visibility" />
+                  </button>
+                  <button
+                    mat-icon-button
+                    matTooltip="{{ t('common.edit') }}"
+                    (click)="editCustomer(customer)"
+                  >
+                    <mat-icon fontIcon="edit" />
+                  </button>
+                  <button
+                    mat-icon-button
+                    matTooltip="{{ t('customers.createOrder') }}"
+                    (click)="createOrderForCustomer(customer)"
+                  >
+                    <mat-icon fontIcon="shopping_cart" />
+                  </button>
                 </div>
               </td>
-            </tr>
-          </ng-template>
+            </ng-container>
 
-          <ng-template pTemplate="emptymessage">
-            <tr>
-              <td colspan="9">
+            <!-- Empty State -->
+            <ng-container matColumnDef="empty">
+              <td mat-cell *matCellDef="let customer" [attr.colspan]="displayedColumns.length">
                 <div class="vinheria-empty-state">
-                  <i class="pi pi-users"></i>
+                  <mat-icon fontIcon="group" />
                   <h3>{{ t('customers.noCustomers') }}</h3>
                   <p>{{ t('customers.noCustomersDescription') }}</p>
                 </div>
               </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </p-card>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="viewCustomer(row)"></tr>
+
+            @if (filteredCustomers().length === 0) {
+              <tr class="mat-row">
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                  <div class="vinheria-empty-state">
+                    <mat-icon fontIcon="group" />
+                    <h3>{{ t('customers.noCustomers') }}</h3>
+                    <p>{{ t('customers.noCustomersDescription') }}</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </table>
+        </mat-card-content>
+      </mat-card>
 
       <!-- Customer Detail Dialog -->
-      <p-dialog
-        [(visible)]="showDetailDialog"
-        [header]="selectedCustomer()?.tradeName || ''"
-        [modal]="true"
-        [style]="{ width: '600px' }"
-      >
-        @if (selectedCustomer()) {
-          <div class="customer-detail">
-            <div class="detail-section">
-              <h4>{{ t('customers.companyInfo') }}</h4>
-              <div class="detail-grid">
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.companyName') }}:</span>
-                  <span>{{ selectedCustomer()!.companyName }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.tradeName') }}:</span>
-                  <span>{{ selectedCustomer()!.tradeName }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.taxId') }}:</span>
-                  <code>{{ selectedCustomer()!.taxId }}</code>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.type') }}:</span>
-                  <p-tag [value]="getTypeLabel(selectedCustomer()!.type)" />
+      <ng-template #detailDialog>
+        <h2 mat-dialog-title>{{ selectedCustomer()?.tradeName || '' }}</h2>
+        <mat-dialog-content>
+          @if (selectedCustomer()) {
+            <div class="customer-detail">
+              <div class="detail-section">
+                <h4>{{ t('customers.companyInfo') }}</h4>
+                <div class="detail-grid">
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.companyName') }}:</span>
+                    <span>{{ selectedCustomer()!.companyName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.tradeName') }}:</span>
+                    <span>{{ selectedCustomer()!.tradeName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.taxId') }}:</span>
+                    <code>{{ selectedCustomer()!.taxId }}</code>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.type') }}:</span>
+                    <span class="badge badge-info">{{ getTypeLabel(selectedCustomer()!.type) }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="detail-section">
-              <h4>{{ t('customers.contact') }}</h4>
-              <div class="detail-grid">
-                <div class="detail-row">
-                  <span class="label">{{ t('users.email') }}:</span>
-                  <span>{{ selectedCustomer()!.email }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.phone') }}:</span>
-                  <span>{{ selectedCustomer()!.phone }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.address') }}:</span>
-                  <span>{{ selectedCustomer()!.address }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.location') }}:</span>
-                  <span>{{ selectedCustomer()!.city }}, {{ selectedCustomer()!.state }}, {{ selectedCustomer()!.country }}</span>
+              <div class="detail-section">
+                <h4>{{ t('customers.contact') }}</h4>
+                <div class="detail-grid">
+                  <div class="detail-row">
+                    <span class="label">{{ t('users.email') }}:</span>
+                    <span>{{ selectedCustomer()!.email }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.phone') }}:</span>
+                    <span>{{ selectedCustomer()!.phone }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.address') }}:</span>
+                    <span>{{ selectedCustomer()!.address }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.location') }}:</span>
+                    <span>{{ selectedCustomer()!.city }}, {{ selectedCustomer()!.state }}, {{ selectedCustomer()!.country }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="detail-section">
-              <h4>{{ t('customers.salesConditions') }}</h4>
-              <div class="detail-grid">
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.priceTable') }}:</span>
-                  <p-tag [value]="selectedCustomer()!.salesCondition.priceTableName" severity="secondary" />
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.paymentTerms') }}:</span>
-                  <span>{{ selectedCustomer()!.salesCondition.paymentTermDays }} days</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.discount') }}:</span>
-                  <span>{{ selectedCustomer()!.salesCondition.discountPercentage }}%</span>
-                </div>
-                <div class="detail-row">
-                  <span class="label">{{ t('customers.creditLimit') }}:</span>
-                  <app-price-display [price]="selectedCustomer()!.salesCondition.creditLimit" />
+              <div class="detail-section">
+                <h4>{{ t('customers.salesConditions') }}</h4>
+                <div class="detail-grid">
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.priceTable') }}:</span>
+                    <span class="badge badge-secondary">{{ selectedCustomer()!.salesCondition.priceTableName }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.paymentTerms') }}:</span>
+                    <span>{{ selectedCustomer()!.salesCondition.paymentTermDays }} days</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.discount') }}:</span>
+                    <span>{{ selectedCustomer()!.salesCondition.discountPercentage }}%</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="label">{{ t('customers.creditLimit') }}:</span>
+                    <app-price-display [price]="selectedCustomer()!.salesCondition.creditLimit" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        }
-        <ng-template pTemplate="footer">
-          <p-button
-            [label]="t('common.close')"
-            [text]="true"
-            (onClick)="showDetailDialog = false"
-          />
-          <p-button
-            [label]="t('customers.createOrder')"
-            icon="pi pi-shopping-cart"
-            (onClick)="createOrderForCustomer(selectedCustomer()!); showDetailDialog = false"
-          />
-        </ng-template>
-      </p-dialog>
+          }
+        </mat-dialog-content>
+        <mat-dialog-actions align="end">
+          <button mat-stroked-button (click)="dialog.closeAll()">{{ t('common.close') }}</button>
+          <button mat-flat-button (click)="onDialogCreateOrder()">
+            <mat-icon fontIcon="shopping_cart" />
+            {{ t('customers.createOrder') }}
+          </button>
+        </mat-dialog-actions>
+      </ng-template>
     </div>
   `,
   styles: [`
     .customers-page {
-      animation: fadeIn var(--vinheria-transition-normal, 0.3s);
+      animation: fadeIn var(--motion-normal);
     }
 
     .page-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
+      margin-bottom: var(--space-lg);
       flex-wrap: wrap;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md);
 
       h1 {
-        margin-bottom: var(--vinheria-spacing-xs, 4px);
+        margin-bottom: var(--space-xxs);
       }
     }
 
-    :host ::ng-deep .filters-card {
-      margin-bottom: var(--vinheria-spacing-lg, 24px);
-
-      .p-card-body {
-        padding: var(--vinheria-spacing-md, 16px);
-      }
+    .filters-card {
+      margin-bottom: var(--space-lg);
     }
 
     .filters-row {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-md, 16px);
+      gap: var(--space-md);
       flex-wrap: wrap;
-    }
 
-    .filter-item {
-      &.search-filter {
-        flex: 1;
-        min-width: 250px;
-
-        input {
-          width: 100%;
-        }
+      mat-form-field {
+        min-width: 150px;
       }
     }
 
-    :host ::ng-deep .type-dropdown,
-    :host ::ng-deep .status-dropdown,
-    :host ::ng-deep .country-dropdown {
-      min-width: 150px;
+    .search-filter {
+      flex: 1;
+      min-width: 250px;
     }
 
     .customer-name {
@@ -399,20 +412,35 @@ interface FilterOption<T> {
       gap: 2px;
 
       strong {
-        color: var(--m3-on-surface);
+        color: var(--color-ink);
       }
 
       .company-name {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
     .tax-id {
-      font-family: var(--vinheria-font-mono, monospace);
-      font-size: var(--vinheria-font-size-sm, 0.875rem);
-      color: var(--m3-on-surface-variant);
+      font-family: var(--font-mono, monospace);
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
     }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-xxs) var(--space-xs);
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      white-space: nowrap;
+      color: var(--color-on-primary);
+    }
+    .badge-success { background: var(--color-accent-green); }
+    .badge-secondary, .badge-contrast { background: var(--color-ink-muted); }
+    .badge-info { background: var(--color-primary); }
+    .badge-warning { background: var(--color-accent-orange); }
+    .badge-danger { background: var(--color-error); }
 
     .location {
       display: flex;
@@ -420,15 +448,15 @@ interface FilterOption<T> {
       gap: 2px;
 
       .country {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--m3-on-surface-variant);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-ink-secondary);
       }
     }
 
     .payment-terms {
       .discount {
-        font-size: var(--vinheria-font-size-xs, 0.75rem);
-        color: var(--vinheria-success, #2e7d32);
+        font-size: var(--font-size-xs, 0.75rem);
+        color: var(--color-accent-green, #2e7d32);
         font-weight: 600;
       }
     }
@@ -436,21 +464,21 @@ interface FilterOption<T> {
     .actions {
       display: flex;
       align-items: center;
-      gap: var(--vinheria-spacing-sm, 8px);
+      gap: var(--space-sm);
     }
 
     .customer-detail {
       .detail-section {
-        margin-bottom: var(--vinheria-spacing-lg, 24px);
+        margin-bottom: var(--space-lg);
 
         &:last-child {
           margin-bottom: 0;
         }
 
         h4 {
-          margin: 0 0 var(--vinheria-spacing-sm, 8px) 0;
-          color: var(--m3-primary);
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
+          margin: 0 0 var(--space-sm) 0;
+          color: var(--color-primary);
+          font-size: var(--font-size-sm, 0.875rem);
           text-transform: uppercase;
           letter-spacing: 0.5px;
         }
@@ -459,29 +487,29 @@ interface FilterOption<T> {
       .detail-grid {
         display: flex;
         flex-direction: column;
-        gap: var(--vinheria-spacing-xs, 4px);
+        gap: var(--space-xxs);
       }
 
       .detail-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: var(--vinheria-spacing-xs, 4px) var(--vinheria-spacing-sm, 8px);
-        background: var(--p-surface-50);
-        border-radius: var(--vinheria-radius-sm, 4px);
+        padding: var(--space-xxs) var(--space-sm);
+        background: var(--color-canvas-soft);
+        border-radius: var(--radius-sm);
 
         .label {
-          color: var(--m3-on-surface-variant);
-          font-size: var(--vinheria-font-size-sm, 0.875rem);
+          color: var(--color-ink-secondary);
+          font-size: var(--font-size-sm, 0.875rem);
         }
       }
     }
-
-
   `]
 })
 export class CustomerListComponent {
   private currencyService = inject(CurrencyService);
+  readonly dialog = inject(MatDialog);
+  @ViewChild('detailDialog', { read: TemplateRef }) detailDialog!: TemplateRef<unknown>;
 
   // State
   searchQuery = signal('');
@@ -489,7 +517,9 @@ export class CustomerListComponent {
   selectedStatus = signal<FilterOption<CustomerStatus> | null>(null);
   selectedCountry = signal<FilterOption<string> | null>(null);
   selectedCustomer = signal<Customer | null>(null);
-  showDetailDialog = false;
+  sort = signal<Sort>({ active: '', direction: '' });
+
+  readonly displayedColumns = ['tradeName', 'taxId', 'type', 'location', 'priceTable', 'creditLimit', 'paymentTerms', 'status', 'actions'];
 
   // Filter options
   typeOptions: FilterOption<CustomerType>[] = [
@@ -517,8 +547,9 @@ export class CustomerListComponent {
     const type = this.selectedType();
     const status = this.selectedStatus();
     const country = this.selectedCountry();
+    const sort = this.sort();
 
-    return CUSTOMERS.filter(customer => {
+    let results = CUSTOMERS.filter(customer => {
       // Search filter
       if (search) {
         const searchFields = [
@@ -550,6 +581,28 @@ export class CustomerListComponent {
 
       return true;
     });
+
+    // Client-side sorting
+    if (sort.active && sort.direction) {
+      results = [...results].sort((a, b) => {
+        const dir = sort.direction === 'asc' ? 1 : -1;
+        let aVal: unknown, bVal: unknown;
+
+        switch (sort.active) {
+          case 'tradeName': aVal = a.tradeName; bVal = b.tradeName; break;
+          case 'type': aVal = a.type; bVal = b.type; break;
+          case 'creditLimit': aVal = a.salesCondition.creditLimit.BRL; bVal = b.salesCondition.creditLimit.BRL; break;
+          case 'status': aVal = a.status; bVal = b.status; break;
+          default: return 0;
+        }
+
+        if (aVal == null) return 1;
+        if (bVal == null) return -1;
+        return aVal < bVal ? -dir : aVal > bVal ? dir : 0;
+      });
+    }
+
+    return results;
   });
 
   getTypeLabel(type: CustomerType): string {
@@ -563,8 +616,8 @@ export class CustomerListComponent {
     return labels[type] || type;
   }
 
-  getTypeSeverity(type: CustomerType): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' {
-    const severities: Record<CustomerType, 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast'> = {
+  getTypeSeverity(type: CustomerType): string {
+    const severities: Record<CustomerType, string> = {
       'RESTAURANT': 'info',
       'WINE_SHOP': 'success',
       'HOTEL': 'warning',
@@ -574,8 +627,8 @@ export class CustomerListComponent {
     return severities[type] || 'secondary';
   }
 
-  getStatusSeverity(status: CustomerStatus): 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast' {
-    const severities: Record<CustomerStatus, 'success' | 'secondary' | 'info' | 'warning' | 'danger' | 'contrast'> = {
+  getStatusSeverity(status: CustomerStatus): string {
+    const severities: Record<CustomerStatus, string> = {
       'ACTIVE': 'success',
       'INACTIVE': 'secondary',
       'BLOCKED': 'danger'
@@ -592,21 +645,27 @@ export class CustomerListComponent {
 
   addCustomer(): void {
     console.log('Add customer');
-    // In real app, would navigate to create customer form
   }
 
   viewCustomer(customer: Customer): void {
     this.selectedCustomer.set(customer);
-    this.showDetailDialog = true;
+    this.dialog.open(this.detailDialog, { width: '600px' });
   }
 
   editCustomer(customer: Customer): void {
     console.log('Edit customer:', customer);
-    // In real app, would navigate to edit customer form
   }
 
   createOrderForCustomer(customer: Customer): void {
     console.log('Create order for customer:', customer);
-    // In real app, would navigate to sales order create with customer pre-selected
+  }
+
+  onDialogCreateOrder(): void {
+    this.createOrderForCustomer(this.selectedCustomer()!);
+    this.dialog.closeAll();
+  }
+
+  onSortChange(sort: Sort): void {
+    this.sort.set(sort);
   }
 }

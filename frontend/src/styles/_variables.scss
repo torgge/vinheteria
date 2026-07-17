@@ -1,7 +1,6 @@
 // Vinheria Digital — Design Tokens (Notion-inspired per DESIGN.md)
 // Authoritative source: /DESIGN.md
 // Strategy: DESIGN.md defines the values; --color-*, --space-*, --radius-*, --font-* are canonical.
-// --m3-*, --vinheria-*, --p-* are backward-compatible aliases.
 
 :root {
   // ═══════════════════════════════════════════
@@ -30,6 +29,9 @@
   --color-accent-teal:        #2a9d99;
   --color-accent-green:       #1aae39;
   --color-accent-brown:       #523410;
+
+  // Semantic error (app-level extension — DESIGN.md marketing spec has no error ramp)
+  --color-error:              #d32f2f;
 
   // RGB variants for rgba() compositing
   --color-primary-rgb:    0, 117, 222;
@@ -117,269 +119,43 @@
   --state-drag-opacity:  0.16;
 
   // ═══════════════════════════════════════════
-  // PRIMENG TOKEN MAPPING (backward-compatible)
+  // FONT SIZE SCALE (standalone sizes for contexts that don't need the
+  // full DESIGN.md composite typography tokens above)
   // ═══════════════════════════════════════════
-  --p-primary-color:           var(--color-primary);
-  --p-primary-color-text:      var(--color-on-primary);
-  --p-primary-50:  #E8F1FD;
-  --p-primary-100: #C5DFFB;
-  --p-primary-200: #9CC8F7;
-  --p-primary-300: #72B0F3;
-  --p-primary-400: #4A98EF;
-  --p-primary-500: var(--color-primary);
-  --p-primary-600: #0064C8;
-  --p-primary-700: #0053A7;
-  --p-primary-800: #004286;
-  --p-primary-900: #003165;
+  --font-size-xs:  12px;
+  --font-size-sm:  14px;
+  --font-size-md:  16px;
+  --font-size-lg:  20px;
+  --font-size-xl:  22px;
+  --font-size-2xl: 26px;
+  --font-size-3xl: 40px;
 
-  --p-surface-ground:   var(--color-canvas-soft);
-  --p-surface-section:  var(--color-canvas-soft);
-  --p-surface-card:     var(--color-surface);
-  --p-surface-overlay:  var(--color-surface);
-  --p-surface-border:   var(--color-hairline);
-  --p-surface-hover:    var(--color-canvas-soft);
-
-  --p-surface-0:   var(--color-surface);
-  --p-surface-50:  var(--color-canvas-soft);
-  --p-surface-100: var(--color-canvas-soft);
-  --p-surface-200: #E8E6E4;
-
-  --p-text-color:           var(--color-ink);
-  --p-text-color-secondary: var(--color-ink-secondary);
-  --p-text-color-muted:     var(--color-ink-muted);
-
-  --p-content-border-radius:      var(--radius-lg);
-  --p-form-field-border-radius:   var(--radius-xs);
-  --p-button-rounded-border-radius: var(--radius-full);
-  --p-font-family:                var(--font-family);
-  --p-card-shadow:                var(--shadow-level-1);
+  // Spacing scale extension
+  --space-3xl: 64px;
 
   // ═══════════════════════════════════════════
-  // M3 TOKEN COMPATIBILITY (aliased to DESIGN.md)
-  // All existing component code references --m3-* — preserved.
+  // SEMANTIC STATUS TINTS (translucent backgrounds for badges/alerts)
   // ═══════════════════════════════════════════
+  --color-success-bg: rgba(26, 174, 57, 0.1);
+  --color-warning-bg: rgba(221, 91, 0, 0.1);
+  --color-info-bg:    rgba(98, 174, 240, 0.1);
 
-  // Surface hierarchy → warm paper canvas
-  --m3-surface-dim:                var(--color-canvas-soft);
-  --m3-surface:                    var(--color-surface);
-  --m3-surface-bright:             var(--color-surface);
-  --m3-surface-container-lowest:   var(--color-canvas-soft);
-  --m3-surface-container-low:      var(--color-canvas-soft);
-  --m3-surface-container:          var(--color-surface);
-  --m3-surface-container-high:     var(--color-canvas-soft);
-  --m3-surface-container-highest:  var(--color-canvas-soft);
+  // Margin-tier RGB triplets (for rgba() compositing in margin indicators)
+  --color-margin-high-rgb:     26, 174, 57;
+  --color-margin-medium-rgb:   221, 91, 0;
+  --color-margin-low-rgb:      255, 100, 200;
+  --color-margin-negative-rgb: 57, 28, 87;
 
-  // Tonal palette pairs
-  --m3-primary:              var(--color-primary);
-  --m3-on-primary:           var(--color-on-primary);
-  --m3-primary-container:    var(--color-canvas-soft);
-  --m3-on-primary-container: var(--color-ink);
-  --m3-primary-rgb:          var(--color-primary-rgb);
-
-  --m3-secondary:              var(--color-secondary);
-  --m3-on-secondary:           var(--color-on-primary);
-  --m3-secondary-container:    var(--color-canvas-soft);
-  --m3-on-secondary-container: var(--color-ink);
-  --m3-secondary-rgb:          var(--color-secondary-rgb);
-
-  --m3-tertiary:               var(--color-accent-purple-deep);
-  --m3-on-tertiary:            var(--color-on-primary);
-  --m3-tertiary-container:     var(--color-canvas-soft);
-  --m3-on-tertiary-container:  var(--color-ink);
-
-  --m3-error:               #D32F2F;
-  --m3-on-error:            #FFFFFF;
-  --m3-error-container:     #FFEBEE;
-  --m3-on-error-container:  #410002;
-
-  --m3-surface-tint:        var(--color-primary);
-  --m3-on-surface:          var(--color-ink);
-  --m3-on-surface-variant:  var(--color-ink-secondary);
-  --m3-outline:             var(--color-ink-muted);
-  --m3-outline-variant:     var(--color-hairline);
-  --m3-inverse-surface:     var(--color-secondary);
-  --m3-inverse-on-surface:  var(--color-on-primary);
-  --m3-inverse-primary:     var(--color-accent-sky);
-  --m3-scrim:               rgba(0, 0, 0, 0.38);
-
-  // State layer opacities (reuse canonical)
-  --m3-state-hover-opacity:  var(--state-hover-opacity);
-  --m3-state-focus-opacity:  var(--state-focus-opacity);
-  --m3-state-press-opacity:  var(--state-press-opacity);
-  --m3-state-drag-opacity:   var(--state-drag-opacity);
-  --m3-state-hover-on-primary:  linear-gradient(rgba(255, 255, 255, var(--state-hover-opacity)), rgba(255, 255, 255, var(--state-hover-opacity)));
-  --m3-state-hover-on-surface:  linear-gradient(rgba(var(--color-primary-rgb), var(--state-hover-opacity)), rgba(var(--color-primary-rgb), var(--state-hover-opacity)));
-  --m3-state-focus-ring:        0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-primary);
-
-  // Radius scale (mapped from DESIGN.md canonical)
-  --m3-radius-xs:   var(--radius-xs);
-  --m3-radius-sm:   var(--radius-sm);
-  --m3-radius-md:   var(--radius-lg);
-  --m3-radius-lg:   var(--radius-xl);
-  --m3-radius-xl:   28px;
-  --m3-radius-full: var(--radius-full);
-
-  // Elevation mapped to DESIGN.md shadow levels
-  --m3-elevation-0: var(--shadow-level-0);
-  --m3-elevation-1: var(--shadow-level-1);
-  --m3-elevation-2: var(--shadow-level-1);
-  --m3-elevation-3: var(--shadow-level-2);
-  --m3-elevation-4: var(--shadow-level-2);
-  --m3-elevation-5: var(--shadow-level-2);
-
-  // M3 Typescale → DESIGN.md typography
-  --m3-typescale-display-large-size:         64px;
-  --m3-typescale-display-large-weight:       700;
-  --m3-typescale-display-large-line-height:  1.0;
-  --m3-typescale-display-large-font:         var(--font-family);
-
-  --m3-typescale-headline-large-size:        40px;
-  --m3-typescale-headline-large-weight:      700;
-  --m3-typescale-headline-large-line-height: 1.1;
-  --m3-typescale-headline-large-font:        var(--font-family);
-
-  --m3-typescale-headline-small-size:        26px;
-  --m3-typescale-headline-small-weight:      700;
-  --m3-typescale-headline-small-line-height: 1.23;
-  --m3-typescale-headline-small-font:        var(--font-family);
-
-  --m3-typescale-title-large-size:           20px;
-  --m3-typescale-title-large-weight:         600;
-  --m3-typescale-title-large-line-height:    1.4;
-  --m3-typescale-title-large-font:           var(--font-family);
-
-  --m3-typescale-body-large-size:            16px;
-  --m3-typescale-body-large-weight:          400;
-  --m3-typescale-body-large-line-height:     1.5;
-  --m3-typescale-body-large-font:            var(--font-family);
-
-  --m3-typescale-body-medium-size:           15px;
-  --m3-typescale-body-medium-weight:         400;
-  --m3-typescale-body-medium-line-height:    1.33;
-  --m3-typescale-body-medium-font:           var(--font-family);
-
-  --m3-typescale-label-large-size:           16px;
-  --m3-typescale-label-large-weight:         500;
-  --m3-typescale-label-large-line-height:    1.5;
-  --m3-typescale-label-large-font:           var(--font-family);
-
-  --m3-typescale-label-small-size:           12px;
-  --m3-typescale-label-small-weight:         600;
-  --m3-typescale-label-small-line-height:    1.33;
-  --m3-typescale-label-small-font:           var(--font-family);
-
-  --m3-typescale-body-small-size:            14px;
-  --m3-typescale-body-small-weight:          400;
-  --m3-typescale-body-small-line-height:     1.43;
-  --m3-typescale-body-small-font:            var(--font-family);
-
-  // Motion easing (simplified per DESIGN.md calm philosophy)
-  --m3-motion-easing-emphasized:             ease;
-  --m3-motion-easing-emphasized-decelerate:  ease;
-  --m3-motion-easing-emphasized-accelerate:  ease;
-  --m3-motion-easing-standard:               ease;
-  --m3-motion-easing-standard-decelerate:    ease;
-  --m3-motion-easing-standard-accelerate:    ease;
-
-  --m3-motion-duration-short4: 150ms;
-  --m3-motion-duration-medium2: 200ms;
-  --m3-motion-duration-medium4: 300ms;
-  --m3-motion-duration-long2: 500ms;
-
-  // M3 breakpoints
-  --m3-breakpoint-compact:  600px;
-  --m3-breakpoint-medium:   840px;
-  --m3-breakpoint-expanded: 1200px;
-  --m3-breakpoint-large:    1600px;
+  // Wine catalog placeholder art
+  --wine-placeholder-gradient: linear-gradient(135deg, var(--color-secondary), var(--color-canvas));
 
   // ═══════════════════════════════════════════
-  // VINHERIA DOMAIN TOKENS (backward-compatible)
+  // LAYOUT DIMENSIONS
   // ═══════════════════════════════════════════
-
-  // Gold accent — mapped to sticker palette (decorative only)
-  --vinheria-accent-gold:       var(--color-accent-orange);
-  --vinheria-accent-gold-light: var(--color-accent-orange-deep);
-  --vinheria-accent-gold-dark:  var(--color-accent-brown);
-
-  // Semantic colors
-  --vinheria-success:    var(--color-accent-green);
-  --vinheria-success-bg: rgba(26, 174, 57, 0.1);
-  --vinheria-warning:    var(--color-accent-orange);
-  --vinheria-warning-bg: rgba(221, 91, 0, 0.1);
-  --vinheria-error:      #D32F2F;
-  --vinheria-error-bg:   #FFEBEE;
-  --vinheria-info:       var(--color-accent-sky);
-  --vinheria-info-bg:    rgba(98, 174, 240, 0.1);
-
-  // Status colors
-  --vinheria-status-draft:     var(--color-ink-muted);
-  --vinheria-status-pending:   var(--color-accent-orange);
-  --vinheria-status-approved:  var(--color-accent-green);
-  --vinheria-status-rejected:  var(--color-accent-pink);
-  --vinheria-status-fulfilled: var(--color-primary);
-  --vinheria-status-delivered: var(--color-accent-teal);
-
-  // Margin indicator colors
-  --vinheria-margin-high:      var(--color-accent-green);
-  --vinheria-margin-medium:    var(--color-accent-orange);
-  --vinheria-margin-low:       var(--color-accent-pink);
-  --vinheria-margin-negative:  var(--color-accent-purple-deep);
-  --vinheria-margin-high-rgb:      26, 174, 57;
-  --vinheria-margin-medium-rgb:    221, 91, 0;
-  --vinheria-margin-low-rgb:       255, 100, 200;
-  --vinheria-margin-negative-rgb:  57, 28, 87;
-
-  // Wine image placeholder gradient (dark indigo → canvas)
-  --vinheria-wine-image-gradient: linear-gradient(135deg, var(--color-secondary), var(--color-canvas));
-
-  // Typography (backward-compatible aliases)
-  --vinheria-font-display: var(--font-family);
-  --vinheria-font-mono:    var(--font-mono);
-
-  // Font sizes (backward-compatible)
-  --vinheria-font-size-xs:   12px;
-  --vinheria-font-size-sm:   14px;
-  --vinheria-font-size-base: 16px;
-  --vinheria-font-size-md:   16px;
-  --vinheria-font-size-lg:   20px;
-  --vinheria-font-size-xl:   22px;
-  --vinheria-font-size-2xl:  26px;
-  --vinheria-font-size-3xl:  40px;
-  --vinheria-font-size-4xl:  54px;
-
-  // Spacing (backward-compatible)
-  --vinheria-spacing-xs:  var(--space-xxs);
-  --vinheria-spacing-sm:  var(--space-xs);
-  --vinheria-spacing-md:  var(--space-md);
-  --vinheria-spacing-lg:  var(--space-lg);
-  --vinheria-spacing-xl:  var(--space-xl);
-  --vinheria-spacing-2xl: var(--space-xxl);
-  --vinheria-spacing-3xl: 64px;
-
-  // Radius (backward-compatible)
-  --vinheria-radius-sm:   var(--radius-sm);
-  --vinheria-radius-md:   var(--radius-md);
-  --vinheria-radius-lg:   var(--radius-lg);
-  --vinheria-radius-xl:   var(--radius-xl);
-  --vinheria-radius-full: var(--radius-full);
-
-  // Shadows (backward-compatible)
-  --vinheria-shadow-sm: var(--shadow-level-1);
-  --vinheria-shadow-md: var(--shadow-level-1);
-  --vinheria-shadow-lg: var(--shadow-level-2);
-  --vinheria-shadow-xl: var(--shadow-level-2);
-
-  // Transitions (backward-compatible)
-  --vinheria-transition-fast:   var(--motion-fast);
-  --vinheria-transition-normal: var(--motion-normal);
-  --vinheria-transition-slow:   var(--motion-slow);
-
-  // Layout
-  --vinheria-sidebar-width:           260px;
-  --vinheria-sidebar-collapsed-width: 72px;
-  --vinheria-topbar-height:           56px;
-  --vinheria-content-max-width:       1400px;
-  --vinheria-empty-state-icon-size:   64px;
+  --layout-sidebar-width:           260px;
+  --layout-sidebar-collapsed-width: 72px;
+  --layout-topbar-height:           56px;
+  --layout-content-max-width:       1400px;
 }
 
 // Dark mode placeholder
@@ -392,10 +168,4 @@
   --color-ink-muted:          #8A8A9A;
   --color-ink-faint:          #5A5A6A;
   --color-hairline:           #3D3D52;
-
-  --p-surface-ground:        var(--color-canvas);
-  --p-surface-section:       var(--color-canvas-soft);
-  --p-surface-card:          var(--color-surface);
-  --p-text-color:            var(--color-ink);
-  --p-text-color-secondary:  var(--color-ink-secondary);
 }

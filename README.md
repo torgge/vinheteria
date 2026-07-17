@@ -53,7 +53,7 @@
 | Camada | Tecnologia |
 |--------|------------|
 | Backend | Quarkus 3.x + Kotlin + Gradle Kotlin DSL |
-| Frontend | Angular 18+ + PrimeNG 19 |
+| Frontend | Angular 18+ + Angular Material 18 |
 | Comunicação | Reactive REST (Mutiny) + SSE + gRPC |
 | Orquestração | Orkes Conductor CE (Saga Pattern) |
 | Mensageria | Apache Kafka KRaft (sem Zookeeper) |

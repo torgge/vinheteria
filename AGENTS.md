@@ -1,11 +1,11 @@
 # AGENTS.md — Vinheria Digital
 
-B2B wine distribution platform (closed system, internal users). Angular 18 + PrimeNG 17 frontend. Quarkus + Kotlin backend is **planned but not implemented**.
+B2B wine distribution platform (closed system, internal users). Angular 18 + Angular Material 18 frontend. Quarkus + Kotlin backend is **planned but not implemented**.
 
 ## Repo State
 
 - **`services/` does NOT exist.** Backend is designed in `docs/` but has zero code. Do NOT create backend code without explicit confirmation.
-- **Frontend lives at `frontend/`.** `frontend/vinheria-web/` is a stale duplicate (missing PrimeNG, Transloco, @ngrx/signals) — do not use it.
+- **Frontend lives at `frontend/`.** `frontend/vinheria-web/` is a stale duplicate (missing Angular Material, Transloco, @ngrx/signals) — do not use it.
 - **No test files exist.** `angular.json` sets `"skipTests": true` for all schematics — `ng generate` will not create spec files. You must create them manually.
 - **No ESLint or Prettier** is configured in this repo.
 
@@ -42,7 +42,7 @@ Kafka must be healthy before Kafka Connect starts (30s healthcheck). Conductor t
 - **Standalone components only** (no NgModules). Every component uses `standalone: true`.
 - **State: Angular Signals** (`signal`, `computed`, `input`) + `@ngrx/signals` Signal Store. No RxJS Subjects for component state.
 - **i18n: `*transloco`** for every user-visible string. 3 languages: `pt-BR` (default), `es-PY`, `en-US`. Keys: `{scope}.{feature}.{element}`. Translations at `src/assets/i18n/{locale}.json`.
-- **UI: PrimeNG 17** (`^17.18.11`). Customize via `--p-*` CSS vars, not internal class overrides.
+- **UI: Angular Material 18** (`^18.2.14`). Themed via DESIGN.md tokens (`--color-*`, `--space-*`, `--radius-*`, `--font-*`) in `frontend/src/styles/_variables.scss`; Material overrides in `frontend/src/styles/_material-theme.scss`. Never hardcode values that contradict DESIGN.md.
 - **Multi-currency:** prices as `{ BRL, PYG, USD }`. Accounting currency is BRL. `CurrencyService` handles display.
 - **Feature structure:** `features/{context}/pages/{page-name}/` (e.g. `features/catalog/pages/wine-list/`).
 - **Testing: Karma + Jasmine.** `angular.json` test builder is `karma`. Jest is in devDeps but NOT configured (no `jest.config.js`).
@@ -80,7 +80,7 @@ Smart backend detection — if no `gradlew` or `settings.gradle*` exists, all Gr
 
 ## OpenCode Config
 
-- Skill: `.opencode/skills/material-3/` (MD3 + PrimeNG token system)
+- Skill: `.opencode/skills/material-3/` (MD3 + Angular Material + DESIGN.md token system)
 - Commands: `.opencode/commands/k6-smoke.md`, `k6-load.md`, `k6-e2e.md`
 
 ## Infra Services (Local Dev)

@@ -1,24 +1,62 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslocoModule } from '@jsverse/transloco';
-import { TagModule } from 'primeng/tag';
+import { MatIconModule } from '@angular/material/icon';
+import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-stock-badge',
   standalone: true,
-  imports: [CommonModule, TranslocoModule, TagModule],
+  imports: [CommonModule, MatIconModule],
   template: `
-    <ng-container *transloco="let t">
-      <p-tag [value]="resolveLabel(t)" [severity]="severity()" [icon]="icon()" />
-    </ng-container>
+    <span class="badge" [class]="'badge-' + severity()">
+      @if (iconName()) {
+        <mat-icon [fontIcon]="iconName()!" />
+      }
+      <span>{{ displayLabel() }}</span>
+    </span>
   `,
   styles: [`
     :host {
       display: inline-block;
     }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      padding: var(--space-xxs) var(--space-xs);
+      border-radius: var(--radius-full);
+      font: var(--font-eyebrow);
+      white-space: nowrap;
+      color: var(--color-on-primary);
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+    }
+
+    .badge-success {
+      background: var(--color-accent-green);
+    }
+
+    .badge-secondary {
+      background: var(--color-ink-muted);
+    }
+
+    .badge-warning {
+      background: var(--color-accent-orange);
+    }
+
+    .badge-danger {
+      background: var(--color-error);
+    }
   `]
 })
 export class StockBadgeComponent {
+  private transloco = inject(TranslocoService);
+
   /** Available quantity */
   quantity = input.required<number>();
 
@@ -39,22 +77,22 @@ export class StockBadgeComponent {
     return 'success';
   });
 
-  icon = computed(() => {
+  iconName = computed(() => {
     const qty = this.quantity();
-    if (qty <= 0) return 'pi pi-times-circle';
-    if (qty <= this.criticalThreshold()) return 'pi pi-exclamation-circle';
-    if (qty <= this.lowThreshold()) return 'pi pi-exclamation-triangle';
-    return 'pi pi-check-circle';
+    if (qty <= 0) return 'cancel';
+    if (qty <= this.criticalThreshold()) return 'error';
+    if (qty <= this.lowThreshold()) return 'warning';
+    return 'check_circle';
   });
 
-  resolveLabel(t: (key: string, params?: object) => string): string {
+  displayLabel = computed(() => {
     const qty = this.quantity();
-    if (qty <= 0) return t('catalog.wine.outOfStock');
+    if (qty <= 0) return this.transloco.translate('catalog.wine.outOfStock');
     if (!this.showQuantity()) {
-      if (qty <= this.criticalThreshold()) return t('catalog.wine.lowStock');
-      if (qty <= this.lowThreshold()) return t('catalog.wine.lowStock');
-      return t('catalog.wine.inStock');
+      if (qty <= this.criticalThreshold()) return this.transloco.translate('catalog.wine.lowStock');
+      if (qty <= this.lowThreshold()) return this.transloco.translate('catalog.wine.lowStock');
+      return this.transloco.translate('catalog.wine.inStock');
     }
     return `${qty} units`;
-  }
+  });
 }
