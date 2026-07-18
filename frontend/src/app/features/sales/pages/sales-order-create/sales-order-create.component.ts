@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -621,6 +621,7 @@ export class SalesOrderCreateComponent {
   private currencyService = inject(CurrencyService);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
+  private readonly transloco = inject(TranslocoService);
 
   // Customer selection
   customerOptions = CUSTOMERS.filter(c => c.status === 'ACTIVE');
@@ -804,8 +805,8 @@ export class SalesOrderCreateComponent {
 
     this.notificationService.add({
       severity: 'success',
-      summary: 'Item Added',
-      detail: `${wine.name} added to order`
+      summary: this.transloco.translate('common.success'),
+      detail: this.transloco.translate('notifications.itemAdded', { name: wine.name })
     });
   }
 
@@ -829,8 +830,8 @@ export class SalesOrderCreateComponent {
   saveDraft(): void {
     this.notificationService.add({
       severity: 'info',
-      summary: 'Draft Saved',
-      detail: 'Order saved as draft'
+      summary: this.transloco.translate('notifications.draftSaved'),
+      detail: this.transloco.translate('notifications.draftSavedDetail')
     });
     // In a real app, would save to backend
   }
@@ -840,8 +841,10 @@ export class SalesOrderCreateComponent {
 
     this.notificationService.add({
       severity: 'success',
-      summary: 'Order Submitted',
-      detail: isAdmin ? 'Order has been auto-approved' : 'Order sent for approval'
+      summary: this.transloco.translate('notifications.orderSubmitted'),
+      detail: this.transloco.translate(
+        isAdmin ? 'notifications.orderAutoApproved' : 'notifications.orderSentForApproval'
+      )
     });
 
     // Navigate back to list after short delay

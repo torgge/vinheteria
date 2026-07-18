@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -359,6 +359,7 @@ interface PendingOrder {
 export class ApprovalQueueComponent {
   private currencyService = inject(CurrencyService);
   private notificationService = inject(NotificationService);
+  private readonly transloco = inject(TranslocoService);
   readonly dialog = inject(MatDialog);
   @ViewChild('approveDialogTemplate', { read: TemplateRef }) approveDialogTemplate!: TemplateRef<unknown>;
   @ViewChild('rejectDialogTemplate', { read: TemplateRef }) rejectDialogTemplate!: TemplateRef<unknown>;
@@ -446,8 +447,8 @@ export class ApprovalQueueComponent {
 
     this.notificationService.add({
       severity: 'success',
-      summary: 'Order Approved',
-      detail: `${order.orderNumber} has been approved`
+      summary: this.transloco.translate('notifications.orderApproved'),
+      detail: this.transloco.translate('notifications.orderApprovedDetail', { orderNumber: order.orderNumber })
     });
 
     this.dialog.closeAll();
@@ -465,8 +466,8 @@ export class ApprovalQueueComponent {
 
     this.notificationService.add({
       severity: 'warn',
-      summary: 'Order Rejected',
-      detail: `${order.orderNumber} has been rejected`
+      summary: this.transloco.translate('notifications.orderRejected'),
+      detail: this.transloco.translate('notifications.orderRejectedDetail', { orderNumber: order.orderNumber })
     });
 
     this.dialog.closeAll();
