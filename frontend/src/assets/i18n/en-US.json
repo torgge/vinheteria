@@ -72,9 +72,44 @@
     "suppliers": "Suppliers",
     "warehouses": "Warehouses",
     "pricing": "Pricing",
+    "exchangeRates": "Exchange Rates",
+    "fiscalReport": "Fiscal Report",
     "users": "Users",
     "settings": "Settings",
     "admin": "Administration"
+  },
+  "exchangeRates": {
+    "title": "Exchange Rates",
+    "subtitle": "Daily rates per currency pair (accounting currency: BRL)",
+    "currency": "Currency pair",
+    "date": "Date",
+    "rate": "Rate",
+    "pair": "Pair",
+    "saveRate": "Save rate",
+    "rateSaved": "{{pair}} rate updated",
+    "source": {
+      "label": "Source",
+      "MANUAL": "Manual",
+      "FEED": "Automatic"
+    }
+  },
+  "fiscalReport": {
+    "title": "Fiscal Report",
+    "subtitle": "Sales in the transaction currency and the BRL equivalent (accounting currency)",
+    "period": "Period",
+    "allPeriods": "All periods",
+    "totalAccounting": "Accounting total (BRL)",
+    "transactionCount": "Transactions",
+    "orderNumber": "Order",
+    "date": "Date",
+    "customer": "Customer",
+    "transactionAmount": "Transaction amount",
+    "rate": "Rate",
+    "accountingAmount": "Accounting amount (BRL)",
+    "carriedForward": "No rate for the day — {{date}} rate applied",
+    "missingRate": "No rate registered for this pair",
+    "total": "Total",
+    "noData": "No transactions in the period"
   },
   "auth": {
     "login": "Sign In",

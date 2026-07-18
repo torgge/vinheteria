@@ -143,8 +143,17 @@ export const routes: Routes = [
           {
             path: 'users',
             loadComponent: () => import('./features/users/pages/user-management/user-management.component').then(m => m.UserManagementComponent)
+          },
+          {
+            path: 'exchange-rates',
+            loadComponent: () => import('./features/exchange-rates/pages/exchange-rate-list/exchange-rate-list.component').then(m => m.ExchangeRateListComponent)
           }
         ]
+      },
+      {
+        path: 'fiscal-report',
+        canActivate: [managerGuard],
+        loadComponent: () => import('./features/fiscal-report/pages/fiscal-report/fiscal-report.component').then(m => m.FiscalReportComponent)
       },
       {
         path: '',

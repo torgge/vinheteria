@@ -271,7 +271,8 @@ export class SidebarComponent {
     { label: 'sales', icon: 'shopping_cart', route: '/sales', roles: ['SELLER', 'ADMIN'] },
     { label: 'purchases', icon: 'local_shipping', route: '/purchases', roles: ['PURCHASER', 'ADMIN'] },
     { label: 'approvals', icon: 'check_circle', route: '/approvals', roles: ['MANAGER', 'ADMIN'] },
-    { label: 'fulfillments', icon: 'inventory_2', route: '/fulfillments' }
+    { label: 'fulfillments', icon: 'inventory_2', route: '/fulfillments' },
+    { label: 'fiscalReport', icon: 'receipt_long', route: '/fiscal-report', roles: ['MANAGER', 'ADMIN'] }
   ];
 
   private adminItems: MenuItem[] = [
@@ -279,6 +280,7 @@ export class SidebarComponent {
     { label: 'suppliers', icon: 'domain', route: '/admin/suppliers' },
     { label: 'warehouses', icon: 'warehouse', route: '/admin/warehouses' },
     { label: 'pricing', icon: 'attach_money', route: '/admin/pricing' },
+    { label: 'exchangeRates', icon: 'currency_exchange', route: '/admin/exchange-rates' },
     { label: 'users', icon: 'manage_accounts', route: '/admin/users' }
   ];
 

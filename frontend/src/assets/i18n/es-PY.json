@@ -72,9 +72,44 @@
     "suppliers": "Proveedores",
     "warehouses": "Depósitos",
     "pricing": "Precios",
+    "exchangeRates": "Cambio",
+    "fiscalReport": "Informe Fiscal",
     "users": "Usuarios",
     "settings": "Configuración",
     "admin": "Administración"
+  },
+  "exchangeRates": {
+    "title": "Tipos de Cambio",
+    "subtitle": "Cotizaciones diarias por par de monedas (moneda contable: BRL)",
+    "currency": "Par de monedas",
+    "date": "Fecha",
+    "rate": "Tasa",
+    "pair": "Par",
+    "saveRate": "Guardar tasa",
+    "rateSaved": "Tasa {{pair}} actualizada",
+    "source": {
+      "label": "Origen",
+      "MANUAL": "Manual",
+      "FEED": "Automática"
+    }
+  },
+  "fiscalReport": {
+    "title": "Informe Fiscal",
+    "subtitle": "Ventas en la moneda de la transacción y el equivalente en BRL (moneda contable)",
+    "period": "Período",
+    "allPeriods": "Todos los períodos",
+    "totalAccounting": "Total contable (BRL)",
+    "transactionCount": "Transacciones",
+    "orderNumber": "Pedido",
+    "date": "Fecha",
+    "customer": "Cliente",
+    "transactionAmount": "Valor de la transacción",
+    "rate": "Tasa",
+    "accountingAmount": "Valor contable (BRL)",
+    "carriedForward": "Sin cotización del día — tasa del {{date}} aplicada",
+    "missingRate": "Sin cotización registrada para este par",
+    "total": "Total",
+    "noData": "Ninguna transacción en el período"
   },
   "auth": {
     "login": "Ingresar",
