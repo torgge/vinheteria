@@ -78,17 +78,17 @@ if [[ "$FILE_PATH" == *.kt ]]; then
 fi
 
 # --- Frontend TypeScript (Angular) ---
-if [[ "$FILE_PATH" == *.ts ]] && [[ "$FILE_PATH" == *vinheria-web* ]]; then
+if [[ "$FILE_PATH" == *.ts ]] && [[ "$FILE_PATH" == *frontend* ]]; then
   SPEC_FILE="${FILE_PATH%.ts}.spec.ts"
   COMPONENT_DIR=$(dirname "$FILE_PATH")
 
   if [[ "$FILE_PATH" == *.spec.ts ]]; then
     echo "🧪 TDD: Running Angular test → $(basename "$FILE_PATH")"
-    cd "$PROJECT_DIR/vinheria-web"
+    cd "$PROJECT_DIR/frontend"
     npx ng test --include="$FILE_PATH" --watch=false --browsers=ChromeHeadless 2>&1
   elif [ -f "$SPEC_FILE" ]; then
     echo "🧪 TDD: Running matching spec → $(basename "$SPEC_FILE")"
-    cd "$PROJECT_DIR/vinheria-web"
+    cd "$PROJECT_DIR/frontend"
     npx ng test --include="$SPEC_FILE" --watch=false --browsers=ChromeHeadless 2>&1
   fi
   exit 0
