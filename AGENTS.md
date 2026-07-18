@@ -22,7 +22,7 @@ docker compose --profile '*' down -v                                    # Full t
 # Frontend (package manager is npm, not pnpm — README is stale)
 cd frontend
 npm install && npm start          # Dev server (http://localhost:4200)
-npm test                          # Karma + Jasmine (ng test) — NOT Jest
+npm test                          # Jest (jest-preset-angular)
 npm run build                     # Production build
 ```
 
@@ -45,7 +45,7 @@ Kafka must be healthy before Kafka Connect starts (30s healthcheck). Conductor t
 - **UI: Angular Material 18** (`^18.2.14`). Themed via DESIGN.md tokens (`--color-*`, `--space-*`, `--radius-*`, `--font-*`) in `frontend/src/styles/_variables.scss`; Material overrides in `frontend/src/styles/_material-theme.scss`. Never hardcode values that contradict DESIGN.md.
 - **Multi-currency:** prices as `{ BRL, PYG, USD }`. Accounting currency is BRL. `CurrencyService` handles display.
 - **Feature structure:** `features/{context}/pages/{page-name}/` (e.g. `features/catalog/pages/wine-list/`).
-- **Testing: Karma + Jasmine.** `angular.json` test builder is `karma`. Jest is in devDeps but NOT configured (no `jest.config.js`).
+- **Testing: Jest** (jest-preset-angular). Config in `frontend/jest.config.js`; run with `npm test`. Reusable Transloco stub at `src/testing/transloco-testing.ts` (`provideTranslocoStub`). Set signal inputs in tests via `fixture.componentRef.setInput(name, value)`.
 - **Mock data:** `src/app/mock/data/` — typed fixtures for wines, orders, customers, suppliers, warehouses. Keep shapes in sync with planned backend DTOs.
 - **Styling:** SCSS. `src/styles.scss` + `src/styles/` directory.
 
