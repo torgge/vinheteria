@@ -38,7 +38,28 @@
     "selectGrapes": "Select grapes...",
     "orderNumber": "Order #",
     "items": "Items",
-    "warehouse": "Warehouse"
+    "warehouse": "Warehouse",
+    "days": "days",
+    "success": "Success",
+    "info": "Info",
+    "warning": "Warning",
+    "error": "Error"
+  },
+  "notifications": {
+    "itemAdded": "{{name}} added to order",
+    "draftSaved": "Draft saved",
+    "draftSavedDetail": "Order saved as draft",
+    "orderSubmitted": "Order submitted",
+    "orderAutoApproved": "Order has been auto-approved",
+    "orderSentForApproval": "Order sent for approval",
+    "statusUpdated": "Status updated",
+    "statusUpdatedDetail": "Fulfillment updated to {{status}}",
+    "orderApproved": "Order approved",
+    "orderApprovedDetail": "{{orderNumber}} has been approved",
+    "orderRejected": "Order rejected",
+    "orderRejectedDetail": "{{orderNumber}} has been rejected",
+    "stockReceived": "Stock received",
+    "stockReceivedDetail": "{{orderNumber}} has been marked as received"
   },
   "nav": {
     "dashboard": "Dashboard",

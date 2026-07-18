@@ -38,7 +38,28 @@
     "selectGrapes": "Seleccione uvas...",
     "orderNumber": "Orden #",
     "items": "Items",
-    "warehouse": "Depósito"
+    "warehouse": "Depósito",
+    "days": "días",
+    "success": "Éxito",
+    "info": "Información",
+    "warning": "Aviso",
+    "error": "Error"
+  },
+  "notifications": {
+    "itemAdded": "{{name}} agregado a la orden",
+    "draftSaved": "Borrador guardado",
+    "draftSavedDetail": "Orden guardada como borrador",
+    "orderSubmitted": "Orden enviada",
+    "orderAutoApproved": "La orden fue aprobada automáticamente",
+    "orderSentForApproval": "Orden enviada para aprobación",
+    "statusUpdated": "Estado actualizado",
+    "statusUpdatedDetail": "Fulfillment actualizado a {{status}}",
+    "orderApproved": "Orden aprobada",
+    "orderApprovedDetail": "{{orderNumber}} fue aprobada",
+    "orderRejected": "Orden rechazada",
+    "orderRejectedDetail": "{{orderNumber}} fue rechazada",
+    "stockReceived": "Stock recibido",
+    "stockReceivedDetail": "{{orderNumber}} fue marcada como recibida"
   },
   "nav": {
     "dashboard": "Dashboard",

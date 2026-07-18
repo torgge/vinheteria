@@ -2,7 +2,7 @@ import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@an
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -409,6 +409,7 @@ export class PurchaseOrderListComponent {
   private authService = inject(AuthService);
   private currencyService = inject(CurrencyService);
   private notificationService = inject(NotificationService);
+  private readonly transloco = inject(TranslocoService);
   readonly dialog = inject(MatDialog);
   @ViewChild('approveDialogTemplate', { read: TemplateRef }) approveDialogTemplate!: TemplateRef<unknown>;
   @ViewChild('rejectDialogTemplate', { read: TemplateRef }) rejectDialogTemplate!: TemplateRef<unknown>;
@@ -550,8 +551,8 @@ export class PurchaseOrderListComponent {
 
     this.notificationService.add({
       severity: 'success',
-      summary: 'Order Approved',
-      detail: `${order.orderNumber} has been approved`
+      summary: this.transloco.translate('notifications.orderApproved'),
+      detail: this.transloco.translate('notifications.orderApprovedDetail', { orderNumber: order.orderNumber })
     });
 
     this.dialog.closeAll();
@@ -569,8 +570,8 @@ export class PurchaseOrderListComponent {
 
     this.notificationService.add({
       severity: 'warn',
-      summary: 'Order Rejected',
-      detail: `${order.orderNumber} has been rejected`
+      summary: this.transloco.translate('notifications.orderRejected'),
+      detail: this.transloco.translate('notifications.orderRejectedDetail', { orderNumber: order.orderNumber })
     });
 
     this.dialog.closeAll();
@@ -588,8 +589,8 @@ export class PurchaseOrderListComponent {
 
     this.notificationService.add({
       severity: 'success',
-      summary: 'Stock Received',
-      detail: `${order.orderNumber} has been marked as received`
+      summary: this.transloco.translate('notifications.stockReceived'),
+      detail: this.transloco.translate('notifications.stockReceivedDetail', { orderNumber: order.orderNumber })
     });
   }
 

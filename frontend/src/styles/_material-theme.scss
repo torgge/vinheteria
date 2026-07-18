@@ -91,3 +91,16 @@ html {
     background: rgba(var(--color-primary-rgb), var(--state-hover-opacity));
   }
 }
+
+// ── Snackbar severity styles ──────────────────────────────────
+// NotificationService applies panelClass `snackbar-${severity}` on the
+// MatSnackBar container. MDC drives the surface background from the
+// `--mdc-snackbar-container-color` custom property (set globally above to
+// --color-ink-secondary), so a plain `.mdc-snackbar__surface` override
+// loses; override the token per-severity on the container instead — it
+// inherits down to the surface. Semantic tint per DESIGN.md sticker
+// palette; supporting-text stays white (set above) and reads on all four.
+.snackbar-success { --mdc-snackbar-container-color: var(--color-accent-green); }
+.snackbar-info    { --mdc-snackbar-container-color: var(--color-accent-sky); }
+.snackbar-warn    { --mdc-snackbar-container-color: var(--color-accent-orange); }
+.snackbar-error   { --mdc-snackbar-container-color: var(--color-error); }

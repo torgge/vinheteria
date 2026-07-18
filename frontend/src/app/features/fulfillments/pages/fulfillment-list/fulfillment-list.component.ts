@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
@@ -428,6 +428,7 @@ interface StatusOption {
 export class FulfillmentListComponent {
   private currencyService = inject(CurrencyService);
   private notificationService = inject(NotificationService);
+  private readonly transloco = inject(TranslocoService);
   readonly dialog = inject(MatDialog);
   @ViewChild('detailDialog', { read: TemplateRef }) detailDialog!: TemplateRef<unknown>;
 
@@ -573,8 +574,10 @@ export class FulfillmentListComponent {
 
     this.notificationService.add({
       severity: 'success',
-      summary: 'Status Updated',
-      detail: `Fulfillment updated to ${this.getNextStatusLabel(currentFulfillment.status)}`
+      summary: this.transloco.translate('notifications.statusUpdated'),
+      detail: this.transloco.translate('notifications.statusUpdatedDetail', {
+        status: this.getNextStatusLabel(currentFulfillment.status)
+      })
     });
   }
 }
