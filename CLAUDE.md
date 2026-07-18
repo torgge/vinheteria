@@ -68,7 +68,7 @@ cd services/vinheria-{service}
 ```bash
 cd frontend
 npm install && npm start                # Dev server (http://localhost:4200)
-npm test                                # Unit tests (Karma + Jasmine)
+npm test                                # Unit tests (Jest)
 npm run build                           # Production build
 ```
 The frontend currently runs against mock data (`frontend/src/app/mock/`) — no backend required for UI development.
@@ -216,7 +216,7 @@ APPROVED  REJECTED
 - Angular Signals + `@ngrx/signals` Signal Store (no RxJS Subjects for component state)
 - `*transloco` for all user-visible text (3 languages)
 - Standalone components only (no NgModules)
-- Tests run via Karma + Jasmine (`ng test`)
+- Tests run via Jest (`npm test`); jest-preset-angular, config in `frontend/jest.config.js`
 - Multi-currency: prices stored as `{ BRL, PYG, USD }` objects; accounting currency is BRL
 
 ### Git
@@ -278,7 +278,7 @@ Configured in `.claude/settings.json` (scripts in `scripts/hooks/`):
 | Hook | Trigger | What it does |
 |------|---------|--------------|
 | **SessionStart** | Session start | Prints git status, test results, infra check |
-| **PostToolUse** | Edit/Write | TDD test runner (backend: Gradle per-slice; frontend: `ng test`) + Detekt lint (`.kt` files only) |
+| **PostToolUse** | Edit/Write | TDD test runner (backend: Gradle per-slice; frontend: `jest`) + Detekt lint (`.kt` files only) |
 | **PreToolUse** | Edit/Write | Blocks framework imports in `domain/` (`.kt` files only) |
 | **PreToolUse** | Bash | Blocks dangerous commands + validates commit messages |
 | **Stop** | Session end | Full quality gate (`ktlintCheck`, `detekt`, unit/integration/architecture tests, coverage) |
