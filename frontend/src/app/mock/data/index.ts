@@ -17,3 +17,6 @@ export * from './suppliers.mock';
 
 // Orders & Fulfillments
 export * from './orders.mock';
+
+// Daily Exchange Rates
+export * from './exchange-rates.mock';

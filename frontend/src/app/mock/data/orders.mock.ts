@@ -6,6 +6,7 @@ import { WINES } from './wines.mock';
 import { CUSTOMERS } from './customers.mock';
 import { WAREHOUSES, STOCK_POSITIONS } from './warehouses.mock';
 import { SUPPLIERS } from './suppliers.mock';
+import { SupportedCurrency } from '../../core/currency/currency.model';
 
 // Types
 export type SalesOrderStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'FULFILLED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
@@ -42,6 +43,7 @@ export interface SalesOrder {
   orderNumber: string;
   customerId: string;
   customerName: string;
+  transactionCurrency: SupportedCurrency; // moeda em que a venda foi fechada (ADR-001 decisão 2)
   items: SalesOrderItem[];
   totalAmount: {
     BRL: number;
@@ -194,12 +196,16 @@ function generateSalesOrders(): SalesOrder[] {
 
     const createdDate = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
     const seller = sellers[Math.floor(Math.random() * sellers.length)];
+    // moeda da transação: mistura realista (mais BRL, algumas em USD/PYG de fronteira)
+    const txCurrencies: SupportedCurrency[] = ['BRL', 'BRL', 'BRL', 'USD', 'USD', 'PYG'];
+    const transactionCurrency = txCurrencies[Math.floor(Math.random() * txCurrencies.length)];
 
     const order: SalesOrder = {
       id: `so-${String(i).padStart(3, '0')}`,
       orderNumber: `SO-2024-${String(i).padStart(4, '0')}`,
       customerId: customer.id,
       customerName: customer.tradeName,
+      transactionCurrency,
       items,
       totalAmount: { BRL: Math.round(totalBRL * 100) / 100, PYG: Math.round(totalPYG), USD: Math.round(totalUSD * 100) / 100 },
       totalCost: { BRL: Math.round(costBRL * 100) / 100, PYG: Math.round(costPYG), USD: Math.round(costUSD * 100) / 100 },
