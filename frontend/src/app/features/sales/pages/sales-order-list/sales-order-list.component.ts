@@ -136,7 +136,7 @@ interface StatusOption {
                   <app-money-display [money]="order.totalAmount" />
                   <span class="currency-chip">{{ order.transactionCurrency }}</span>
                 </div>
-                @if (order.accounting) {
+                @if (order.accounting && order.transactionCurrency !== 'BRL') {
                   <div class="amount-accounting">
                     <app-money-display [money]="order.accounting.totalAmount" size="small" />
                     @if (order.accounting.rate.carriedForward) {
@@ -257,7 +257,7 @@ interface StatusOption {
                 <span class="label">{{ t('common.total') }}:</span>
                 <app-money-display [money]="selectedOrder()!.totalAmount" />
               </div>
-              @if (selectedOrder()!.accounting) {
+              @if (selectedOrder()!.accounting && selectedOrder()!.transactionCurrency !== 'BRL') {
                 <div class="summary-row">
                   <span class="label">{{ t('sales.list.accountingValue') }}:</span>
                   <app-money-display [money]="selectedOrder()!.accounting!.totalAmount" />

@@ -47,6 +47,16 @@ describe('SalesOrderListComponent — currency view', () => {
     expect(text).toContain('R$'); // BRL accounting column is present
   });
 
+  it('hides the accounting row for BRL orders (identity, no duplicate R$)', () => {
+    setup();
+    const rendered = fixture.componentInstance.filteredOrders();
+    const expected = rendered.filter(
+      (r) => r.accounting && r.transactionCurrency !== 'BRL',
+    ).length;
+    const accountingEls = fixture.nativeElement.querySelectorAll('.amount-accounting');
+    expect(accountingEls.length).toBe(expected);
+  });
+
   it('sorts by the BRL accounting amount for the total column', () => {
     setup();
     fixture.componentInstance.onSortChange({ active: 'total', direction: 'asc' });
