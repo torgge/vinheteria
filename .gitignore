@@ -54,3 +54,6 @@ k6/results/
 coverage/
 build/reports/
 scripts/daily-status/__pycache__/
+
+# === Git worktrees (oc-delegate) ===
+.git-worktrees/
