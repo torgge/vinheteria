@@ -61,7 +61,10 @@ function toItemView(item: SalesOrderItem, cur: SupportedCurrency): SalesOrderIte
  */
 export function toSalesOrderView(order: SalesOrder, fx: ExchangeRateService): SalesOrderView {
   const cur = order.transactionCurrency;
-  const acc = fx.toAccounting(order.totalAmount[cur], cur, order.createdAt);
+  // createdAt may be a full ISO timestamp; DailyRate keys on yyyy-mm-dd (repo convention,
+  // see fiscal-report). Normalize before resolving the frozen rate.
+  const isoDate = order.createdAt.split('T')[0];
+  const acc = fx.toAccounting(order.totalAmount[cur], cur, isoDate);
 
   return {
     id: order.id,
