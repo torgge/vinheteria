@@ -24,7 +24,7 @@
     "@angular/router": "^18.2.0",
     "@jsverse/transloco": "^7.5.0",
     "@jsverse/transloco-locale": "^7.0.0",
-    "@jsverse/transloco-persist-lang": "^7.0.0",
+    "@jsverse/transloco-persist-lang": "^8.4.0",
     "@ngrx/signals": "^18.1.1",
     "chart.js": "^4.5.1",
     "rxjs": "~7.8.0",
