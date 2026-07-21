@@ -243,6 +243,10 @@
       "SHIPPED": "Shipped",
       "DELIVERED": "Delivered",
       "CANCELLED": "Cancelled"
+    },
+    "list": {
+      "accountingValue": "Accounting value (BRL)",
+      "carriedForward": "Last business-day rate (no quote on the date)"
     }
   },
   "purchases": {

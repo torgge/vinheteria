@@ -15,18 +15,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-import { CurrencyService } from '../../../../core/currency/currency.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ExchangeRateService } from '../../../../core/currency/exchange-rate.service';
 import { formatDate } from '../../../../shared/utils/date.utils';
-import { PriceDisplayComponent } from '../../../../shared/components/price-display/price-display.component';
+import { MoneyDisplayComponent } from '../../../../shared/components/money-display/money-display.component';
 import { MarginIndicatorComponent } from '../../../../shared/components/margin-indicator/margin-indicator.component';
 import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
-import {
-  SALES_ORDERS,
-  SalesOrder,
-  SalesOrderStatus
-} from '../../../../mock/data';
+import { SALES_ORDERS, SalesOrderStatus } from '../../../../mock/data';
+import { toSalesOrderView, SalesOrderView } from '../../sales-order.view';
 
 interface StatusOption {
   label: string;
@@ -50,7 +47,7 @@ interface StatusOption {
     MatSelectModule,
     MatTooltipModule,
     MatDialogModule,
-    PriceDisplayComponent,
+    MoneyDisplayComponent,
     MarginIndicatorComponent,
     StatusBadgeComponent
   ],
@@ -135,7 +132,22 @@ interface StatusOption {
                 {{ t('common.total') }}
               </th>
               <td mat-cell *matCellDef="let order">
-                <app-price-display [price]="order.totalAmount" />
+                <div class="amount-transaction">
+                  <app-money-display [money]="order.totalAmount" />
+                  <span class="currency-chip">{{ order.transactionCurrency }}</span>
+                </div>
+                @if (order.accounting) {
+                  <div class="amount-accounting">
+                    <app-money-display [money]="order.accounting.totalAmount" size="small" />
+                    @if (order.accounting.rate.carriedForward) {
+                      <mat-icon
+                        class="carry-icon"
+                        fontIcon="event_busy"
+                        [matTooltip]="t('sales.list.carriedForward')"
+                      />
+                    }
+                  </div>
+                }
               </td>
             </ng-container>
 
@@ -243,8 +255,14 @@ interface StatusOption {
             <div class="order-summary">
               <div class="summary-row">
                 <span class="label">{{ t('common.total') }}:</span>
-                <app-price-display [price]="selectedOrder()!.totalAmount" />
+                <app-money-display [money]="selectedOrder()!.totalAmount" />
               </div>
+              @if (selectedOrder()!.accounting) {
+                <div class="summary-row">
+                  <span class="label">{{ t('sales.list.accountingValue') }}:</span>
+                  <app-money-display [money]="selectedOrder()!.accounting!.totalAmount" />
+                </div>
+              }
               @if (selectedOrder()!.marginPercentage !== undefined) {
                 <div class="summary-row">
                   <span class="label">{{ t('common.margin') }}:</span>
@@ -343,6 +361,32 @@ interface StatusOption {
       color: var(--color-ink-secondary);
     }
 
+    .amount-transaction {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-xxs);
+    }
+
+    .currency-chip {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-ink-secondary);
+      font-weight: 600;
+    }
+
+    .amount-accounting {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      color: var(--color-ink-secondary);
+    }
+
+    .carry-icon {
+      font-size: var(--font-size-sm, 0.875rem);
+      width: var(--font-size-sm, 0.875rem);
+      height: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
+    }
+
     .date {
       font-size: var(--font-size-sm, 0.875rem);
     }
@@ -374,7 +418,7 @@ interface StatusOption {
 })
 export class SalesOrderListComponent {
   private router = inject(Router);
-  private currencyService = inject(CurrencyService);
+  private fx = inject(ExchangeRateService);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private translocoService = inject(TranslocoService);
@@ -382,11 +426,13 @@ export class SalesOrderListComponent {
   @ViewChild('approveDialog', { read: TemplateRef }) approveDialog!: TemplateRef<unknown>;
   @ViewChild('rejectDialog', { read: TemplateRef }) rejectDialog!: TemplateRef<unknown>;
 
-  orders = SALES_ORDERS;
+  ordersView = computed<SalesOrderView[]>(() =>
+    SALES_ORDERS.map(order => toSalesOrderView(order, this.fx))
+  );
 
   searchQuery = signal('');
   selectedStatus = signal<StatusOption | null>(null);
-  selectedOrder = signal<SalesOrder | null>(null);
+  selectedOrder = signal<SalesOrderView | null>(null);
   rejectReason = '';
   private processedIds = signal<Set<string>>(new Set());
   sort = signal<Sort>({ active: '', direction: '' });
@@ -410,7 +456,7 @@ export class SalesOrderListComponent {
     const processed = this.processedIds();
     const sort = this.sort();
 
-    let results = this.orders.filter(order => {
+    let results = this.ordersView().filter(order => {
       if (processed.has(order.id)) return false;
 
       if (search) {
@@ -435,7 +481,10 @@ export class SalesOrderListComponent {
         switch (sort.active) {
           case 'orderNumber': aVal = a.orderNumber; bVal = b.orderNumber; break;
           case 'customerName': aVal = a.customerName; bVal = b.customerName; break;
-          case 'total': aVal = a.totalAmount.BRL; bVal = b.totalAmount.BRL; break;
+          case 'total':
+            aVal = a.accounting?.totalAmount.amount ?? 0;
+            bVal = b.accounting?.totalAmount.amount ?? 0;
+            break;
           case 'status': aVal = a.status; bVal = b.status; break;
           case 'createdAt': aVal = a.createdAt; bVal = b.createdAt; break;
           default: return 0;
@@ -466,20 +515,20 @@ export class SalesOrderListComponent {
     this.router.navigate(['/sales/create']);
   }
 
-  viewOrder(order: SalesOrder): void {
+  viewOrder(order: SalesOrderView): void {
     this.router.navigate(['/sales', order.id]);
   }
 
-  editOrder(order: SalesOrder): void {
+  editOrder(order: SalesOrderView): void {
     this.router.navigate(['/sales', order.id, 'edit']);
   }
 
-  openApproveDialog(order: SalesOrder): void {
+  openApproveDialog(order: SalesOrderView): void {
     this.selectedOrder.set(order);
     this.dialog.open(this.approveDialog, { width: '400px' });
   }
 
-  openRejectDialog(order: SalesOrder): void {
+  openRejectDialog(order: SalesOrderView): void {
     this.selectedOrder.set(order);
     this.rejectReason = '';
     this.dialog.open(this.rejectDialog, { width: '450px' });
