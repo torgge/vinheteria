@@ -243,6 +243,10 @@
       "SHIPPED": "Enviado",
       "DELIVERED": "Entregado",
       "CANCELLED": "Cancelado"
+    },
+    "list": {
+      "accountingValue": "Valor contable (BRL)",
+      "carriedForward": "Tasa del último día hábil (sin cotización en la fecha)"
     }
   },
   "purchases": {
