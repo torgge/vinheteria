@@ -18,7 +18,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CurrencyService } from '../../../../core/currency/currency.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { PriceDisplayComponent, SimplePrices } from '../../../../shared/components/price-display/price-display.component';
+import { ExchangeRateService, ResolvedRate } from '../../../../core/currency/exchange-rate.service';
+import { Money, SupportedCurrency, CURRENCIES } from '../../../../core/currency/currency.model';
+import { moneyFrom } from '../../../../core/currency/money.util';
+import { MoneyDisplayComponent } from '../../../../shared/components/money-display/money-display.component';
 import { MarginIndicatorComponent } from '../../../../shared/components/margin-indicator/margin-indicator.component';
 import { StockBadgeComponent } from '../../../../shared/components/stock-badge/stock-badge.component';
 import {
@@ -37,11 +40,14 @@ interface OrderItem {
   wine: Wine;
   warehouse: Warehouse;
   quantity: number;
-  unitPrice: SimplePrices;
-  unitCost: SimplePrices;
-  totalPrice: SimplePrices;
-  marginPercentage: number;
   availableStock: number;
+}
+
+interface ItemView {
+  item: OrderItem;
+  unitPrice: Money;
+  totalPrice: Money;
+  marginPercentage: number;
 }
 
 @Component({
@@ -62,7 +68,7 @@ interface OrderItem {
     MatDividerModule,
     MatTooltipModule,
     MatDialogModule,
-    PriceDisplayComponent,
+    MoneyDisplayComponent,
     MarginIndicatorComponent,
     StockBadgeComponent
   ],
@@ -75,6 +81,14 @@ interface OrderItem {
           <p class="text-secondary">{{ t('sales.orderDetail') }}</p>
         </div>
         <div class="header-actions">
+          <mat-form-field appearance="outline" class="currency-picker">
+            <mat-label>{{ t('sales.transactionCurrency') }}</mat-label>
+            <mat-select [(ngModel)]="transactionCurrency">
+              @for (c of currencyOptions; track c) {
+                <mat-option [value]="c">{{ c }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
           <button mat-stroked-button (click)="cancel()">
             <mat-icon fontIcon="close" />
             {{ t('common.cancel') }}
@@ -167,21 +181,33 @@ interface OrderItem {
             <div class="summary-content">
               <div class="summary-row">
                 <span class="summary-label">{{ t('sales.subtotal') }}</span>
-                <app-price-display [price]="orderTotals().totalPrice" size="medium" />
+                <app-money-display [money]="orderTotals().totalPrice" size="medium" />
               </div>
               <div class="summary-row">
                 <span class="summary-label">{{ t('common.margin') }}</span>
-                <app-price-display [price]="orderTotals().totalMargin" size="medium" />
+                <app-money-display [money]="orderTotals().totalMargin" size="medium" />
               </div>
               <mat-divider />
               <div class="summary-row total">
                 <span class="summary-label">{{ t('common.total') }}</span>
-                <app-price-display [price]="orderTotals().totalPrice" size="large" />
+                <app-money-display [money]="orderTotals().totalPrice" size="large" />
               </div>
               <div class="summary-row margin-total">
                 <span class="summary-label">{{ t('sales.marginPercentage') }}</span>
                 <app-margin-indicator [marginPercentage]="orderTotals().marginPercentage" />
               </div>
+              @if (orderTotals().accounting && transactionCurrency() !== 'BRL') {
+                <mat-divider />
+                <div class="summary-row accounting-row">
+                  <span class="summary-label">{{ t('sales.list.accountingValue') }}</span>
+                  <app-money-display [money]="orderTotals().accounting!.totalAmount" />
+                </div>
+                @if (orderTotals().accounting!.rate.carriedForward) {
+                  <div class="summary-row accounting-hint">
+                    <span class="hint-text">{{ t('sales.list.carriedForward') }}</span>
+                  </div>
+                }
+              }
             </div>
           </mat-card-content>
         </mat-card>
@@ -218,7 +244,7 @@ interface OrderItem {
                             <span class="wine-name">{{ wine.name }}</span>
                             <span class="wine-sku">{{ wine.sku }}</span>
                           </div>
-                          <span class="wine-price">{{ formatPrice(wine.prices.BRL) }}</span>
+                          <span class="wine-price">{{ formatPrice(wine.prices[transactionCurrency()], transactionCurrency()) }}</span>
                         </div>
                       </mat-option>
                     }
@@ -283,7 +309,7 @@ interface OrderItem {
               <div class="item-preview">
                 <div class="preview-row">
                   <span class="preview-label">{{ t('common.price') }}:</span>
-                  <app-price-display [price]="selectedWine()!.prices" />
+                  <app-money-display [money]="previewMoney()" />
                 </div>
                 <div class="preview-row">
                   <span class="preview-label">{{ t('common.margin') }}:</span>
@@ -301,38 +327,38 @@ interface OrderItem {
           <mat-card-title>{{ t('sales.orderItems') }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <table mat-table [dataSource]="orderItems()" style="min-width: 60rem">
+          <table mat-table [dataSource]="itemViews()" style="min-width: 60rem">
             <ng-container matColumnDef="sku">
               <th mat-header-cell *matHeaderCellDef>{{ t('catalog.wine.sku') }}</th>
-              <td mat-cell *matCellDef="let item"><span class="sku">{{ item.wine.sku }}</span></td>
+              <td mat-cell *matCellDef="let v"><span class="sku">{{ v.item.wine.sku }}</span></td>
             </ng-container>
 
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>{{ t('catalog.wine.name') }}</th>
-              <td mat-cell *matCellDef="let item">
+              <td mat-cell *matCellDef="let v">
                 <div class="item-wine">
-                  <span class="wine-name">{{ item.wine.name }}</span>
-                  <span class="wine-producer">{{ item.wine.producer }}</span>
+                  <span class="wine-name">{{ v.item.wine.name }}</span>
+                  <span class="wine-producer">{{ v.item.wine.producer }}</span>
                 </div>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="warehouse">
               <th mat-header-cell *matHeaderCellDef>{{ t('warehouse.code') }}</th>
-              <td mat-cell *matCellDef="let item"><strong>{{ item.warehouse.code }}</strong></td>
+              <td mat-cell *matCellDef="let v"><strong>{{ v.item.warehouse.code }}</strong></td>
             </ng-container>
 
             <ng-container matColumnDef="quantity">
               <th mat-header-cell *matHeaderCellDef>{{ t('common.quantity') }}</th>
-              <td mat-cell *matCellDef="let item; let i = index">
+              <td mat-cell *matCellDef="let v; let i = index">
                 <mat-form-field appearance="outline" class="quantity-input-form">
                   <input
                     matInput
                     type="number"
-                    [ngModel]="item.quantity"
+                    [ngModel]="v.item.quantity"
                     (ngModelChange)="updateItemQuantity(i, $event)"
                     min="1"
-                    [max]="item.availableStock"
+                    [max]="v.item.availableStock"
                   />
                 </mat-form-field>
               </td>
@@ -340,22 +366,22 @@ interface OrderItem {
 
             <ng-container matColumnDef="price">
               <th mat-header-cell *matHeaderCellDef>{{ t('common.price') }}</th>
-              <td mat-cell *matCellDef="let item"><app-price-display [price]="item.unitPrice" /></td>
+              <td mat-cell *matCellDef="let v"><app-money-display [money]="v.unitPrice" /></td>
             </ng-container>
 
             <ng-container matColumnDef="total">
               <th mat-header-cell *matHeaderCellDef>{{ t('common.total') }}</th>
-              <td mat-cell *matCellDef="let item"><app-price-display [price]="item.totalPrice" /></td>
+              <td mat-cell *matCellDef="let v"><app-money-display [money]="v.totalPrice" /></td>
             </ng-container>
 
             <ng-container matColumnDef="margin">
               <th mat-header-cell *matHeaderCellDef>{{ t('common.margin') }}</th>
-              <td mat-cell *matCellDef="let item"><app-margin-indicator [marginPercentage]="item.marginPercentage" /></td>
+              <td mat-cell *matCellDef="let v"><app-margin-indicator [marginPercentage]="v.marginPercentage" /></td>
             </ng-container>
 
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef>{{ t('common.actions') }}</th>
-              <td mat-cell *matCellDef="let item; let i = index">
+              <td mat-cell *matCellDef="let v; let i = index">
                 <button
                   mat-icon-button
                   matTooltip="{{ t('common.delete') }}"
@@ -369,7 +395,7 @@ interface OrderItem {
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-            @if (orderItems().length === 0) {
+            @if (itemViews().length === 0) {
               <tr class="mat-row">
                 <td class="mat-cell" [attr.colspan]="displayedColumns.length">
                   <div class="vinheria-empty-state">
@@ -403,6 +429,22 @@ interface OrderItem {
     .header-actions {
       display: flex;
       gap: var(--space-sm);
+      align-items: center;
+    }
+
+    .currency-picker {
+      width: 180px;
+    }
+
+    .accounting-row {
+      font-size: var(--font-size-sm, 0.875rem);
+      color: var(--color-ink-secondary);
+    }
+
+    .accounting-hint .hint-text {
+      font-size: var(--font-size-xs, 0.75rem);
+      color: var(--color-ink-secondary);
+      font-style: italic;
     }
 
     .order-grid {
@@ -619,9 +661,16 @@ interface OrderItem {
 export class SalesOrderCreateComponent {
   private router = inject(Router);
   private currencyService = inject(CurrencyService);
+  private fx = inject(ExchangeRateService);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private readonly transloco = inject(TranslocoService);
+
+  // Transaction currency — locked per order, chosen in the header. Default BRL
+  // (accounting currency). Default BRL means identity conversion; accounting
+  // row is suppressed. Replaces the global selectedCurrency display-switch.
+  transactionCurrency = signal<SupportedCurrency>('BRL');
+  currencyOptions = Object.keys(CURRENCIES) as SupportedCurrency[];
 
   // Customer selection
   customerOptions = CUSTOMERS.filter(c => c.status === 'ACTIVE');
@@ -664,39 +713,53 @@ export class SalesOrderCreateComponent {
     return stock?.availableQuantity ?? 0;
   });
 
-  // Computed: order totals
-  orderTotals = computed(() => {
-    const items = this.orderItems();
-
-    const totalPrice: SimplePrices = { BRL: 0, PYG: 0, USD: 0 };
-    const totalCost: SimplePrices = { BRL: 0, PYG: 0, USD: 0 };
-
-    items.forEach(item => {
-      totalPrice.BRL += item.totalPrice.BRL;
-      totalPrice.PYG += item.totalPrice.PYG;
-      totalPrice.USD += item.totalPrice.USD;
-
-      totalCost.BRL += item.unitCost.BRL * item.quantity;
-      totalCost.PYG += item.unitCost.PYG * item.quantity;
-      totalCost.USD += item.unitCost.USD * item.quantity;
+  // Computed: item views in the current transaction currency. Switching currency
+  // re-derives unitPrice/total/margin for ALL items automatically (no mutation).
+  itemViews = computed<ItemView[]>(() => {
+    const cur = this.transactionCurrency();
+    return this.orderItems().map(item => {
+      const unitPrice = moneyFrom(item.wine.prices, cur);
+      const unitCost = moneyFrom(item.wine.cost, cur);
+      const totalPrice: Money = { amount: unitPrice.amount * item.quantity, currency: cur };
+      const marginPercentage =
+        unitPrice.amount > 0
+          ? Math.round(((unitPrice.amount - unitCost.amount) / unitPrice.amount) * 100 * 10) / 10
+          : 0;
+      return { item, unitPrice, totalPrice, marginPercentage };
     });
+  });
 
-    const totalMargin: SimplePrices = {
-      BRL: totalPrice.BRL - totalCost.BRL,
-      PYG: totalPrice.PYG - totalCost.PYG,
-      USD: totalPrice.USD - totalCost.USD
-    };
+  // Computed: order totals in the transaction currency + BRL accounting.
+  // BRL → identity (rate 1, accounting null, row suppressed in template).
+  // Non-BRL without a known rate → accounting null (bootstrap gap).
+  orderTotals = computed(() => {
+    const cur = this.transactionCurrency();
+    const views = this.itemViews();
 
-    const marginPercentage = totalPrice.BRL > 0
-      ? (totalMargin.BRL / totalPrice.BRL) * 100
-      : 0;
+    let price = 0;
+    let cost = 0;
+    for (const v of views) {
+      price += v.totalPrice.amount;
+      cost += moneyFrom(v.item.wine.cost, cur).amount * v.item.quantity;
+    }
+    const totalPrice: Money = { amount: price, currency: cur };
+    const totalMargin: Money = { amount: price - cost, currency: cur };
+    const marginPercentage = price > 0 ? Math.round(((price - cost) / price) * 100 * 10) / 10 : 0;
 
-    return {
-      totalPrice,
-      totalCost,
-      totalMargin,
-      marginPercentage: Math.round(marginPercentage * 10) / 10
-    };
+    const todayIso = new Date().toISOString().split('T')[0];
+    const acc = this.fx.toAccounting(price, cur, todayIso);
+    const accounting: { totalAmount: Money; rate: ResolvedRate } | null = acc
+      ? { totalAmount: { amount: acc.accountingAmount, currency: 'BRL' }, rate: acc.resolved }
+      : null;
+
+    return { totalPrice, totalMargin, marginPercentage, accounting };
+  });
+
+  // Computed: preview Money for the currently selected wine (in tx currency).
+  previewMoney = computed<Money>(() => {
+    const wine = this.selectedWine();
+    if (!wine) return { amount: 0, currency: this.transactionCurrency() };
+    return moneyFrom(wine.prices, this.transactionCurrency());
   });
 
   // Computed: can add item
@@ -762,11 +825,12 @@ export class SalesOrderCreateComponent {
   }
 
   calculateItemMargin(wine: Wine): number {
-    return ((wine.prices.BRL - wine.cost.BRL) / wine.prices.BRL) * 100;
+    const cur = this.transactionCurrency();
+    return ((wine.prices[cur] - wine.cost[cur]) / wine.prices[cur]) * 100;
   }
 
-  formatPrice(amount: number): string {
-    return this.currencyService.formatPrice(amount);
+  formatPrice(amount: number, currency?: SupportedCurrency): string {
+    return this.currencyService.formatPrice(amount, currency);
   }
 
   addItem(): void {
@@ -777,27 +841,18 @@ export class SalesOrderCreateComponent {
     if (!wine || !warehouse) return;
 
     const stock = getStockPosition(warehouse.id, wine.sku);
-    const marginPercentage = this.calculateItemMargin(wine);
 
     const newItem: OrderItem = {
       id: `item-${Date.now()}`,
       wine,
       warehouse,
       quantity,
-      unitPrice: wine.prices,
-      unitCost: wine.cost,
-      totalPrice: {
-        BRL: wine.prices.BRL * quantity,
-        PYG: wine.prices.PYG * quantity,
-        USD: wine.prices.USD * quantity
-      },
-      marginPercentage: Math.round(marginPercentage * 10) / 10,
-      availableStock: stock?.availableQuantity ?? 0
+      availableStock: stock?.availableQuantity ?? 0,
     };
 
     this.orderItems.update(items => [...items, newItem]);
 
-    // Reset selection
+    // Reset selection — totals re-derive via itemViews/orderTotals computed.
     this.selectedWine.set(null);
     this.selectedWarehouse.set(null);
     this.itemQuantity.set(1);
@@ -812,14 +867,9 @@ export class SalesOrderCreateComponent {
 
   updateItemQuantity(index: number, quantity: number): void {
     this.orderItems.update(items => {
-      const item = items[index];
-      item.quantity = quantity;
-      item.totalPrice = {
-        BRL: item.unitPrice.BRL * quantity,
-        PYG: item.unitPrice.PYG * quantity,
-        USD: item.unitPrice.USD * quantity
-      };
-      return [...items];
+      const next = [...items];
+      next[index] = { ...next[index], quantity };
+      return next;
     });
   }
 
