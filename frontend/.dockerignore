@@ -1,0 +1,17 @@
+.git
+.github
+.vscode
+.idea
+node_modules
+dist
+.angular/cache
+.gitignore
+Dockerfile
+docker-compose*.y*ml
+*.log
+coverage
+.env
+.env.*
+__pycache__
+.DS_Store
+Thumbs.db
