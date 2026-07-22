@@ -140,6 +140,41 @@ services:
       - kafka
       - kafka-connect
 
+  # ─── Frontend (Angular dev server) ────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    container_name: vinheria-frontend
+    profiles: [frontend]
+    ports:
+      - "4200:4200"
+    # Read-only rootfs + tmpfs only on paths Angular needs to write at runtime.
+    # uids set to 1000 (matches Dockerfile USER + chown) so UID 1000 can create subdirs.
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.angular/cache:uid=1000,gid=1000,mode=0700
+      - /app/node_modules/.cache:uid=1000,gid=1000,mode=0700
+      - /app/dist:uid=1000,gid=1000,mode=0700
+    # Bind mount source for hot reload — node_modules stays in image layer (NOT bind-mounted)
+    volumes:
+      - ./frontend:/app:cached
+      # Anonymous volume shadows host node_modules so the container's npm-installed deps win
+      - /app/node_modules
+    cap_drop:
+      [ALL]
+    security_opt:
+      ["no-new-privileges:true"]
+    # No /var/run/docker.sock mount — explicitly avoided per docker.md
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider --quiet http://127.0.0.1:4200/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+
 volumes:
   postgres_data:
   valkey_data:
