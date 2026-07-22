@@ -220,6 +220,7 @@
     "createOrder": "Create Sales Order",
     "orderList": "Order List",
     "orderDetail": "Order Details",
+    "transactionCurrency": "Transaction currency",
     "selectCustomer": "Select Customer",
     "selectWine": "Select Wine",
     "selectWarehouse": "Select Warehouse",

@@ -220,6 +220,7 @@
     "createOrder": "Crear Orden de Venta",
     "orderList": "Lista de Órdenes",
     "orderDetail": "Detalles de la Orden",
+    "transactionCurrency": "Moneda de la transacción",
     "selectCustomer": "Seleccionar Cliente",
     "selectWine": "Seleccionar Vino",
     "selectWarehouse": "Seleccionar Depósito",
