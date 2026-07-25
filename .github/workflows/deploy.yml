@@ -19,7 +19,7 @@ jobs:
     outputs:
       has_terraform: ${{ steps.check.outputs.has_terraform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check for Terraform infrastructure
         id: check
         run: |
@@ -36,7 +36,7 @@ jobs:
     if: needs.detect.outputs.has_terraform == 'true'
     environment: staging
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init (Staging)
@@ -69,7 +69,7 @@ jobs:
     needs: deploy-staging
     environment: production      # Requer approval manual no GitHub
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init (Production)
