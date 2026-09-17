@@ -64,6 +64,10 @@ Leia na ordem: **01 → 07 → 08 → 10 → 11**
 
 Use o [`CLAUDE.md`](../CLAUDE.md) na raiz do projeto — é o arquivo de contexto com todas as regras de agente.
 
+### Diagramas
+
+Convenções sobre quando usar Mermaid inline vs. ASCII art vs. draw.io (`.drawio` + `.svg`), workflow de edição e nomenclatura: [`docs/diagrams/README.md`](./diagrams/README.md).
+
 ## Microserviços B2B
 
 | Serviço | Porta | Bounded Context | Responsabilidade |

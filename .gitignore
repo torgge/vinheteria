@@ -23,7 +23,8 @@ dist/
 # === IDE ===
 .idea/
 *.iml
-.vscode/
+.vscode/*
+!.vscode/extensions.json
 *.swp
 *.swo
 *~
