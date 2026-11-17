@@ -37,7 +37,7 @@
     "@angular/compiler-cli": "^18.2.0",
     "@types/jest": "^30.0.0",
     "jest": "^30.4.2",
-    "jest-preset-angular": "^14.4.2",
+    "jest-preset-angular": "^17.0.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.5.2"
   }
