@@ -3,14 +3,14 @@ name: 📊 Daily Repository Status Report
 description: >
   Generates a daily health report for maintainers covering open issues,
   PR queue, CI/CD status, stale work, and recent activity trends.
-engine: deepseek-v4-pro
+engine: nvidia/nemotron-3.5-lightning-30b-a3b
 on:
   schedule: daily on weekdays
 permissions:
   contents: read
   issues: write
 secrets:
-  - DEEPSEEK_API_KEY
+  - NVIDIA_API_KEY
 implementation: scripts/daily-status/generate_report.py
 ---
 

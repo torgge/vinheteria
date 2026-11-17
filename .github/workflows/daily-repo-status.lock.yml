@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   report:
-    name: "📊 Generate Daily Report (DeepSeek)"
+    name: "📊 Generate Daily Report (Nemotron)"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,7 +37,7 @@ jobs:
       - name: Generate daily status report
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           STATE_FILE: /tmp/daily-status-state/state.json
         run: python scripts/daily-status/generate_report.py
