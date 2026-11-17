@@ -1,4 +1,4 @@
-name: "🤖 Auto-Fix Pipeline (Claude)"
+name: "🤖 Auto-Fix Pipeline (Nemotron)"
 
 on:
   workflow_run:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   auto-fix:
-    name: "🔧 Diagnose & Fix with Claude"
+    name: "🔧 Diagnose & Fix with Nemotron"
     runs-on: ubuntu-latest
 
     # Only trigger on genuine failures; skip bots and dependabot branches to avoid loops
@@ -37,10 +37,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/auto-fix/requirements.txt
 
-      - name: Run Claude auto-fix agent
+      - name: Run Nemotron auto-fix agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
           FAILED_WORKFLOW: ${{ github.event.workflow_run.name }}
