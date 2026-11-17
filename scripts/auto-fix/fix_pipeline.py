@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Auto-fix CI pipeline failures using Claude as an agentic loop."""
+"""Auto-fix CI pipeline failures using NVIDIA Nemotron as an agentic loop."""
 
 import json
 import os
@@ -7,13 +7,13 @@ import sys
 import textwrap
 from pathlib import Path
 
-import anthropic
 import requests
 from github import Github, GithubException
+from openai import OpenAI
 
 # ── GitHub context ──────────────────────────────────────────────────────────
 GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
-ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
+NVIDIA_API_KEY = os.environ["NVIDIA_API_KEY"]
 REPO_NAME = os.environ["GITHUB_REPOSITORY"]          # e.g. "torgge/vinheteria"
 WORKFLOW_RUN_ID = int(os.environ["WORKFLOW_RUN_ID"])
 FAILED_WORKFLOW = os.environ["FAILED_WORKFLOW"]      # display name
@@ -22,7 +22,8 @@ REPO_ROOT = Path(os.environ.get("GITHUB_WORKSPACE", "."))
 # ── Clients ──────────────────────────────────────────────────────────────────
 gh = Github(GITHUB_TOKEN)
 repo = gh.get_repo(REPO_NAME)
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+client = OpenAI(api_key=NVIDIA_API_KEY, base_url="https://integrate.api.nvidia.com/v1")
+MODEL = "nvidia/nemotron-3-ultra-550b-a55b"
 
 
 # ── Tool implementations ──────────────────────────────────────────────────────
@@ -73,36 +74,45 @@ def fetch_run_logs() -> str:
     return "\n\n".join(log_parts) or "No failure logs retrieved."
 
 
-# ── Tool schema for Claude ────────────────────────────────────────────────────
+# ── Tool schema (OpenAI function-calling format) ──────────────────────────────
 TOOLS = [
     {
-        "name": "read_file",
-        "description": "Read a file from the repository. Path relative to repo root.",
-        "input_schema": {
-            "type": "object",
-            "properties": {"path": {"type": "string", "description": "Relative file path"}},
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "write_file",
-        "description": "Write (create or overwrite) a file in the repository.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "path": {"type": "string", "description": "Relative file path"},
-                "content": {"type": "string", "description": "Full file content"},
+        "type": "function",
+        "function": {
+            "name": "read_file",
+            "description": "Read a file from the repository. Path relative to repo root.",
+            "parameters": {
+                "type": "object",
+                "properties": {"path": {"type": "string", "description": "Relative file path"}},
+                "required": ["path"],
             },
-            "required": ["path", "content"],
         },
     },
     {
-        "name": "list_directory",
-        "description": "List contents of a directory in the repository.",
-        "input_schema": {
-            "type": "object",
-            "properties": {"path": {"type": "string", "description": "Relative directory path"}},
-            "required": ["path"],
+        "type": "function",
+        "function": {
+            "name": "write_file",
+            "description": "Write (create or overwrite) a file in the repository.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Relative file path"},
+                    "content": {"type": "string", "description": "Full file content"},
+                },
+                "required": ["path", "content"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "list_directory",
+            "description": "List contents of a directory in the repository.",
+            "parameters": {
+                "type": "object",
+                "properties": {"path": {"type": "string", "description": "Relative directory path"}},
+                "required": ["path"],
+            },
         },
     },
 ]
@@ -113,7 +123,7 @@ TOOL_HANDLERS = {
     "list_directory": lambda inp: list_directory(inp["path"]),
 }
 
-# ── System prompt (cached) ────────────────────────────────────────────────────
+# ── System prompt ─────────────────────────────────────────────────────────────
 SYSTEM_PROMPT = textwrap.dedent("""
     You are an expert CI/CD engineer for the **Vinheria Digital** project — a Kotlin/Quarkus
     microservices platform built with trunk-based development, Conventional Commits, and
@@ -146,21 +156,21 @@ SYSTEM_PROMPT = textwrap.dedent("""
 """).strip()
 
 
-def dispatch_tools(tool_uses: list) -> list:
+def dispatch_tools(tool_calls: list) -> list:
     results = []
-    for tu in tool_uses:
-        handler = TOOL_HANDLERS.get(tu.name)
+    for tc in tool_calls:
+        handler = TOOL_HANDLERS.get(tc.function.name)
         if handler is None:
-            output = f"ERROR: unknown tool '{tu.name}'"
+            output = f"ERROR: unknown tool '{tc.function.name}'"
         else:
             try:
-                output = handler(tu.input)
+                output = handler(json.loads(tc.function.arguments or "{}"))
             except Exception as exc:
                 output = f"ERROR: {exc}"
         results.append(
             {
-                "type": "tool_result",
-                "tool_use_id": tu.id,
+                "role": "tool",
+                "tool_call_id": tc.id,
                 "content": output,
             }
         )
@@ -170,6 +180,7 @@ def dispatch_tools(tool_uses: list) -> list:
 # ── Agentic loop ─────────────────────────────────────────────────────────────
 def run_agent(failure_logs: str) -> str:
     messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
             "content": (
@@ -181,38 +192,25 @@ def run_agent(failure_logs: str) -> str:
     ]
 
     while True:
-        response = client.messages.create(
-            model="claude-opus-4-8",
+        response = client.chat.completions.create(
+            model=MODEL,
             max_tokens=8096,
-            thinking={"type": "adaptive"},
-            system=[
-                {
-                    "type": "text",
-                    "text": SYSTEM_PROMPT,
-                    "cache_control": {"type": "ephemeral"},
-                }
-            ],
             tools=TOOLS,
             messages=messages,
         )
+        choice = response.choices[0]
+        msg = choice.message
 
         # Append assistant turn
-        messages.append({"role": "assistant", "content": response.content})
+        messages.append(msg.model_dump(exclude_none=True))
 
-        if response.stop_reason == "end_turn":
-            # Extract final text summary
-            for block in response.content:
-                if hasattr(block, "text"):
-                    return block.text
-            return "Fix applied (no summary text returned)."
-
-        if response.stop_reason == "tool_use":
-            tool_uses = [b for b in response.content if b.type == "tool_use"]
-            tool_results = dispatch_tools(tool_uses)
-            messages.append({"role": "user", "content": tool_results})
+        if msg.tool_calls:
+            messages.extend(dispatch_tools(msg.tool_calls))
+        elif choice.finish_reason == "stop":
+            return msg.content or "Fix applied (no summary text returned)."
         else:
-            # Unexpected stop reason — bail out
-            return f"Agent stopped unexpectedly: {response.stop_reason}"
+            # Unexpected finish reason (e.g. "length") — bail out
+            return f"Agent stopped unexpectedly: {choice.finish_reason}"
 
 
 # ── PR creation ───────────────────────────────────────────────────────────────
@@ -268,7 +266,7 @@ def create_fix_pr(summary: str) -> str:
     pr = repo.create_pull(
         title=f"fix(ci): auto-fix {FAILED_WORKFLOW} failure (run #{WORKFLOW_RUN_ID})",
         body=(
-            f"## Auto-fix by Claude\n\n"
+            f"## Auto-fix by Nemotron\n\n"
             f"**Failed workflow:** {FAILED_WORKFLOW}\n"
             f"**Run ID:** {WORKFLOW_RUN_ID}\n\n"
             f"### Summary of changes\n\n{summary}\n\n"
@@ -286,7 +284,7 @@ def main() -> None:
     logs = fetch_run_logs()
     print(f"  Retrieved {len(logs)} bytes of log data.")
 
-    print("Running Claude agentic loop…")
+    print("Running Nemotron agentic loop…")
     summary = run_agent(logs)
     print(f"\nAgent summary:\n{summary}\n")
 
