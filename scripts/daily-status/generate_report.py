@@ -328,6 +328,8 @@ def call_nemotron(context_prompt: str) -> str:
         messages=[{"role": "user", "content": context_prompt}],
         max_tokens=512,
         temperature=0.2,
+        # Lightning 3.5 reasons by default; thinking would eat max_tokens and leave content empty.
+        extra_body={"chat_template_kwargs": {"enable_thinking": False}},
     )
     return response.choices[0].message.content.strip()
 
