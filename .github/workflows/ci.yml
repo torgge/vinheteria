@@ -124,7 +124,7 @@ jobs:
         run: ./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
 
       - name: Login to GHCR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
